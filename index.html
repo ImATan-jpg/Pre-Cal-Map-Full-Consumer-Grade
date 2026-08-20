@@ -1,23 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-Philippines Cartesian Transportation Planning Map
-</title>
+<title>Philippines Transportation Planning Map</title>
 
 <link
   rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
 />
 
-<script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7.2.0/turf.min.js"></script>
 
 <style>
 
@@ -37,7 +32,6 @@ body {
 }
 
 body {
-
   background:
     linear-gradient(
       135deg,
@@ -51,16 +45,47 @@ body {
     sans-serif;
 
   color: #17212b;
-
   min-height: 100vh;
 
   display: flex;
-
   justify-content: center;
-
   align-items: center;
 
   padding: 18px;
+}
+
+button,
+select,
+input {
+  font-family: inherit;
+}
+
+button {
+  border: none;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 11px;
+  cursor: pointer;
+
+  background: #17365d;
+  color: white;
+
+  transition:
+    background .15s ease,
+    transform .1s ease;
+}
+
+button:hover {
+  background: #24558e;
+}
+
+button:active {
+  transform: scale(.97);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
 }
 
 
@@ -69,8 +94,7 @@ body {
    ========================================================= */
 
 .project {
-
-  width: min(98vw, 1450px);
+  width: min(98vw, 1500px);
 
   background: white;
 
@@ -80,7 +104,6 @@ body {
     0 12px 40px rgba(0,0,0,.18);
 
   padding: 18px;
-
 }
 
 
@@ -89,20 +112,15 @@ body {
    ========================================================= */
 
 h1 {
-
   text-align: center;
-
-  margin:
-    0 0 4px;
+  margin: 0 0 4px;
 
   color: #17365d;
 
   font-size: 25px;
-
 }
 
 .subtitle {
-
   text-align: center;
 
   color: #66727e;
@@ -110,7 +128,51 @@ h1 {
   font-size: 13px;
 
   margin-bottom: 12px;
+}
 
+
+/* =========================================================
+   COMMON PANELS
+   ========================================================= */
+
+.panel {
+  border-radius: 9px;
+  padding: 11px;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 9px;
+}
+
+input,
+select {
+  border:
+    1px solid #9eacb9;
+
+  border-radius: 6px;
+
+  padding:
+    7px 9px;
+
+  background: white;
+
+  color: #17212b;
+
+  font-size: 12px;
+}
+
+input {
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: #24558e;
+
+  box-shadow:
+    0 0 0 2px rgba(36,85,142,.12);
 }
 
 
@@ -119,7 +181,6 @@ h1 {
    ========================================================= */
 
 .calibration-panel {
-
   background:
     linear-gradient(
       135deg,
@@ -135,84 +196,32 @@ h1 {
   padding: 12px;
 
   margin-bottom: 12px;
-
 }
 
 .calibration-title {
-
   font-size: 13px;
-
   font-weight: bold;
 
   color: #17365d;
 
   margin-bottom: 8px;
-
 }
 
 .calibration-row {
-
   display: flex;
-
   align-items: center;
 
   gap: 8px;
 
   flex-wrap: wrap;
-
 }
 
 .calibration-row label {
-
   font-size: 11px;
-
   font-weight: bold;
-
-}
-
-select,
-input {
-
-  border:
-    1px solid #9eacb9;
-
-  border-radius: 6px;
-
-  padding:
-    7px 9px;
-
-  background: white;
-
-  color: #17212b;
-
-  font-size: 12px;
-
-}
-
-select {
-
-  cursor: pointer;
-
-}
-
-input {
-
-  outline: none;
-
-}
-
-input:focus,
-select:focus {
-
-  border-color: #24558e;
-
-  box-shadow:
-    0 0 0 2px rgba(36,85,142,.12);
-
 }
 
 .calibration-info {
-
   margin-top: 9px;
 
   font-size: 11px;
@@ -220,35 +229,18 @@ select:focus {
   line-height: 1.6;
 
   color: #59636d;
-
 }
 
-#calibrationName {
-
+#calibrationName,
+#scaleDisplay {
   font-weight: bold;
-
   color: #17365d;
-
 }
 
 #originDisplay {
-
-  font-family:
-    "Courier New",
-    monospace;
-
+  font-family: "Courier New", monospace;
   font-weight: bold;
-
   color: #c1121f;
-
-}
-
-#scaleDisplay {
-
-  font-weight: bold;
-
-  color: #17365d;
-
 }
 
 
@@ -257,50 +249,30 @@ select:focus {
    ========================================================= */
 
 .workspace {
-
   display: grid;
 
   grid-template-columns:
     255px
     minmax(0, 1fr)
-    255px;
+    270px;
 
   gap: 10px;
 
   align-items: start;
-
 }
-
-
-/* =========================================================
-   SIDEBARS
-   ========================================================= */
 
 .sidebar {
-
   display: flex;
-
   flex-direction: column;
-
   gap: 10px;
-
-}
-
-.sidebar-panel {
-
-  border-radius: 9px;
-
-  padding: 11px;
-
 }
 
 
 /* =========================================================
-   LEFT PIN PANEL
+   PIN PANEL
    ========================================================= */
 
 .pin-panel {
-
   background:
     linear-gradient(
       135deg,
@@ -310,65 +282,41 @@ select:focus {
 
   border:
     1px solid #e3cf9f;
-
 }
 
 .pin-panel-title {
-
-  font-size: 13px;
-
-  font-weight: bold;
-
   color: #7a4b00;
-
-  margin-bottom: 9px;
-
 }
 
 .pin-row {
-
   display: flex;
-
   flex-direction: column;
-
   gap: 5px;
-
 }
 
 .pin-row label {
-
   font-size: 10px;
-
   font-weight: bold;
-
   color: #59451f;
-
 }
 
 .pin-name,
 .pin-type {
-
   width: 100%;
-
 }
 
 .color-options {
-
   display: grid;
-
   grid-template-columns:
     repeat(5, 1fr);
 
   gap: 7px;
 
   margin-top: 4px;
-
 }
 
 .color-button {
-
   width: 27px;
-
   height: 27px;
 
   padding: 0;
@@ -380,35 +328,17 @@ select:focus {
 
   box-shadow:
     0 0 0 1px #8995a1;
-
-  cursor: pointer;
-
-  transition:
-    transform .12s ease,
-    box-shadow .12s ease;
-
-}
-
-.color-button:hover {
-
-  transform:
-    scale(1.12);
-
 }
 
 .color-button.selected {
-
   box-shadow:
     0 0 0 2px #17212b,
     0 0 0 4px white;
 
-  transform:
-    scale(1.08);
-
+  transform: scale(1.08);
 }
 
 .pin-instructions {
-
   margin-top: 9px;
 
   font-size: 10px;
@@ -416,11 +346,9 @@ select:focus {
   color: #6b6255;
 
   line-height: 1.5;
-
 }
 
 .pin-count {
-
   margin-top: 8px;
 
   font-size: 11px;
@@ -428,63 +356,51 @@ select:focus {
   color: #6b6255;
 
   font-weight: bold;
-
 }
 
 
 /* =========================================================
-   ROUTE PLANNER
+   TRANSPORT PANEL
    ========================================================= */
 
-.route-panel {
-
+.transport-panel {
   background:
     linear-gradient(
       135deg,
-      #edf8ef,
-      #fbfffc
+      #eef8ff,
+      #fbfdff
     );
 
   border:
-    1px solid #a9d2b0;
-
+    1px solid #9fc5df;
 }
 
-.route-title {
-
-  font-size: 13px;
-
-  font-weight: bold;
-
-  color: #216b35;
-
-  margin-bottom: 9px;
-
+.transport-title {
+  color: #155b83;
 }
 
-.route-label {
+.transport-grid {
+  display: grid;
 
-  display: block;
+  grid-template-columns:
+    1fr 1fr;
 
+  gap: 5px;
+}
+
+.transport-button {
   font-size: 10px;
-
-  font-weight: bold;
-
-  color: #31513a;
-
-  margin:
-    7px 0 4px;
-
+  padding: 7px 4px;
 }
 
-.route-select {
+.transport-button.active {
+  background: #0b7fab;
 
-  width: 100%;
-
+  box-shadow:
+    0 0 0 2px #d5f2ff;
 }
 
-.route-buttons {
-
+.transport-controls {
   display: grid;
 
   grid-template-columns:
@@ -492,104 +408,286 @@ select:focus {
 
   gap: 5px;
 
-  margin-top: 9px;
-
+  margin-top: 8px;
 }
 
-.route-buttons button {
+.snap-toggle {
+  display: flex;
 
-  padding:
-    7px 5px;
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-top: 8px;
+
+  padding: 7px;
+
+  background: #f7fbfe;
+
+  border:
+    1px solid #c8dce8;
+
+  border-radius: 6px;
 
   font-size: 10px;
 
+  font-weight: bold;
 }
 
-.route-status {
+.toggle {
+  position: relative;
 
-  margin-top: 9px;
+  width: 38px;
+  height: 20px;
+
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+
+  inset: 0;
+
+  cursor: pointer;
+
+  background: #aeb9c2;
+
+  border-radius: 20px;
+
+  transition: .2s;
+}
+
+.slider:before {
+  content: "";
+
+  position: absolute;
+
+  height: 14px;
+  width: 14px;
+
+  left: 3px;
+  top: 3px;
+
+  background: white;
+
+  border-radius: 50%;
+
+  transition: .2s;
+}
+
+.toggle input:checked + .slider {
+  background: #159447;
+}
+
+.toggle input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+.draw-status {
+  margin-top: 8px;
 
   padding: 8px;
 
   border-radius: 6px;
 
-  background: #f4faf5;
+  background: #f5fbff;
 
   border:
-    1px solid #c9dfcd;
+    1px solid #c8dce8;
 
-  color: #48604d;
+  color: #456273;
 
   font-size: 10px;
 
   line-height: 1.5;
-
 }
 
-.route-result {
-
-  margin-top: 8px;
-
+.snap-indicator {
   display: none;
+
+  margin-top: 6px;
+
+  padding: 6px;
+
+  background: #dcfce7;
+
+  border:
+    1px solid #86efac;
+
+  color: #166534;
+
+  border-radius: 6px;
 
   font-size: 10px;
 
-  line-height: 1.55;
-
+  font-weight: bold;
 }
 
-.route-result strong {
-
-  color: #17365d;
-
-}
-
-.route-legend {
-
-  margin-top: 9px;
-
-  padding-top: 8px;
-
-  border-top:
-    1px solid #c9dfcd;
+.transport-note {
+  margin-top: 8px;
 
   font-size: 9px;
 
-  line-height: 1.7;
+  color: #63727d;
 
-}
-
-.legend-green {
-
-  color: #159447;
-
-  font-weight: bold;
-
-}
-
-.legend-blue {
-
-  color: #1677d2;
-
-  font-weight: bold;
-
-}
-
-.legend-orange {
-
-  color: #e87900;
-
-  font-weight: bold;
-
+  line-height: 1.5;
 }
 
 
 /* =========================================================
-   RIGHT SEARCH PANEL
+   ROUTE MANAGER
+   ========================================================= */
+
+.route-manager {
+  background:
+    linear-gradient(
+      135deg,
+      #f3f0ff,
+      #fcfbff
+    );
+
+  border:
+    1px solid #c9bde8;
+}
+
+.route-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.route-item {
+  padding: 8px;
+
+  margin-bottom: 6px;
+
+  background: white;
+
+  border:
+    1px solid #d8d2e8;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+}
+
+.route-item:hover {
+  background: #f5f1ff;
+}
+
+.route-item-header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.route-color {
+  width: 13px;
+  height: 13px;
+
+  border-radius: 50%;
+
+  flex-shrink: 0;
+}
+
+.route-item-name {
+  font-size: 11px;
+  font-weight: bold;
+  color: #35245d;
+}
+
+.route-item-meta {
+  margin-top: 4px;
+
+  font-size: 9px;
+
+  color: #68727b;
+
+  line-height: 1.5;
+}
+
+.route-empty {
+  font-size: 10px;
+
+  color: #737984;
+
+  padding: 8px 2px;
+}
+
+
+/* =========================================================
+   ANALYSIS PANEL
+   ========================================================= */
+
+.analysis-panel {
+  background:
+    linear-gradient(
+      135deg,
+      #fff8ed,
+      #fffdf9
+    );
+
+  border:
+    1px solid #e5c58e;
+}
+
+.analysis-summary {
+  font-size: 10px;
+
+  line-height: 1.55;
+
+  color: #5d5346;
+}
+
+.analysis-box {
+  margin-top: 7px;
+
+  padding: 7px;
+
+  border-radius: 6px;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.analysis-ok {
+  background: #ecfdf5;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+.analysis-warning {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  color: #9a3412;
+}
+
+.analysis-danger {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.analysis-neutral {
+  background: #f4f7fa;
+  border: 1px solid #d4dde5;
+  color: #52616d;
+}
+
+
+/* =========================================================
+   SEARCH
    ========================================================= */
 
 .search-panel {
-
   background:
     linear-gradient(
       135deg,
@@ -599,23 +697,13 @@ select:focus {
 
   border:
     1px solid #b8c9e4;
-
 }
 
 .search-title {
-
-  font-size: 13px;
-
-  font-weight: bold;
-
   color: #244f86;
-
-  margin-bottom: 9px;
-
 }
 
 .search-label {
-
   display: block;
 
   font-size: 10px;
@@ -626,25 +714,18 @@ select:focus {
     7px 0 4px;
 
   color: #3c5066;
-
 }
 
 .search-input {
-
   width: 100%;
-
 }
 
 .search-button {
-
   width: 100%;
-
   margin-top: 8px;
-
 }
 
 .search-results {
-
   margin-top: 8px;
 
   max-height: 220px;
@@ -652,11 +733,9 @@ select:focus {
   overflow-y: auto;
 
   font-size: 10px;
-
 }
 
 .search-result-item {
-
   padding: 7px;
 
   margin-bottom: 5px;
@@ -669,39 +748,26 @@ select:focus {
   background: white;
 
   cursor: pointer;
-
 }
 
 .search-result-item:hover {
-
   background: #eef5ff;
-
 }
 
 .search-result-name {
-
   font-weight: bold;
-
   color: #17365d;
-
 }
 
 .search-result-type {
-
   color: #66727e;
-
   margin-top: 2px;
-
 }
 
 .search-result-pin {
-
   margin-top: 5px;
-
   color: #246b39;
-
   font-weight: bold;
-
 }
 
 
@@ -710,16 +776,12 @@ select:focus {
    ========================================================= */
 
 .map-column {
-
   min-width: 0;
-
 }
 
 #map {
-
   width: 100%;
-
-  height: 680px;
+  height: 700px;
 
   border:
     2px solid #263746;
@@ -731,20 +793,16 @@ select:focus {
   position: relative;
 
   background: #dfe7ed;
-
 }
 
 .leaflet-container {
-
   width: 100%;
-
   height: 100%;
 
   font-family:
     Arial,
     Helvetica,
     sans-serif;
-
 }
 
 
@@ -753,121 +811,81 @@ select:focus {
    ========================================================= */
 
 .cartesian-overlay {
-
   pointer-events: none;
-
   overflow: visible;
-
 }
 
 .cartesian-overlay line {
-
   vector-effect:
     non-scaling-stroke;
-
 }
 
 .cartesian-grid {
-
   stroke: #34495e;
-
   stroke-width: .65;
-
   opacity: .18;
-
 }
 
 .cartesian-grid-major {
-
   stroke: #34495e;
-
   stroke-width: 1.15;
-
   opacity: .34;
-
 }
 
 .cartesian-grid-10 {
-
   stroke: #34495e;
-
   stroke-width: 1.5;
-
   opacity: .43;
-
 }
 
 .cartesian-axis {
-
   stroke: #111827;
-
   stroke-width: 2.5;
-
   opacity: .88;
-
 }
 
 .coordinate-number {
-
   font-size: 10px;
-
   font-weight: bold;
-
   fill: #263746;
 
   paint-order: stroke;
-
   stroke: white;
-
   stroke-width: 3px;
-
   stroke-linejoin: round;
-
 }
 
 .axis-label {
-
   font-size: 11px;
-
   font-weight: bold;
-
   fill: #111827;
 
   paint-order: stroke;
-
   stroke: white;
-
   stroke-width: 3px;
-
 }
 
 
 /* =========================================================
-   CUSTOM PIN
+   PINS
    ========================================================= */
 
 .custom-pin {
-
   position: relative;
 
   width: 34px;
-
   height: 44px;
 
   cursor: pointer;
-
 }
 
 .pin-shape {
-
   position: absolute;
 
   left: 4px;
-
   top: 2px;
 
   width: 26px;
-
   height: 26px;
 
   border-radius:
@@ -881,19 +899,15 @@ select:focus {
 
   box-shadow:
     0 2px 5px rgba(0,0,0,.45);
-
 }
 
 .pin-dot {
-
   position: absolute;
 
   left: 12px;
-
   top: 10px;
 
   width: 10px;
-
   height: 10px;
 
   border-radius: 50%;
@@ -902,7 +916,25 @@ select:focus {
 
   border:
     2px solid rgba(0,0,0,.25);
+}
 
+.station-ring {
+  position: absolute;
+
+  left: 5px;
+  top: 4px;
+
+  width: 24px;
+  height: 24px;
+
+  border-radius: 50%;
+
+  border:
+    3px solid white;
+
+  box-shadow:
+    0 0 0 2px #111827,
+    0 2px 5px rgba(0,0,0,.4);
 }
 
 
@@ -911,7 +943,6 @@ select:focus {
    ========================================================= */
 
 .pin-popup {
-
   background:
     rgba(20,28,36,.96);
 
@@ -929,92 +960,86 @@ select:focus {
   font-size: 11px;
 
   line-height: 1.55;
-
 }
 
 .pin-popup-title {
-
   font-size: 13px;
-
   font-weight: bold;
-
   margin-bottom: 3px;
-
 }
 
 .pin-popup-type {
-
   color: #b9d8ff;
-
   font-weight: bold;
-
   margin-bottom: 5px;
-
 }
 
 .pin-popup-coordinates {
-
   font-family:
     "Courier New",
     monospace;
 
   color: #ffd166;
-
 }
 
 .pin-popup-elevation {
-
   color: #9ef01a;
-
 }
 
 
 /* =========================================================
-   ROUTE LINE
+   TRANSPORT DRAWING
    ========================================================= */
 
-.route-line {
-
-  stroke-linecap:
-    round;
-
-  stroke-linejoin:
-    round;
-
+.transport-preview {
+  pointer-events: none;
 }
 
-.route-line-outline {
-
-  stroke: white;
-
-  stroke-width: 8;
-
-  opacity: .85;
-
+.route-drawing-point {
+  pointer-events: none;
 }
 
-.route-line-land {
+.route-vertex {
+  background: white;
 
-  stroke: #16a34a;
+  border-radius: 50%;
 
-  stroke-width: 5;
-
+  box-shadow:
+    0 0 0 3px #17365d,
+    0 2px 5px rgba(0,0,0,.35);
 }
 
-.route-line-water {
+.snap-marker {
+  background: #16a34a;
 
-  stroke: #1677d2;
+  border:
+    3px solid white;
 
-  stroke-width: 5;
+  border-radius: 50%;
 
+  box-shadow:
+    0 0 0 3px #16a34a,
+    0 2px 7px rgba(0,0,0,.4);
 }
 
-.route-line-unknown {
+.route-label-marker {
+  background:
+    rgba(20,28,36,.9);
 
-  stroke: #f97316;
+  color: white;
 
-  stroke-width: 5;
+  border-radius: 5px;
 
+  padding: 4px 7px;
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0 2px 5px rgba(0,0,0,.3);
 }
 
 
@@ -1023,11 +1048,9 @@ select:focus {
    ========================================================= */
 
 .terrain-note {
-
   position: absolute;
 
   bottom: 10px;
-
   right: 10px;
 
   z-index: 1000;
@@ -1046,7 +1069,41 @@ select:focus {
   font-size: 10px;
 
   pointer-events: none;
+}
 
+
+/* =========================================================
+   WARNINGS ON MAP
+   ========================================================= */
+
+.warning-marker {
+  width: 22px;
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: #dc2626;
+
+  border:
+    3px solid white;
+
+  box-shadow:
+    0 2px 7px rgba(0,0,0,.45);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+
+  font-size: 12px;
+
+  font-weight: bold;
+}
+
+.warning-marker.yellow {
+  background: #f59e0b;
 }
 
 
@@ -1055,11 +1112,9 @@ select:focus {
    ========================================================= */
 
 .controls {
-
   display: flex;
 
   justify-content: center;
-
   align-items: center;
 
   flex-wrap: wrap;
@@ -1067,52 +1122,14 @@ select:focus {
   gap: 7px;
 
   margin-top: 10px;
-
-}
-
-button {
-
-  background: #17365d;
-
-  color: white;
-
-  border: none;
-
-  border-radius: 7px;
-
-  padding:
-    8px 12px;
-
-  font-size: 11px;
-
-  cursor: pointer;
-
-  transition:
-    background .15s ease,
-    transform .1s ease;
-
-}
-
-button:hover {
-
-  background: #24558e;
-
-}
-
-button:active {
-
-  transform:
-    scale(.97);
-
 }
 
 
 /* =========================================================
-   INFORMATION
+   INFO
    ========================================================= */
 
 .info {
-
   margin-top: 10px;
 
   padding: 10px;
@@ -1127,11 +1144,9 @@ button:active {
   font-size: 12px;
 
   line-height: 1.55;
-
 }
 
 #mouseCoordinate {
-
   font-weight: bold;
 
   color: #c1121f;
@@ -1139,7 +1154,6 @@ button:active {
   font-family:
     "Courier New",
     monospace;
-
 }
 
 
@@ -1148,7 +1162,6 @@ button:active {
    ========================================================= */
 
 .footer {
-
   margin-top: 12px;
 
   text-align: center;
@@ -1160,11 +1173,9 @@ button:active {
   color: #34495e;
 
   line-height: 1.6;
-
 }
 
 .instructions {
-
   text-align: center;
 
   margin-top: 8px;
@@ -1174,19 +1185,20 @@ button:active {
   font-size: 10px;
 
   line-height: 1.5;
+}
 
+#map.right-dragging {
+  cursor: grabbing !important;
 }
 
 
 /* =========================================================
-   RIGHT DRAG
+   LOADING
    ========================================================= */
 
-#map.right-dragging {
-
-  cursor:
-    grabbing !important;
-
+.loading {
+  opacity: .65;
+  pointer-events: none;
 }
 
 
@@ -1197,12 +1209,10 @@ button:active {
 @media (max-width: 1100px) {
 
   .workspace {
-
     grid-template-columns:
       220px
       minmax(0, 1fr)
       220px;
-
   }
 
 }
@@ -1210,52 +1220,29 @@ button:active {
 @media (max-width: 850px) {
 
   body {
-
     padding: 8px;
-
   }
 
   .project {
-
     width: 100%;
-
     padding: 10px;
-
   }
 
   .workspace {
-
     grid-template-columns:
       1fr;
-
   }
 
   .sidebar {
-
     width: 100%;
-
   }
 
   #map {
-
     height: 600px;
-
   }
 
   h1 {
-
     font-size: 19px;
-
-  }
-
-}
-
-@media (max-width: 500px) {
-
-  #map {
-
-    height: 500px;
-
   }
 
 }
@@ -1266,9 +1253,7 @@ button:active {
    ========================================================= */
 
 .search-location-marker {
-
   width: 22px;
-
   height: 22px;
 
   border-radius: 50%;
@@ -1280,24 +1265,21 @@ button:active {
 
   box-shadow:
     0 2px 8px rgba(0,0,0,.45);
-
 }
+
 
 
 /* =========================================================
-   LOADING
+   UPGRADE SUPPORT — SAME ORIGINAL VISUAL SYSTEM
    ========================================================= */
-
-.loading {
-
-  opacity: .65;
-
-  pointer-events: none;
-
-}
-
+.route-status-chip { display:inline-block; padding:2px 6px; border-radius:10px; font-size:8px; font-weight:bold; margin-left:4px; }
+.route-status-ok { background:#dcfce7; color:#166534; }
+.route-status-warning { background:#ffedd5; color:#9a3412; }
+.route-status-danger { background:#fee2e2; color:#991b1b; }
+.route-status-unavailable { background:#eef2f7; color:#52616d; }
+.live-analysis { margin-top:7px; padding:7px; border-radius:6px; background:#f8fafc; border:1px solid #d8e0e7; font-size:9px; line-height:1.5; }
+.gps-route-line { pointer-events:none; }
 </style>
-
 </head>
 
 
@@ -1305,16 +1287,12 @@ button:active {
 
 <div class="project">
 
-
 <h1>
-Philippines Cartesian Planning Map
+Philippines Transportation Planning Map
 </h1>
 
 <div class="subtitle">
-
-Interactive geographic map with calibrated
-400 × 400 Cartesian planning grid
-
+Interactive Cartesian transportation planning environment
 </div>
 
 
@@ -1325,9 +1303,7 @@ Interactive geographic map with calibrated
 <div class="calibration-panel">
 
   <div class="calibration-title">
-
     Coordinate Calibration
-
   </div>
 
   <div class="calibration-row">
@@ -1429,6 +1405,18 @@ Interactive geographic map with calibrated
       onchange="changeUnitScale(this.value)"
     >
 
+      <option value="0.05">
+        1 unit = 50 m
+      </option>
+
+      <option value="0.1">
+        1 unit = 100 m
+      </option>
+
+      <option value="0.5">
+        1 unit = 500 m
+      </option>
+
       <option value="1">
         1 unit = 1 km
       </option>
@@ -1465,11 +1453,9 @@ Interactive geographic map with calibrated
 
   </div>
 
-
   <div class="calibration-info">
 
     Current calibration:
-
     <span id="calibrationName">
       Region I — Ilocos Region
     </span>
@@ -1477,7 +1463,6 @@ Interactive geographic map with calibrated
     <br>
 
     Mathematical origin:
-
     <span id="originDisplay">
       (0,0)
     </span>
@@ -1485,7 +1470,6 @@ Interactive geographic map with calibrated
     <br>
 
     Scale:
-
     <span id="scaleDisplay">
       1 coordinate unit = 10 km
     </span>
@@ -1503,7 +1487,6 @@ Interactive geographic map with calibrated
     <br>
 
     Total geographic width:
-
     <strong id="geographicWidth">
       4,000 km
     </strong>
@@ -1520,7 +1503,7 @@ Interactive geographic map with calibrated
 
 
 <!-- =======================================================
-     THREE COLUMN WORKSPACE
+     WORKSPACE
      ======================================================= -->
 
 <div class="workspace">
@@ -1535,12 +1518,11 @@ Interactive geographic map with calibrated
 
 <!-- PIN PANEL -->
 
-<div class="sidebar-panel pin-panel">
+<div class="panel pin-panel">
 
-  <div class="pin-panel-title">
-    📍 Pin Placement
+  <div class="panel-title pin-panel-title">
+    📍 Pin / Station Placement
   </div>
-
 
   <div class="pin-row">
 
@@ -1553,9 +1535,8 @@ Interactive geographic map with calibrated
       class="pin-type"
       type="text"
       value="Major Area"
-      placeholder="e.g. Major Area"
+      placeholder="e.g. MRT Station"
     >
-
 
     <label>
       Pin Name
@@ -1566,14 +1547,13 @@ Interactive geographic map with calibrated
       class="pin-name"
       type="text"
       value="Unnamed Location"
-      placeholder="e.g. Laoag City"
+      placeholder="e.g. Quezon City"
     >
 
   </div>
 
 
-  <div class="pin-row"
-       style="margin-top:9px;">
+  <div class="pin-row" style="margin-top:9px;">
 
     <label>
       Pin Color
@@ -1586,7 +1566,6 @@ Interactive geographic map with calibrated
         class="color-button selected"
         data-color="#e63946"
         style="background:#e63946"
-        title="Red"
         onclick="selectPinColor(this)"
       ></button>
 
@@ -1595,7 +1574,6 @@ Interactive geographic map with calibrated
         class="color-button"
         data-color="#2563eb"
         style="background:#2563eb"
-        title="Blue"
         onclick="selectPinColor(this)"
       ></button>
 
@@ -1604,7 +1582,6 @@ Interactive geographic map with calibrated
         class="color-button"
         data-color="#16a34a"
         style="background:#16a34a"
-        title="Green"
         onclick="selectPinColor(this)"
       ></button>
 
@@ -1613,7 +1590,6 @@ Interactive geographic map with calibrated
         class="color-button"
         data-color="#facc15"
         style="background:#facc15"
-        title="Yellow"
         onclick="selectPinColor(this)"
       ></button>
 
@@ -1622,7 +1598,6 @@ Interactive geographic map with calibrated
         class="color-button"
         data-color="#9333ea"
         style="background:#9333ea"
-        title="Purple"
         onclick="selectPinColor(this)"
       ></button>
 
@@ -1631,7 +1606,6 @@ Interactive geographic map with calibrated
         class="color-button"
         data-color="#f97316"
         style="background:#f97316"
-        title="Orange"
         onclick="selectPinColor(this)"
       ></button>
 
@@ -1640,7 +1614,6 @@ Interactive geographic map with calibrated
         class="color-button"
         data-color="#0891b2"
         style="background:#0891b2"
-        title="Cyan"
         onclick="selectPinColor(this)"
       ></button>
 
@@ -1649,7 +1622,6 @@ Interactive geographic map with calibrated
         class="color-button"
         data-color="#ec4899"
         style="background:#ec4899"
-        title="Pink"
         onclick="selectPinColor(this)"
       ></button>
 
@@ -1658,7 +1630,6 @@ Interactive geographic map with calibrated
         class="color-button"
         data-color="#374151"
         style="background:#374151"
-        title="Black"
         onclick="selectPinColor(this)"
       ></button>
 
@@ -1670,20 +1641,19 @@ Interactive geographic map with calibrated
   <div class="pin-instructions">
 
     <strong>Double-click</strong>
-    anywhere on the map to place the selected pin.
+    anywhere on the map to place a pin.
 
     <br>
 
     <strong>Hover</strong>
-    over a pin to view its information.
+    over a pin to inspect it.
 
     <br>
 
-    <strong>Hold a pin for 2 seconds</strong>
-    to remove it.
+    <strong>Hold for 2 seconds</strong>
+    to remove a pin.
 
   </div>
-
 
   <div class="pin-count">
 
@@ -1695,99 +1665,186 @@ Interactive geographic map with calibrated
 </div>
 
 
-<!-- ROUTE PLANNER -->
+<!-- TRANSPORT DRAWING -->
 
-<div class="sidebar-panel route-panel">
+<div class="panel transport-panel">
 
-  <div class="route-title">
-    🧭 Route Planner
+  <div class="panel-title transport-title">
+    🚇 Transportation Planner
   </div>
 
 
-  <label class="route-label">
-    Start Pin
-  </label>
+  <div class="transport-grid">
 
-  <select
-    id="routeStart"
-    class="route-select"
-  >
+    <button class="transport-button" data-mode="BUS" onclick="startTransportDrawing('BUS')">🚌 Bus</button>
+    <button class="transport-button" data-mode="MRT" onclick="startTransportDrawing('MRT')">🚇 MRT</button>
+    <button class="transport-button" data-mode="LRT" onclick="startTransportDrawing('LRT')">🚈 LRT</button>
+    <button class="transport-button" data-mode="SUBWAY" onclick="startTransportDrawing('SUBWAY')">🚇 Subway</button>
+    <button class="transport-button" data-mode="ELEVATED" onclick="startTransportDrawing('ELEVATED')">🚆 Elevated</button>
+    <button class="transport-button" data-mode="MONORAIL" onclick="startTransportDrawing('MONORAIL')">🚝 Monorail</button>
+    <button class="transport-button" data-mode="FERRY" onclick="startTransportDrawing('FERRY')">⛴ Ferry</button>
+    <button class="transport-button" data-mode="BIKE" onclick="startTransportDrawing('BIKE')">🚲 Bike Lane</button>
+    <button class="transport-button" data-mode="ROAD" onclick="startTransportDrawing('ROAD')">🛣 Road</button>
+    <button class="transport-button" data-mode="TERMINAL" onclick="startTransportDrawing('TERMINAL')">🚉 Terminal</button>
+    <button class="transport-button" data-mode="HUB" onclick="startTransportDrawing('HUB')">🔄 Hub</button>
+    <button class="transport-button" data-mode="CABLE" onclick="startTransportDrawing('CABLE')">🚡 Cable Car</button>
 
-    <option value="">
-      Select start pin...
-    </option>
-
-  </select>
-
-
-  <label class="route-label">
-    Destination Pin
-  </label>
-
-  <select
-    id="routeEnd"
-    class="route-select"
-  >
-
-    <option value="">
-      Select destination...
-    </option>
-
-  </select>
+  </div>
 
 
-  <div class="route-buttons">
+  <div class="snap-toggle">
 
-    <button
-      onclick="calculateRoute()"
-    >
-      Find Route
-    </button>
+    <span>
+      🧲 Snap to Grid
+    </span>
 
-    <button
-      onclick="clearRoute()"
-    >
-      Clear
-    </button>
+    <label class="toggle">
+
+      <input
+        id="snapToggle"
+        type="checkbox"
+        checked
+      >
+
+      <span class="slider"></span>
+
+    </label>
 
   </div>
 
 
   <div
-    id="routeStatus"
-    class="route-status"
+    id="drawStatus"
+    class="draw-status"
   >
-    Add at least two pins to use the route planner.
+    Choose a transportation type to begin drawing.
   </div>
 
 
   <div
-    id="routeResult"
-    class="route-result"
-  ></div>
+    id="snapIndicator"
+    class="snap-indicator"
+  >
+    🧲 Snapped to point
+  </div>
+
+  <div style="margin-top:8px;">
+    <label for="routeNameInput" style="display:block;font-size:10px;font-weight:bold;margin-bottom:4px;">Route Name</label>
+    <input
+      id="routeNameInput"
+      type="text"
+      class="search-input"
+      value=""
+      maxlength="80"
+      placeholder="Optional route name"
+      style="width:100%;"
+    >
+  </div>
+
+  <div style="margin-top:8px;">
+    <label for="routeLineWidth" style="display:block;font-size:10px;font-weight:bold;margin-bottom:4px;">Route Line Width</label>
+    <select id="routeLineWidth" style="width:100%;" onchange="updateDrawingLineWidth()">
+      <option value="2">2 px</option>
+      <option value="3">3 px</option>
+      <option value="4">4 px</option>
+      <option value="5" selected>5 px</option>
+      <option value="6">6 px</option>
+      <option value="8">8 px</option>
+      <option value="10">10 px</option>
+      <option value="12">12 px</option>
+      <option value="14">14 px</option>
+    </select>
+  </div>
 
 
-  <div class="route-legend">
+  <div class="transport-controls">
 
-    <span class="legend-green">
-      ● Green
-    </span>
-    Land / road route
+    <button
+      onclick="undoDrawingPoint()"
+      id="undoPointButton"
+      disabled
+    >
+      ↩ Undo
+    </button>
 
-    <br>
+    <button
+      onclick="finishTransportDrawing()"
+      id="finishRouteButton"
+      disabled
+    >
+      ✅ Finish
+    </button>
 
-    <span class="legend-blue">
-      ● Blue
-    </span>
-    Water / ferry route
+    <button
+      onclick="cancelTransportDrawing()"
+      id="cancelRouteButton"
+      disabled
+    >
+      ❌ Cancel
+    </button>
 
-    <br>
+    <button
+      onclick="clearAllTransportRoutes()"
+    >
+      🗑️ Clear Routes
+    </button>
 
-    <span class="legend-orange">
-      ● Orange
-    </span>
-    Unclassified route
+  </div>
 
+
+  <div class="transport-note">
+
+    Click the map to add alignment points.
+    Double-clicking while drawing finishes the route.
+
+    <br><br>
+
+    When Snap is enabled, alignment points snap to the
+    mathematical Cartesian grid using the current unit scale.
+
+  </div>
+
+</div>
+
+
+<!-- ROUTE MANAGER -->
+
+<div class="panel route-manager">
+
+  <div class="panel-title" style="color:#35245d;">
+    🛤️ Transport Network
+  </div>
+
+  <div
+    id="routeList"
+    class="route-list"
+  >
+    <div class="route-empty">
+      No transportation routes created yet.
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ANALYSIS -->
+
+<div class="panel analysis-panel">
+
+  <div class="panel-title" style="color:#875300;">
+    🔍 Route Analysis
+  </div>
+
+  <div
+    id="analysisContent"
+    class="analysis-summary"
+  >
+    Finish a transportation route to analyze
+    distance, elevation, gradient and terrain.
+  </div>
+
+  <div id="dataSourceStatus" class="live-analysis">
+    🟡 Live terrain, water and DENR-BMB checks are idle.
   </div>
 
 </div>
@@ -1822,12 +1879,13 @@ Interactive geographic map with calibrated
 <div class="sidebar">
 
 
-<div class="sidebar-panel search-panel">
+<!-- LOCATION SEARCH -->
 
-  <div class="search-title">
+<div class="panel search-panel">
+
+  <div class="panel-title search-title">
     🔎 Location Search
   </div>
-
 
   <label class="search-label">
     Search location
@@ -1841,14 +1899,12 @@ Interactive geographic map with calibrated
     onkeydown="handleSearchKey(event)"
   >
 
-
   <button
     class="search-button"
     onclick="searchLocation()"
   >
     Search Location
   </button>
-
 
   <div
     id="searchStatus"
@@ -1862,7 +1918,6 @@ Interactive geographic map with calibrated
     Search for a place and the map will zoom to it.
   </div>
 
-
   <div
     id="searchResults"
     class="search-results"
@@ -1871,12 +1926,74 @@ Interactive geographic map with calibrated
 </div>
 
 
-<div class="sidebar-panel search-panel">
+<!-- PIN-TO-PIN ROUTING -->
 
-  <div class="search-title">
-    🗺️ Places & Landmarks
+<div class="panel search-panel">
+
+  <div class="panel-title search-title">
+    🧭 Route Between Transportation Pins
   </div>
 
+  <label class="search-label">
+    Start Pin
+  </label>
+
+  <select
+    id="gpsStartPin"
+    class="search-input"
+  >
+    <option value="">Choose a transportation pin</option>
+  </select>
+
+  <label class="search-label" style="margin-top:7px;">
+    Destination Pin
+  </label>
+
+  <select
+    id="gpsEndPin"
+    class="search-input"
+  >
+    <option value="">Choose a transportation pin</option>
+  </select>
+
+  <button
+    class="search-button"
+    style="margin-top:7px;"
+    onclick="createPinToPinRoute()"
+  >
+    🧭 Create Land Route
+  </button>
+
+  <button
+    class="search-button"
+    style="margin-top:5px;background:#66727e;"
+    onclick="clearPinToPinRoute()"
+  >
+    Clear GPS Route
+  </button>
+
+  <div
+    id="gpsRouteStatus"
+    style="
+      margin-top:7px;
+      font-size:10px;
+      color:#66727e;
+      line-height:1.4;
+    "
+  >
+    Choose two transportation pins to calculate a mostly land-based route.
+  </div>
+
+</div>
+
+
+<!-- LANDMARK SEARCH -->
+
+<div class="panel search-panel">
+
+  <div class="panel-title search-title">
+    🗺️ Places & Landmarks
+  </div>
 
   <label class="search-label">
     Region
@@ -2047,11 +2164,6 @@ Interactive geographic map with calibrated
 </div>
 
 
-</div>
-
-</div>
-
-
 <!-- =======================================================
      CONTROLS
      ======================================================= -->
@@ -2116,6 +2228,15 @@ Interactive geographic map with calibrated
   <br>
 
   <strong>
+    Drawing:
+  </strong>
+
+  Select a transport mode → click alignment points →
+  Finish or double-click. Live planning checks run while drawing.
+
+  <br>
+
+  <strong>
     Coordinate System:
   </strong>
 
@@ -2150,26 +2271,15 @@ Interactive geographic map with calibrated
 
 <div class="instructions">
 
-  The Cartesian coordinate system is calibrated independently
-  from the geographic map.
+  Live terrain, water and protected-area analysis uses reliable
+  geographic datasets where available; unavailable data is reported explicitly.
 
   <br>
 
-  Changing the coordinate reference changes the mathematical
-  origin.
-
-  <br>
-
-  Changing the unit scale changes how many kilometers each
-  Cartesian unit represents.
-
-  <br>
-
-  Pins automatically update their Cartesian coordinates when
-  the calibration or scale changes.
+  Results are intended for conceptual transportation planning,
+  not final engineering design.
 
 </div>
-
 
 </div>
 
@@ -2177,7 +2287,7 @@ Interactive geographic map with calibrated
 <script>
 
 /* =========================================================
-   PHILIPPINES CARTESIAN PLANNING MAP
+   PHILIPPINES TRANSPORTATION PLANNING MAP
    ========================================================= */
 
 
@@ -2190,13 +2300,10 @@ let KM_PER_UNIT = 10;
 let METERS_PER_UNIT =
   KM_PER_UNIT * 1000;
 
-
 const X_MIN = -200;
-
 const X_MAX = 200;
 
 const Y_MIN = -200;
-
 const Y_MAX = 200;
 
 
@@ -2331,7 +2438,6 @@ const map =
   L.map(
     "map",
     {
-
       dragging: false,
 
       zoomControl: true,
@@ -2341,9 +2447,16 @@ const map =
       doubleClickZoom: false,
 
       attributionControl: true
-
     }
   );
+
+/* Keep route drawing visibly above the Cartesian SVG/grid. */
+map.createPane("routePreviewPane");
+map.getPane("routePreviewPane").style.zIndex = 1000;
+map.getPane("routePreviewPane").style.pointerEvents = "none";
+
+map.createPane("routePane");
+map.getPane("routePane").style.zIndex = 900;
 
 
 /* =========================================================
@@ -2352,18 +2465,13 @@ const map =
 
 const streetLayer =
   L.tileLayer(
-
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-
     {
-
       maxZoom: 19,
 
       attribution:
         "&copy; OpenStreetMap contributors"
-
     }
-
   ).addTo(map);
 
 
@@ -2373,22 +2481,16 @@ const streetLayer =
 
 const terrainLayer =
   L.tileLayer(
-
     "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-
     {
-
       maxZoom: 17,
 
       opacity: 0.82,
 
       attribution:
         "Map data: OpenStreetMap contributors, SRTM | Map style: OpenTopoMap"
-
     }
-
   );
-
 
 let terrainVisible = false;
 
@@ -2405,9 +2507,7 @@ let currentOrigin =
     calibrations[currentCalibration].lng
   );
 
-
 const crs = map.options.crs;
-
 
 let projectedOrigin =
   crs.project(
@@ -2423,13 +2523,11 @@ function coordinateToLatLng(x, y) {
 
   const projectedPoint =
     L.point(
-
       projectedOrigin.x +
       x * METERS_PER_UNIT,
 
       projectedOrigin.y -
       y * METERS_PER_UNIT
-
     );
 
   return crs.unproject(
@@ -2444,14 +2542,12 @@ function latLngToCoordinate(latlng) {
   const projected =
     crs.project(latlng);
 
-
   const x =
     (
       projected.x -
       projectedOrigin.x
     ) /
     METERS_PER_UNIT;
-
 
   const y =
     (
@@ -2460,17 +2556,16 @@ function latLngToCoordinate(latlng) {
     ) /
     METERS_PER_UNIT;
 
-
   return {
-    x: x,
-    y: y
+    x,
+    y
   };
 
 }
 
 
 /* =========================================================
-   8. FORMAT
+   8. FORMATTING
    ========================================================= */
 
 function formatNumber(number) {
@@ -2490,37 +2585,36 @@ function formatNumber(number) {
    9. CALIBRATION INFO
    ========================================================= */
 
+function formatScaleText() {
+  const meters = KM_PER_UNIT * 1000;
+  if (meters < 1000) {
+    return `1 unit = ${formatNumber(meters)} m`;
+  }
+  return `1 unit = ${formatNumber(KM_PER_UNIT)} km`;
+}
+
 function updateCalibrationInfo() {
-
-  const scaleText =
-    `1 coordinate unit = ${formatNumber(KM_PER_UNIT)} km`;
-
 
   document.getElementById(
     "scaleDisplay"
   ).textContent =
-    scaleText;
-
+    formatScaleText();
 
   document.getElementById(
     "footerScale"
   ).textContent =
-    `1 unit = ${formatNumber(KM_PER_UNIT)} km`;
-
+    formatScaleText();
 
   const totalWidth =
     X_MAX - X_MIN;
 
-
   const totalHeight =
     Y_MAX - Y_MIN;
-
 
   document.getElementById(
     "geographicWidth"
   ).textContent =
     `${formatNumber(totalWidth * KM_PER_UNIT)} km`;
-
 
   document.getElementById(
     "geographicHeight"
@@ -2539,24 +2633,18 @@ function changeUnitScale(value) {
   const newScale =
     Number(value);
 
-
   if (
     !Number.isFinite(newScale) ||
     newScale <= 0
   ) {
-
     return;
-
   }
-
 
   KM_PER_UNIT =
     newScale;
 
-
   METERS_PER_UNIT =
     KM_PER_UNIT * 1000;
-
 
   updateCalibrationInfo();
 
@@ -2577,10 +2665,8 @@ function changeCalibration(key) {
     return;
   }
 
-
   currentCalibration =
     key;
-
 
   currentOrigin =
     L.latLng(
@@ -2588,18 +2674,15 @@ function changeCalibration(key) {
       calibrations[key].lng
     );
 
-
   projectedOrigin =
     crs.project(
       currentOrigin
     );
 
-
   document.getElementById(
     "calibrationName"
   ).textContent =
     calibrations[key].name;
-
 
   drawCartesianGrid();
 
@@ -2615,10 +2698,7 @@ function changeCalibration(key) {
    ========================================================= */
 
 const mapElement =
-  document.getElementById(
-    "map"
-  );
-
+  document.getElementById("map");
 
 const cartesianSVG =
   document.createElementNS(
@@ -2626,12 +2706,10 @@ const cartesianSVG =
     "svg"
   );
 
-
 cartesianSVG.setAttribute(
   "class",
   "cartesian-overlay"
 );
-
 
 cartesianSVG.style.position =
   "absolute";
@@ -2654,18 +2732,15 @@ cartesianSVG.style.zIndex =
 cartesianSVG.style.pointerEvents =
   "none";
 
-
 mapElement.appendChild(
   cartesianSVG
 );
-
 
 const overlayGroup =
   document.createElementNS(
     "http://www.w3.org/2000/svg",
     "g"
   );
-
 
 cartesianSVG.appendChild(
   overlayGroup
@@ -2677,7 +2752,6 @@ cartesianSVG.appendChild(
    ========================================================= */
 
 let gridVisible = true;
-
 let labelsVisible = true;
 
 
@@ -2695,20 +2769,15 @@ function createLine(
       "line"
     );
 
-
   line.setAttribute("x1", x1);
-
   line.setAttribute("y1", y1);
-
   line.setAttribute("x2", x2);
-
   line.setAttribute("y2", y2);
 
   line.setAttribute(
     "class",
     className
   );
-
 
   return line;
 
@@ -2728,7 +2797,6 @@ function createText(
       "http://www.w3.org/2000/svg",
       "text"
     );
-
 
   label.setAttribute(
     "x",
@@ -2750,10 +2818,8 @@ function createText(
     anchor
   );
 
-
   label.textContent =
     text;
-
 
   return label;
 
@@ -2764,7 +2830,6 @@ function getGridStep() {
 
   const zoom =
     map.getZoom();
-
 
   if (zoom >= 11) {
     return 1;
@@ -2799,15 +2864,12 @@ function drawCartesianGrid() {
 
   }
 
-
   if (!gridVisible) {
     return;
   }
 
-
   const step =
     getGridStep();
-
 
   for (
     let x = X_MIN;
@@ -2823,7 +2885,6 @@ function drawCartesianGrid() {
         )
       );
 
-
     const bottom =
       map.latLngToContainerPoint(
         coordinateToLatLng(
@@ -2832,32 +2893,23 @@ function drawCartesianGrid() {
         )
       );
 
-
     let lineClass =
       "cartesian-grid";
 
-
     if (x === 0) {
-
       lineClass =
         "cartesian-axis";
-
     }
 
     else if (x % 10 === 0) {
-
       lineClass =
         "cartesian-grid-10";
-
     }
 
     else if (x % 5 === 0) {
-
       lineClass =
         "cartesian-grid-major";
-
     }
-
 
     overlayGroup.appendChild(
       createLine(
@@ -2868,7 +2920,6 @@ function drawCartesianGrid() {
         lineClass
       )
     );
-
 
     if (
       labelsVisible &&
@@ -2888,7 +2939,6 @@ function drawCartesianGrid() {
 
   }
 
-
   for (
     let y = Y_MIN;
     y <= Y_MAX;
@@ -2903,7 +2953,6 @@ function drawCartesianGrid() {
         )
       );
 
-
     const right =
       map.latLngToContainerPoint(
         coordinateToLatLng(
@@ -2912,32 +2961,23 @@ function drawCartesianGrid() {
         )
       );
 
-
     let lineClass =
       "cartesian-grid";
 
-
     if (y === 0) {
-
       lineClass =
         "cartesian-axis";
-
     }
 
     else if (y % 10 === 0) {
-
       lineClass =
         "cartesian-grid-10";
-
     }
 
     else if (y % 5 === 0) {
-
       lineClass =
         "cartesian-grid-major";
-
     }
-
 
     overlayGroup.appendChild(
       createLine(
@@ -2948,7 +2988,6 @@ function drawCartesianGrid() {
         lineClass
       )
     );
-
 
     if (
       labelsVisible &&
@@ -2969,12 +3008,10 @@ function drawCartesianGrid() {
 
   }
 
-
   const originPoint =
     map.latLngToContainerPoint(
       currentOrigin
     );
-
 
   if (labelsVisible) {
 
@@ -2989,9 +3026,7 @@ function drawCartesianGrid() {
 
   }
 
-
   const cross = 8;
-
 
   overlayGroup.appendChild(
     createLine(
@@ -3003,7 +3038,6 @@ function drawCartesianGrid() {
     )
   );
 
-
   overlayGroup.appendChild(
     createLine(
       originPoint.x,
@@ -3014,7 +3048,6 @@ function drawCartesianGrid() {
     )
   );
 
-
   const eastPoint =
     map.latLngToContainerPoint(
       coordinateToLatLng(
@@ -3022,7 +3055,6 @@ function drawCartesianGrid() {
         0
       )
     );
-
 
   if (labelsVisible) {
 
@@ -3038,7 +3070,6 @@ function drawCartesianGrid() {
 
   }
 
-
   const northPoint =
     map.latLngToContainerPoint(
       coordinateToLatLng(
@@ -3046,7 +3077,6 @@ function drawCartesianGrid() {
         Y_MAX
       )
     );
-
 
   if (labelsVisible) {
 
@@ -3065,10 +3095,6 @@ function drawCartesianGrid() {
 }
 
 
-/* =========================================================
-   15. GRID EVENTS
-   ========================================================= */
-
 map.on(
   "zoom move resize zoomend moveend",
   drawCartesianGrid
@@ -3076,7 +3102,7 @@ map.on(
 
 
 /* =========================================================
-   16. MOUSE COORDINATES
+   15. MOUSE COORDINATES
    ========================================================= */
 
 map.on(
@@ -3088,30 +3114,74 @@ map.on(
         event.latlng
       );
 
-
     const x =
       Math.round(
         coordinate.x * 10
       ) / 10;
-
 
     const y =
       Math.round(
         coordinate.y * 10
       ) / 10;
 
-
     document.getElementById(
       "mouseCoordinate"
     ).textContent =
       `(${x}, ${y})`;
+
+    if (
+      transportDrawing.active
+    ) {
+
+      updateDrawingPreview(
+        event.latlng
+      );
+
+    }
+
+  }
+);
+
+
+/*
+   Transportation drawing uses a direct pointer listener as a
+   second, reliable path for the rubber-band preview. This is
+   intentionally independent of Leaflet layer mouse events.
+*/
+mapElement.addEventListener(
+  "mousemove",
+  function(event) {
+
+    const rect =
+      mapElement.getBoundingClientRect();
+
+    const containerPoint =
+      L.point(
+        event.clientX - rect.left,
+        event.clientY - rect.top
+      );
+
+    const latlng =
+      map.containerPointToLatLng(
+        containerPoint
+      );
+
+    if (
+      transportDrawing.active
+    ) {
+
+      updateDrawingPreview(
+        latlng
+      );
+
+    }
 
   }
 );
 
 
 /* =========================================================
-   17. RIGHT CLICK PANNING
+   16. RIGHT CLICK PANNING
    ========================================================= */
 
 mapElement.addEventListener(
@@ -3123,11 +3193,8 @@ mapElement.addEventListener(
   }
 );
 
-
 let rightDragging = false;
-
 let lastMousePosition = null;
-
 
 mapElement.addEventListener(
   "mousedown",
@@ -3137,29 +3204,21 @@ mapElement.addEventListener(
       return;
     }
 
-
     rightDragging = true;
 
-
     lastMousePosition = {
-
       x: event.clientX,
-
       y: event.clientY
-
     };
-
 
     mapElement.classList.add(
       "right-dragging"
     );
 
-
     event.preventDefault();
 
   }
 );
-
 
 window.addEventListener(
   "mousemove",
@@ -3169,16 +3228,13 @@ window.addEventListener(
       return;
     }
 
-
     const dx =
       event.clientX -
       lastMousePosition.x;
 
-
     const dy =
       event.clientY -
       lastMousePosition.y;
-
 
     map.panBy(
       [
@@ -3190,18 +3246,13 @@ window.addEventListener(
       }
     );
 
-
     lastMousePosition = {
-
       x: event.clientX,
-
       y: event.clientY
-
     };
 
   }
 );
-
 
 window.addEventListener(
   "mouseup",
@@ -3211,11 +3262,8 @@ window.addEventListener(
       return;
     }
 
-
     rightDragging = false;
-
     lastMousePosition = null;
-
 
     mapElement.classList.remove(
       "right-dragging"
@@ -3226,7 +3274,7 @@ window.addEventListener(
 
 
 /* =========================================================
-   18. TOGGLES
+   17. TOGGLES
    ========================================================= */
 
 function toggleGrid() {
@@ -3254,13 +3302,9 @@ function toggleTerrain() {
   terrainVisible =
     !terrainVisible;
 
-
   if (terrainVisible) {
 
-    terrainLayer.addTo(
-      map
-    );
-
+    terrainLayer.addTo(map);
 
     document.getElementById(
       "terrainNote"
@@ -3275,14 +3319,12 @@ function toggleTerrain() {
       terrainLayer
     );
 
-
     document.getElementById(
       "terrainNote"
     ).textContent =
       "Terrain layer hidden";
 
   }
-
 
   cartesianSVG.style.zIndex =
     "450";
@@ -3291,12 +3333,11 @@ function toggleTerrain() {
 
 
 /* =========================================================
-   19. PIN SYSTEM
+   18. PIN SYSTEM
    ========================================================= */
 
 let selectedPinColor =
   "#e63946";
-
 
 const placedPins = [];
 
@@ -3305,7 +3346,6 @@ function selectPinColor(button) {
 
   selectedPinColor =
     button.dataset.color;
-
 
   document
     .querySelectorAll(
@@ -3321,7 +3361,6 @@ function selectPinColor(button) {
       }
     );
 
-
   button.classList.add(
     "selected"
   );
@@ -3330,10 +3369,40 @@ function selectPinColor(button) {
 
 
 /* =========================================================
-   20. PIN ICON
+   19. PIN ICON
    ========================================================= */
 
-function createPinIcon(color) {
+function createPinIcon(
+  color,
+  isStation = false
+) {
+
+  if (isStation) {
+
+    return L.divIcon({
+
+      className: "",
+
+      html:
+        `<div class="custom-pin">
+          <div
+            class="station-ring"
+            style="background:${color};"
+          ></div>
+        </div>`,
+
+      iconSize:
+        [34,44],
+
+      iconAnchor:
+        [17,42],
+
+      popupAnchor:
+        [0,-42]
+
+    });
+
+  }
 
   return L.divIcon({
 
@@ -3367,7 +3436,7 @@ function createPinIcon(color) {
 
 
 /* =========================================================
-   21. PIN INFORMATION
+   20. PIN INFORMATION
    ========================================================= */
 
 function buildPinInformation(pin) {
@@ -3380,22 +3449,18 @@ function buildPinInformation(pin) {
       )
     );
 
-
   const x =
     Math.round(
       coordinate.x * 100
     ) / 100;
-
 
   const y =
     Math.round(
       coordinate.y * 100
     ) / 100;
 
-
   let elevationText =
     "Unavailable";
-
 
   if (
     pin.elevation !== null &&
@@ -3406,7 +3471,6 @@ function buildPinInformation(pin) {
       `${formatNumber(pin.elevation)} m`;
 
   }
-
 
   return `
 
@@ -3447,6 +3511,20 @@ function buildPinInformation(pin) {
 
       </div>
 
+      ${
+        pin.isStation
+        ? `
+          <div style="color:#7dd3fc;margin-top:4px;">
+            🚉 Transportation Station
+          </div>
+        `
+        : ""
+      }
+
+      <div style="margin-top:6px;color:#fca5a5;">
+        Hold this pin for 2 seconds to remove it.
+      </div>
+
     </div>
 
   `;
@@ -3457,59 +3535,50 @@ function buildPinInformation(pin) {
 function escapeHTML(text) {
 
   return String(text)
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
 
 /* =========================================================
-   22. ADD PIN
+   21. ADD PIN
    ========================================================= */
 
-function addPin(latlng, customName = null, customType = null, customColor = null) {
+function addPin(
+  latlng,
+  customName = null,
+  customType = null,
+  customColor = null
+) {
 
   const nameInput =
     document.getElementById(
       "pinName"
     );
 
-
   const typeInput =
     document.getElementById(
       "pinType"
     );
-
 
   const name =
     customName ||
     nameInput.value.trim() ||
     "Unnamed Location";
 
-
   const type =
     customType ||
     typeInput.value.trim() ||
     "Area";
 
+  const isStation =
+    /station|terminal|depot/i.test(
+      type
+    );
 
   const pin = {
 
@@ -3517,11 +3586,9 @@ function addPin(latlng, customName = null, customType = null, customColor = null
       Date.now() +
       Math.random(),
 
-    name:
-      name,
+    name,
 
-    type:
-      type,
+    type,
 
     color:
       customColor ||
@@ -3536,20 +3603,21 @@ function addPin(latlng, customName = null, customType = null, customColor = null
     elevation:
       null,
 
+    isStation,
+
     marker:
       null
 
   };
 
-
   pin.marker =
     L.marker(
       latlng,
       {
-
         icon:
           createPinIcon(
-            pin.color
+            pin.color,
+            pin.isStation
           ),
 
         interactive:
@@ -3557,19 +3625,12 @@ function addPin(latlng, customName = null, customType = null, customColor = null
 
         zIndexOffset:
           1000
-
       }
     ).addTo(map);
 
-
   pin.marker.bindTooltip(
-
-    buildPinInformation(
-      pin
-    ),
-
+    buildPinInformation(pin),
     {
-
       direction:
         "top",
 
@@ -3584,11 +3645,8 @@ function addPin(latlng, customName = null, customType = null, customColor = null
 
       className:
         "pin-tooltip"
-
     }
-
   );
-
 
   pin.marker.on(
     "mouseover",
@@ -3599,7 +3657,6 @@ function addPin(latlng, customName = null, customType = null, customColor = null
     }
   );
 
-
   pin.marker.on(
     "mouseout",
     function() {
@@ -3609,26 +3666,20 @@ function addPin(latlng, customName = null, customType = null, customColor = null
     }
   );
 
-
   setupPinLongPress(
     pin
   );
-
 
   placedPins.push(
     pin
   );
 
-
   updatePinCount();
-
-  updateRoutePinSelectors();
-
+  refreshPinRouteSelectors();
 
   fetchElevation(
     pin
   );
-
 
   return pin;
 
@@ -3636,21 +3687,18 @@ function addPin(latlng, customName = null, customType = null, customColor = null
 
 
 /* =========================================================
-   23. LONG PRESS
+   22. LONG PRESS
    ========================================================= */
 
 function setupPinLongPress(pin) {
 
   let holdTimer = null;
-
   let holdTriggered = false;
-
 
   function startHold() {
 
     holdTriggered =
       false;
-
 
     holdTimer =
       setTimeout(
@@ -3669,7 +3717,6 @@ function setupPinLongPress(pin) {
 
   }
 
-
   function cancelHold() {
 
     if (holdTimer) {
@@ -3685,7 +3732,6 @@ function setupPinLongPress(pin) {
 
   }
 
-
   pin.marker.on(
     "mousedown",
     function(event) {
@@ -3693,9 +3739,7 @@ function setupPinLongPress(pin) {
       if (
         event.originalEvent.button !== 0
       ) {
-
         return;
-
       }
 
       startHold();
@@ -3703,18 +3747,15 @@ function setupPinLongPress(pin) {
     }
   );
 
-
   pin.marker.on(
     "mouseup",
     cancelHold
   );
 
-
   pin.marker.on(
     "mouseout",
     cancelHold
   );
-
 
   pin.marker.on(
     "click",
@@ -3731,18 +3772,15 @@ function setupPinLongPress(pin) {
     }
   );
 
-
   pin.marker.on(
     "touchstart",
     startHold
   );
 
-
   pin.marker.on(
     "touchend",
     cancelHold
   );
-
 
   pin.marker.on(
     "touchcancel",
@@ -3753,7 +3791,7 @@ function setupPinLongPress(pin) {
 
 
 /* =========================================================
-   24. REMOVE PIN
+   23. REMOVE PIN
    ========================================================= */
 
 function removePin(pin) {
@@ -3766,12 +3804,10 @@ function removePin(pin) {
 
   }
 
-
   const index =
     placedPins.indexOf(
       pin
     );
-
 
   if (index !== -1) {
 
@@ -3782,16 +3818,13 @@ function removePin(pin) {
 
   }
 
-
   updatePinCount();
-
-  updateRoutePinSelectors();
 
 }
 
 
 /* =========================================================
-   25. CLEAR PINS
+   24. CLEAR PINS
    ========================================================= */
 
 function clearAllPins() {
@@ -3799,22 +3832,17 @@ function clearAllPins() {
   if (
     placedPins.length === 0
   ) {
-
     return;
-
   }
-
 
   const confirmed =
     confirm(
       "Remove all pins from the map?"
     );
 
-
   if (!confirmed) {
     return;
   }
-
 
   placedPins.forEach(
     function(pin) {
@@ -3830,22 +3858,18 @@ function clearAllPins() {
     }
   );
 
-
   placedPins.length =
     0;
 
-
   updatePinCount();
-
-  updateRoutePinSelectors();
-
-  clearRoute();
+  refreshPinRouteSelectors();
+  clearPinToPinRoute();
 
 }
 
 
 /* =========================================================
-   26. PIN COUNT
+   25. PIN COUNT
    ========================================================= */
 
 function updatePinCount() {
@@ -3859,7 +3883,7 @@ function updatePinCount() {
 
 
 /* =========================================================
-   27. REFRESH PINS
+   26. REFRESH PINS
    ========================================================= */
 
 function refreshAllPinCoordinates() {
@@ -3870,11 +3894,7 @@ function refreshAllPinCoordinates() {
       if (pin.marker) {
 
         pin.marker.setTooltipContent(
-
-          buildPinInformation(
-            pin
-          )
-
+          buildPinInformation(pin)
         );
 
       }
@@ -3886,7 +3906,7 @@ function refreshAllPinCoordinates() {
 
 
 /* =========================================================
-   28. ELEVATION
+   27. ELEVATION
    ========================================================= */
 
 async function fetchElevation(pin) {
@@ -3896,12 +3916,8 @@ async function fetchElevation(pin) {
     const url =
       `https://api.open-elevation.com/api/v1/lookup?locations=${pin.latitude},${pin.longitude}`;
 
-
     const response =
-      await fetch(
-        url
-      );
-
+      await fetch(url);
 
     if (!response.ok) {
       throw new Error(
@@ -3909,10 +3925,8 @@ async function fetchElevation(pin) {
       );
     }
 
-
     const data =
       await response.json();
-
 
     if (
       data &&
@@ -3930,15 +3944,10 @@ async function fetchElevation(pin) {
           data.results[0].elevation
         );
 
-
       if (pin.marker) {
 
         pin.marker.setTooltipContent(
-
-          buildPinInformation(
-            pin
-          )
-
+          buildPinInformation(pin)
         );
 
       }
@@ -3960,12 +3969,60 @@ async function fetchElevation(pin) {
 
 
 /* =========================================================
-   29. DOUBLE CLICK
+   28. DOUBLE CLICK
    ========================================================= */
 
 map.on(
   "dblclick",
   function(event) {
+
+    if (
+      transportDrawing.active
+    ) {
+
+      /*
+         A double-click already produces the preceding click
+         event, so only add the final point if the double-click
+         location is meaningfully different from the last point.
+      */
+      const lastPoint =
+        transportDrawing.points[
+          transportDrawing.points.length - 1
+        ];
+
+      const distanceFromLast =
+        lastPoint
+          ? lastPoint.distanceTo(event.latlng)
+          : Infinity;
+
+      if (
+        !lastPoint ||
+        distanceFromLast > 1
+      ) {
+        addDrawingPoint(
+          event.latlng
+        );
+      }
+
+      if (
+        transportDrawing.points.length >= 2
+      ) {
+
+        finishTransportDrawing();
+
+      }
+      else {
+
+        document.getElementById(
+          "drawStatus"
+        ).textContent =
+          "⚠️ Add one more alignment point before finishing.";
+
+      }
+
+      return;
+
+    }
 
     addPin(
       event.latlng
@@ -3976,436 +4033,988 @@ map.on(
 
 
 /* =========================================================
-   30. ROUTE SELECTORS
+   29. TRANSPORTATION DEFINITIONS
    ========================================================= */
 
-function updateRoutePinSelectors() {
+const transportTypes = {
 
-  const start =
-    document.getElementById(
-      "routeStart"
-    );
+  BUS: { name:"Bus Routes", color:"#16a34a", maxPreferredGrade:8, maxCriticalGrade:12, waterAllowed:false, waterCrossing:"bridge", terrainFlexibility:"high" },
+  MRT: { name:"MRT Lines", color:"#e63946", maxPreferredGrade:4, maxCriticalGrade:7, waterAllowed:false, waterCrossing:"bridge/tunnel", terrainFlexibility:"low" },
+  LRT: { name:"LRT Lines", color:"#2563eb", maxPreferredGrade:6, maxCriticalGrade:9, waterAllowed:false, waterCrossing:"bridge/tunnel", terrainFlexibility:"medium" },
+  SUBWAY: { name:"Subway / Underground Railway", color:"#7c3aed", maxPreferredGrade:5, maxCriticalGrade:8, waterAllowed:false, waterCrossing:"tunnel", terrainFlexibility:"medium" },
+  ELEVATED: { name:"Elevated Railways", color:"#9333ea", maxPreferredGrade:5, maxCriticalGrade:8, waterAllowed:false, waterCrossing:"elevated structure", terrainFlexibility:"medium" },
+  MONORAIL: { name:"Monorails", color:"#0891b2", maxPreferredGrade:6, maxCriticalGrade:10, waterAllowed:false, waterCrossing:"elevated structure", terrainFlexibility:"medium" },
+  FERRY: { name:"Ferry Routes", color:"#0b7fab", maxPreferredGrade:null, maxCriticalGrade:null, waterAllowed:true, waterCrossing:"normal water operation", terrainFlexibility:"water" },
+  BIKE: { name:"Bike Lanes", color:"#f97316", maxPreferredGrade:5, maxCriticalGrade:10, waterAllowed:false, waterCrossing:"bridge", terrainFlexibility:"low" },
+  ROAD: { name:"Expressways and Major Roads", color:"#374151", maxPreferredGrade:6, maxCriticalGrade:10, waterAllowed:false, waterCrossing:"bridge/tunnel", terrainFlexibility:"medium" },
+  TERMINAL: { name:"Transport Terminals", color:"#f59e0b", maxPreferredGrade:3, maxCriticalGrade:6, waterAllowed:false, waterCrossing:"site access required", terrainFlexibility:"low" },
+  HUB: { name:"Transport Hubs", color:"#c2410c", maxPreferredGrade:3, maxCriticalGrade:6, waterAllowed:false, waterCrossing:"site access required", terrainFlexibility:"low" },
+  CABLE: { name:"Cable Cars", color:"#db2777", maxPreferredGrade:20, maxCriticalGrade:35, waterAllowed:false, waterCrossing:"cable span", terrainFlexibility:"high" }
 
+};
 
-  const end =
-    document.getElementById(
-      "routeEnd"
-    );
+const transportRoutes = [];
 
-
-  const oldStart =
-    start.value;
-
-
-  const oldEnd =
-    end.value;
-
-
-  start.innerHTML =
-    `<option value="">Select start pin...</option>`;
+let routeNumber = 1;
 
 
-  end.innerHTML =
-    `<option value="">Select destination...</option>`;
+/* =========================================================
+   31. DRAWING STATE
+   ========================================================= */
+
+const transportDrawing = {
+
+  active:
+    false,
+
+  type:
+    null,
+
+  points:
+    [],
+
+  snappedPin:
+    null,
+
+  previewLine:
+    null,
+
+  committedLine:
+    null,
+
+  permanentLine:
+    null,
+
+  vertexMarkers:
+    []
+
+};
 
 
-  placedPins.forEach(
-    function(pin, index) {
+/* =========================================================
+   32. START DRAWING
+   ========================================================= */
 
-      const label =
-        `${index + 1}. ${pin.name}`;
+function startTransportDrawing(type) {
 
+  if (
+    !transportTypes[type]
+  ) {
+    return;
+  }
 
-      const startOption =
-        document.createElement(
-          "option"
+  if (
+    transportDrawing.active
+  ) {
+
+    finishTransportDrawing();
+
+  }
+
+  transportDrawing.active =
+    true;
+
+  transportDrawing.type =
+    type;
+
+  transportDrawing.points =
+    [];
+
+  transportDrawing.snappedPin =
+    null;
+
+  clearDrawingVisuals();
+
+  document
+    .querySelectorAll(
+      ".transport-button"
+    )
+    .forEach(
+      button => {
+
+        button.classList.toggle(
+          "active",
+          button.dataset.mode === type
         );
 
-
-      startOption.value =
-        pin.id;
-
-
-      startOption.textContent =
-        label;
-
-
-      start.appendChild(
-        startOption
-      );
-
-
-      const endOption =
-        document.createElement(
-          "option"
-        );
-
-
-      endOption.value =
-        pin.id;
-
-
-      endOption.textContent =
-        label;
-
-
-      end.appendChild(
-        endOption
-      );
-
-    }
-  );
-
-
-  if (
-    placedPins.some(
-      pin => String(pin.id) === oldStart
-    )
-  ) {
-
-    start.value =
-      oldStart;
-
-  }
-
-
-  if (
-    placedPins.some(
-      pin => String(pin.id) === oldEnd
-    )
-  ) {
-
-    end.value =
-      oldEnd;
-
-  }
-
-
-  const status =
-    document.getElementById(
-      "routeStatus"
+      }
     );
 
+  document.getElementById(
+    "drawStatus"
+  ).textContent =
+    `✏️ Drawing ${type}. Click the map to add alignment points.`;
 
-  if (
-    placedPins.length < 2
-  ) {
+  document.getElementById(
+    "finishRouteButton"
+  ).disabled =
+    true;
 
-    status.textContent =
-      "Add at least two pins to use the route planner.";
+  document.getElementById(
+    "undoPointButton"
+  ).disabled =
+    true;
 
-  }
+  document.getElementById(
+    "cancelRouteButton"
+  ).disabled =
+    false;
 
-  else {
-
-    status.textContent =
-      "Select a start and destination pin.";
-
-  }
+  map.getContainer().style.cursor =
+    "crosshair";
 
 }
 
 
 /* =========================================================
-   31. ROUTE LAYER
+   33. ADD DRAWING POINT
    ========================================================= */
 
-let activeRouteLayers = [];
+function addDrawingPoint(
+  latlng
+) {
 
+  if (
+    !transportDrawing.active
+  ) {
+    return;
+  }
 
-function clearRoute() {
+  const snapped =
+    getSnapTarget(
+      latlng
+    );
 
-  activeRouteLayers.forEach(
-    function(layer) {
+  const finalPoint =
+    snapped
+      ? snapped.latlng
+      : latlng;
 
-      map.removeLayer(
-        layer
-      );
-
-    }
+  transportDrawing.points.push(
+    L.latLng(
+      finalPoint.lat,
+      finalPoint.lng
+    )
   );
 
+  createDrawingVertex(
+    finalPoint,
+    snapped
+  );
 
-  activeRouteLayers = [];
+  if (
+    snapped &&
+    snapped.pin
+  ) {
 
+    transportDrawing.snappedPin =
+      snapped.pin;
+
+  }
 
   document.getElementById(
-    "routeResult"
+    "undoPointButton"
+  ).disabled =
+    transportDrawing.points.length === 0;
+
+  document.getElementById(
+    "finishRouteButton"
+  ).disabled =
+    transportDrawing.points.length < 2;
+
+  document.getElementById(
+    "drawStatus"
+  ).textContent =
+    `${transportTypes[transportDrawing.type].name}: ` +
+    `${transportDrawing.points.length} alignment point` +
+    `${transportDrawing.points.length === 1 ? "" : "s"} added.`;
+
+  /*
+     Keep the committed alignment visible as a SOLID line. The
+     next pointer movement immediately adds the live dashed
+     cursor segment on top via updateDrawingPreview().
+  */
+  redrawCommittedLine(
+    transportDrawing.points
+  );
+
+}
+
+
+/* =========================================================
+   34. DRAWING MAP CLICK
+   ========================================================= */
+
+map.on(
+  "click",
+  function(event) {
+
+    if (
+      !transportDrawing.active
+    ) {
+      return;
+    }
+
+    addDrawingPoint(
+      event.latlng
+    );
+
+  }
+);
+
+
+/* =========================================================
+   35. SNAP SYSTEM
+   ========================================================= */
+
+function snapCoordinateToGrid(latlng) {
+
+  const coordinate = latLngToCoordinate(latlng);
+
+  const snappedX = Math.max(X_MIN, Math.min(X_MAX, Math.round(coordinate.x)));
+  const snappedY = Math.max(Y_MIN, Math.min(Y_MAX, Math.round(coordinate.y)));
+  const snappedLatLng = coordinateToLatLng(snappedX, snappedY);
+
+  return {
+    latlng: snappedLatLng,
+    x: snappedX,
+    y: snappedY,
+    label: `Grid point (${snappedX}, ${snappedY}) · ${formatScaleText()} spacing`
+  };
+}
+
+function getSnapTarget(latlng) {
+
+  const snapEnabled = document.getElementById("snapToggle").checked;
+
+  if (!snapEnabled) {
+    hideSnapIndicator();
+    return null;
+  }
+
+  const snapped = snapCoordinateToGrid(latlng);
+  showSnapIndicator(snapped.label);
+
+  return {
+    latlng: snapped.latlng,
+    pin: null,
+    grid: true,
+    x: snapped.x,
+    y: snapped.y,
+    label: snapped.label
+  };
+}
+
+/* =========================================================
+   36. SNAP INDICATOR
+   ========================================================= */
+
+function showSnapIndicator(
+  label
+) {
+
+  const indicator =
+    document.getElementById(
+      "snapIndicator"
+    );
+
+  indicator.style.display =
+    "block";
+
+  indicator.textContent =
+    `🧲 Snapped to: ${label}`;
+
+}
+
+
+function hideSnapIndicator() {
+
+  document.getElementById(
+    "snapIndicator"
   ).style.display =
     "none";
 
-
-  document.getElementById(
-    "routeResult"
-  ).innerHTML =
-    "";
+}
 
 
-  document.getElementById(
-    "routeStatus"
-  ).textContent =
-    placedPins.length >= 2
-      ? "Select a start and destination pin."
-      : "Add at least two pins to use the route planner.";
+/* =========================================================
+   37b. ROUTE LINE WIDTH CONTROL
+   ========================================================= */
+
+function getSelectedRouteLineWidth() {
+
+  const select =
+    document.getElementById(
+      "routeLineWidth"
+    );
+
+  const value =
+    Number(
+      select?.value
+    );
+
+  return (
+    Number.isFinite(value) &&
+    value > 0
+  )
+    ? value
+    : 5;
+
+}
+
+function updateDrawingLineWidth() {
+
+  if (
+    transportDrawing.active &&
+    transportDrawing.points.length >= 2
+  ) {
+
+    redrawCommittedLine();
+
+  }
 
 }
 
 
 /* =========================================================
-   32. ROUTE CALCULATION
+   37. DRAWING PREVIEW
    ========================================================= */
 
-async function calculateRoute() {
+function updateDrawingPreview(
+  latlng
+) {
 
-  const startId =
-    document.getElementById(
-      "routeStart"
-    ).value;
-
-
-  const endId =
-    document.getElementById(
-      "routeEnd"
-    ).value;
-
-
-  if (!startId || !endId) {
-
-    document.getElementById(
-      "routeStatus"
-    ).textContent =
-      "Please select both a start pin and a destination pin.";
-
+  if (
+    !transportDrawing.active
+  ) {
     return;
+  }
+
+  let target =
+    L.latLng(
+      latlng.lat,
+      latlng.lng
+    );
+
+  let snapped =
+    null;
+
+  if (
+    document.getElementById(
+      "snapToggle"
+    )?.checked
+  ) {
+
+    snapped =
+      snapCoordinateToGrid(
+        target
+      );
+
+    target =
+      snapped.latlng;
+
+    showSnapIndicator(
+      snapped.label
+    );
+
+  }
+  else {
+
+    hideSnapIndicator();
 
   }
 
-
-  if (startId === endId) {
-
-    document.getElementById(
-      "routeStatus"
-    ).textContent =
-      "Start and destination must be different pins.";
-
-    return;
-
-  }
-
-
-  const startPin =
-    placedPins.find(
-      pin =>
-        String(pin.id) ===
-        String(startId)
-    );
-
-
-  const endPin =
-    placedPins.find(
-      pin =>
-        String(pin.id) ===
-        String(endId)
-    );
-
-
-  if (!startPin || !endPin) {
-
-    return;
-
-  }
-
-
-  clearRoute();
-
-
-  const status =
-    document.getElementById(
-      "routeStatus"
-    );
-
-
-  status.textContent =
-    "⏳ Finding the best road route...";
-
-
-  const routePanel =
-    document.querySelector(
-      ".route-panel"
-    );
-
-
-  routePanel.classList.add(
-    "loading"
+  updateDrawingCursorMarker(
+    target,
+    snapped
   );
 
+  /*
+     The important behavior:
+     after ONE point is placed, show one dashed segment
+     from that point to the cursor.
+     After more points are placed, show the complete
+     committed alignment plus the live cursor segment.
+  */
+  const previewPoints =
+    transportDrawing.points.length
+      ? [
+          ...transportDrawing.points,
+          target
+        ]
+      : [];
+
+  if (
+    previewPoints.length >= 2
+  ) {
+
+    redrawPreviewLine(
+      previewPoints
+    );
+
+    scheduleLiveRouteAnalysis(
+      previewPoints,
+      transportDrawing.type
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   38. REDRAW COMMITTED LINE (solid, locked-in points)
+   ========================================================= */
+
+function redrawCommittedLine(
+  overridePoints = null
+) {
+
+  if (
+    transportDrawing.committedLine
+  ) {
+
+    map.removeLayer(
+      transportDrawing.committedLine
+    );
+
+    transportDrawing.committedLine =
+      null;
+
+  }
+
+  const points =
+    overridePoints ||
+    transportDrawing.points;
+
+  if (
+    !points ||
+    points.length < 2 ||
+    !transportDrawing.type ||
+    !transportTypes[transportDrawing.type]
+  ) {
+    return;
+  }
+
+  transportDrawing.committedLine =
+    L.polyline(
+      points,
+      {
+        color:
+          transportTypes[
+            transportDrawing.type
+          ].color,
+
+        weight:
+          Math.max(
+            3,
+            getSelectedRouteLineWidth()
+          ),
+
+        opacity:
+          .95,
+
+        lineCap:
+          "round",
+
+        lineJoin:
+          "round",
+
+        interactive:
+          false,
+
+        pane:
+          "routePreviewPane"
+      }
+    ).addTo(map);
+
+}
+
+
+/* =========================================================
+   38b. REDRAW LIVE SEGMENT (dashed, follows the cursor)
+   ========================================================= */
+
+function redrawPreviewLine(
+  overridePoints = null
+) {
+
+  if (
+    transportDrawing.previewLine
+  ) {
+
+    map.removeLayer(
+      transportDrawing.previewLine
+    );
+
+    transportDrawing.previewLine =
+      null;
+
+  }
+
+  /*
+     Only the LAST committed point plus the live cursor
+     position is drawn here — everything before that is
+     already solid via redrawCommittedLine().
+  */
+  const allPoints =
+    overridePoints ||
+    transportDrawing.points;
+
+  if (
+    !allPoints ||
+    allPoints.length < 2 ||
+    !transportDrawing.type ||
+    !transportTypes[transportDrawing.type]
+  ) {
+    return;
+  }
+
+  const liveSegmentPoints =
+    allPoints.slice(-2);
+
+  transportDrawing.previewLine =
+    L.polyline(
+      liveSegmentPoints,
+      {
+        color:
+          transportTypes[
+            transportDrawing.type
+          ].color,
+
+        weight:
+          Math.max(
+            3,
+            getSelectedRouteLineWidth()
+          ),
+
+        opacity:
+          .95,
+
+        dashArray:
+          "10 7",
+
+        lineCap:
+          "round",
+
+        lineJoin:
+          "round",
+
+        interactive:
+          false,
+
+        pane:
+          "routePreviewPane"
+      }
+    ).addTo(map);
+
+}
+
+
+/* =========================================================
+   39. DRAWING VERTEX
+   ========================================================= */
+
+
+function createDrawingVertex(
+  latlng,
+  snap
+) {
+
+  const marker =
+    L.circleMarker(
+      latlng,
+      {
+        radius:
+          snap ? 7 : 5,
+
+        color:
+          snap ? "#16a34a" : "#17365d",
+
+        weight:
+          3,
+
+        fillColor:
+          "white",
+
+        fillOpacity:
+          1,
+
+        interactive:
+          false,
+
+        pane:
+          "routePreviewPane"
+      }
+    ).addTo(map);
+
+  transportDrawing.vertexMarkers.push(
+    marker
+  );
+
+}
+
+
+/* =========================================================
+   40. UNDO POINT
+   ========================================================= */
+
+function undoDrawingPoint() {
+
+  if (
+    !transportDrawing.active ||
+    transportDrawing.points.length === 0
+  ) {
+    return;
+  }
+
+  transportDrawing.points.pop();
+
+  const marker =
+    transportDrawing.vertexMarkers.pop();
+
+  if (marker) {
+
+    map.removeLayer(
+      marker
+    );
+
+  }
+
+  redrawCommittedLine();
+
+  if (
+    transportDrawing.previewLine
+  ) {
+
+    map.removeLayer(
+      transportDrawing.previewLine
+    );
+
+    transportDrawing.previewLine =
+      null;
+
+  }
+
+  document.getElementById(
+    "finishRouteButton"
+  ).disabled =
+    transportDrawing.points.length < 2;
+
+  document.getElementById(
+    "undoPointButton"
+  ).disabled =
+    transportDrawing.points.length === 0;
+
+  document.getElementById(
+    "drawStatus"
+  ).textContent =
+    `${transportDrawing.points.length} alignment point` +
+    `${transportDrawing.points.length === 1 ? "" : "s"} remaining.`;
+
+}
+
+
+/* =========================================================
+   41. FINISH DRAWING
+   ========================================================= */
+
+function finishTransportDrawing() {
+
+  if (
+    !transportDrawing.active
+  ) {
+    return false;
+  }
+
+  const pointCount =
+    transportDrawing.points.length;
+
+  if (
+    pointCount < 2
+  ) {
+
+    document.getElementById(
+      "drawStatus"
+    ).textContent =
+      "⚠️ Place at least two points before pressing Finish.";
+
+    return false;
+
+  }
+
+  const points =
+    transportDrawing.points.map(
+      point =>
+        L.latLng(
+          point.lat,
+          point.lng
+        )
+    );
+
+  const type =
+    transportDrawing.type;
+
+  if (
+    !transportTypes[type]
+  ) {
+
+    document.getElementById(
+      "drawStatus"
+    ).textContent =
+      "⚠️ Select a transportation mode first.";
+
+    return false;
+
+  }
+
+  const name =
+    document.getElementById(
+      "routeNameInput"
+    )?.value.trim() ||
+    `${transportTypes[type].name} Line ${routeNumber++}`;
+
+  const lineWidth =
+    Math.max(
+      2,
+      Number(
+        getSelectedRouteLineWidth()
+      ) || 5
+    );
+
+  const route = {
+
+    id:
+      Date.now() +
+      Math.random(),
+
+    name,
+
+    type,
+
+    color:
+      transportTypes[type].color,
+
+    lineWidth,
+
+    points,
+
+    line:
+      null,
+
+    warningLayers:
+      [],
+
+    analysis:
+      null
+
+  };
 
   try {
 
     /*
-       OSRM uses:
-
-       longitude,latitude
-
-       rather than:
-
-       latitude,longitude
+       Permanent route is created immediately. Analysis is
+       deliberately NOT awaited here.
     */
+    const outline =
+      L.polyline(
+        points,
+        {
+          color:
+            "#ffffff",
 
-    const coordinates =
-      `${startPin.longitude},${startPin.latitude};${endPin.longitude},${endPin.latitude}`;
+          weight:
+            lineWidth + 4,
 
+          opacity:
+            .95,
 
-    const url =
-      `https://router.project-osrm.org/route/v1/driving/${coordinates}?overview=full&geometries=geojson&steps=true&annotations=true`;
+          interactive:
+            false,
 
+          pane:
+            "routePane"
+        }
+      ).addTo(map);
 
-    const response =
-      await fetch(
-        url
-      );
+    const line =
+      L.polyline(
+        points,
+        {
+          color:
+            route.color,
 
+          weight:
+            lineWidth,
 
-    if (!response.ok) {
+          opacity:
+            1,
 
-      throw new Error(
-        "Routing server returned an error."
-      );
+          lineCap:
+            "round",
 
-    }
+          lineJoin:
+            "round",
 
+          interactive:
+            true,
 
-    const data =
-      await response.json();
+          pane:
+            "routePane"
+        }
+      ).addTo(map);
 
+    route.line =
+      L.layerGroup(
+        [
+          outline,
+          line
+        ]
+      ).addTo(map);
 
-    if (
-      data.code !== "Ok" ||
-      !data.routes ||
-      !data.routes.length
-    ) {
-
-      throw new Error(
-        "No drivable route was found."
-      );
-
-    }
-
-
-    const route =
-      data.routes[0];
-
-
-    drawRoute(
-      route,
-      startPin,
-      endPin
+    line.on(
+      "click",
+      function() {
+        selectTransportRoute(
+          route
+        );
+      }
     );
 
+    transportRoutes.push(
+      route
+    );
 
-    const distanceKm =
-      route.distance / 1000;
+    /* Stop drawing mode only after the permanent route exists. */
+    clearDrawingVisuals();
 
+    transportDrawing.active =
+      false;
 
-    const durationMinutes =
-      route.duration / 60;
+    transportDrawing.type =
+      null;
 
+    transportDrawing.points =
+      [];
 
-    let durationText;
+    transportDrawing.snappedPin =
+      null;
 
+    map.getContainer().style.cursor =
+      "";
+
+    document
+      .querySelectorAll(
+        ".transport-button"
+      )
+      .forEach(
+        button =>
+          button.classList.remove(
+            "active"
+          )
+      );
+
+    document.getElementById(
+      "finishRouteButton"
+    ).disabled =
+      true;
+
+    document.getElementById(
+      "undoPointButton"
+    ).disabled =
+      true;
+
+    document.getElementById(
+      "cancelRouteButton"
+    ).disabled =
+      true;
+
+    hideSnapIndicator();
+
+    const routeNameInput =
+      document.getElementById(
+        "routeNameInput"
+      );
 
     if (
-      durationMinutes >= 60
+      routeNameInput
     ) {
-
-      const hours =
-        Math.floor(
-          durationMinutes / 60
-        );
-
-
-      const minutes =
-        Math.round(
-          durationMinutes % 60
-        );
-
-
-      durationText =
-        `${hours} hr ${minutes} min`;
-
+      routeNameInput.value =
+        "";
     }
 
-    else {
+    updateRouteList();
 
-      durationText =
-        `${Math.round(durationMinutes)} min`;
-
-    }
-
+    selectTransportRoute(
+      route
+    );
 
     document.getElementById(
-      "routeResult"
-    ).style.display =
-      "block";
+      "drawStatus"
+    ).textContent =
+      `✅ ${name} created. Terrain analysis running…`;
 
+    /*
+       Run the real terrain/water/protected-area analysis after
+       the route already exists. A failed network request cannot
+       prevent the route from being completed.
+    */
+    analyzeTransportRoute(
+      route
+    )
+      .then(
+        function() {
 
-    document.getElementById(
-      "routeResult"
-    ).innerHTML = `
+          updateRouteList();
+          selectTransportRoute(
+            route
+          );
 
-      <strong>Route found</strong>
+          document.getElementById(
+            "drawStatus"
+          ).textContent =
+            `✅ ${name} created and analyzed.`;
 
-      <br>
+        }
+      )
+      .catch(
+        function(error) {
 
-      From:
-      ${escapeHTML(startPin.name)}
+          console.warn(
+            "Route analysis failed:",
+            error
+          );
 
-      <br>
+          updateRouteList();
+          selectTransportRoute(
+            route
+          );
 
-      To:
-      ${escapeHTML(endPin.name)}
+          document.getElementById(
+            "drawStatus"
+          ).textContent =
+            `✅ ${name} created. Some analysis data is unavailable.`;
 
-      <br><br>
+        }
+      );
 
-      <strong>Distance:</strong>
-      ${formatNumber(distanceKm)} km
-
-      <br>
-
-      <strong>Estimated travel:</strong>
-      ${durationText}
-
-      <br><br>
-
-      <strong>Routing:</strong>
-      OpenStreetMap road network
-
-    `;
-
-
-    status.textContent =
-      "✅ Route found. The map is following the available road network.";
+    return true;
 
   }
 
   catch(error) {
 
     console.error(
-      "Route error:",
+      "Transportation route creation failed:",
       error
     );
 
+    document.getElementById(
+      "drawStatus"
+    ).textContent =
+      "🔴 Route creation failed. Your alignment points were not discarded.";
 
-    status.textContent =
-      `❌ ${error.message}`;
-
-  }
-
-  finally {
-
-    routePanel.classList.remove(
-      "loading"
-    );
+    return false;
 
   }
 
@@ -4413,324 +5022,361 @@ async function calculateRoute() {
 
 
 /* =========================================================
-   33. DRAW ROUTE
+   42. CANCEL DRAWING
+
+
+
    ========================================================= */
 
-function drawRoute(
-  route,
-  startPin,
-  endPin
-) {
-
-  clearRoute();
-
-
-  const coordinates =
-    route.geometry.coordinates;
-
-
-  const latLngs =
-    coordinates.map(
-      coordinate =>
-        [
-          coordinate[1],
-          coordinate[0]
-        ]
-    );
-
-
-  /*
-     White outline makes the route
-     visible over the map.
-  */
-
-  const outline =
-    L.polyline(
-      latLngs,
-      {
-
-        color:
-          "#ffffff",
-
-        weight:
-          10,
-
-        opacity:
-          .9,
-
-        lineCap:
-          "round",
-
-        lineJoin:
-          "round",
-
-        interactive:
-          false
-
-      }
-    ).addTo(map);
-
-
-  activeRouteLayers.push(
-    outline
-  );
-
-
-  /*
-     Main route.
-
-     OSRM's standard driving profile
-     follows the available drivable road
-     network.
-
-     Green is used as the default
-     land/road route.
-
-  */
-
-  const mainRoute =
-    L.polyline(
-      latLngs,
-      {
-
-        color:
-          "#16a34a",
-
-        weight:
-          6,
-
-        opacity:
-          .9,
-
-        lineCap:
-          "round",
-
-        lineJoin:
-          "round",
-
-        interactive:
-          false
-
-      }
-    ).addTo(map);
-
-
-  activeRouteLayers.push(
-    mainRoute
-  );
-
-
-  /*
-     Look at the route steps.
-
-     Ferry steps are drawn blue.
-
-     Bridge steps remain green because
-     bridges are land/road crossings.
-  */
+function cancelTransportDrawing() {
 
   if (
-    route.legs &&
-    route.legs.length
+    !transportDrawing.active
+  ) {
+    return;
+  }
+
+  clearDrawingVisuals();
+  updateDrawingCursorMarker(null, null);
+
+  transportDrawing.active =
+    false;
+
+  transportDrawing.type =
+    null;
+
+  transportDrawing.points =
+    [];
+
+  transportDrawing.snappedPin =
+    null;
+
+  map.getContainer().style.cursor =
+    "";
+
+  document
+    .querySelectorAll(
+      ".transport-button"
+    )
+    .forEach(
+      button =>
+        button.classList.remove(
+          "active"
+        )
+    );
+
+  document.getElementById(
+    "finishRouteButton"
+  ).disabled =
+    true;
+
+  document.getElementById(
+    "undoPointButton"
+  ).disabled =
+    true;
+
+  document.getElementById(
+    "cancelRouteButton"
+  ).disabled =
+    true;
+
+  hideSnapIndicator();
+
+  document.getElementById(
+    "drawStatus"
+  ).textContent =
+    "Drawing cancelled.";
+
+}
+
+
+/* =========================================================
+   43. CLEAR DRAWING VISUALS
+   ========================================================= */
+
+function clearDrawingVisuals() {
+
+  if (
+    transportDrawing.previewLine
   ) {
 
-    route.legs.forEach(
-      function(leg) {
+    map.removeLayer(
+      transportDrawing.previewLine
+    );
+
+    transportDrawing.previewLine =
+      null;
+
+  }
+
+  if (
+    transportDrawing.committedLine
+  ) {
+
+    map.removeLayer(
+      transportDrawing.committedLine
+    );
+
+    transportDrawing.committedLine =
+      null;
+
+  }
+
+  transportDrawing.vertexMarkers
+    .forEach(
+      marker => {
 
         if (
-          !leg.steps ||
-          !leg.steps.length
+          map.hasLayer(marker)
         ) {
 
-          return;
+          map.removeLayer(
+            marker
+          );
 
         }
 
-
-        leg.steps.forEach(
-          function(step) {
-
-            const isFerry =
-              step.mode === "ferry" ||
-              (
-                step.maneuver &&
-                step.maneuver.type === "ferry"
-              ) ||
-              /ferry/i.test(
-                step.name || ""
-              );
-
-
-            if (!isFerry) {
-
-              return;
-
-            }
-
-
-            if (
-              !step.geometry ||
-              !step.geometry.coordinates
-            ) {
-
-              return;
-
-            }
-
-
-            const ferryLatLngs =
-              step.geometry.coordinates.map(
-                coordinate =>
-                  [
-                    coordinate[1],
-                    coordinate[0]
-                  ]
-              );
-
-
-            const ferryLine =
-              L.polyline(
-                ferryLatLngs,
-                {
-
-                  color:
-                    "#1677d2",
-
-                  weight:
-                    7,
-
-                  opacity:
-                    .95,
-
-                  lineCap:
-                    "round",
-
-                  lineJoin:
-                    "round",
-
-                  interactive:
-                    false
-
-                }
-              ).addTo(map);
-
-
-            activeRouteLayers.push(
-              ferryLine
-            );
-
-          }
-        );
-
       }
+    );
+
+  transportDrawing.vertexMarkers =
+    [];
+
+  if (
+    drawingCursorMarker &&
+    map.hasLayer(drawingCursorMarker)
+  ) {
+
+    map.removeLayer(
+      drawingCursorMarker
     );
 
   }
 
+  drawingCursorMarker =
+    null;
 
-  /*
-     Start/end route markers.
-  */
-
-  const startMarker =
-    L.circleMarker(
-      [
-        startPin.latitude,
-        startPin.longitude
-      ],
-      {
-
-        radius:
-          8,
-
-        color:
-          "white",
-
-        weight:
-          3,
-
-        fillColor:
-          "#16a34a",
-
-        fillOpacity:
-          1,
-
-        zIndexOffset:
-          2000
-
-      }
-    ).addTo(map);
+}
 
 
-  startMarker.bindTooltip(
-    `Start: ${escapeHTML(startPin.name)}`
-  );
+/* =========================================================
+   44. CLEAR ALL TRANSPORT ROUTES
+   ========================================================= */
 
+function clearAllTransportRoutes() {
 
-  activeRouteLayers.push(
-    startMarker
-  );
+  if (
+    transportRoutes.length === 0
+  ) {
+    return;
+  }
 
-
-  const endMarker =
-    L.circleMarker(
-      [
-        endPin.latitude,
-        endPin.longitude
-      ],
-      {
-
-        radius:
-          8,
-
-        color:
-          "white",
-
-        weight:
-          3,
-
-        fillColor:
-          "#dc2626",
-
-        fillOpacity:
-          1,
-
-        zIndexOffset:
-          2000
-
-      }
-    ).addTo(map);
-
-
-  endMarker.bindTooltip(
-    `Destination: ${escapeHTML(endPin.name)}`
-  );
-
-
-  activeRouteLayers.push(
-    endMarker
-  );
-
-
-  /*
-     Fit the entire route.
-  */
-
-  const bounds =
-    L.latLngBounds(
-      latLngs
+  const confirmed =
+    confirm(
+      "Delete every transportation route?"
     );
 
+  if (!confirmed) {
+    return;
+  }
 
-  map.fitBounds(
-    bounds,
-    {
+  transportRoutes.forEach(
+    route => {
 
-      padding:
-        [50,50],
+      if (route.line) {
 
-      maxZoom:
-        15
+        map.removeLayer(
+          route.line
+        );
+
+      }
+
+      route.warningLayers
+        .forEach(
+          layer => {
+
+            if (
+              map.hasLayer(layer)
+            ) {
+
+              map.removeLayer(
+                layer
+              );
+
+            }
+
+          }
+        );
+
+    }
+  );
+
+  transportRoutes.length =
+    0;
+
+  updateRouteList();
+
+  document.getElementById(
+    "analysisContent"
+  ).innerHTML =
+    "Finish a transportation route to analyze distance, elevation, gradient and terrain.";
+
+}
+
+
+/* =========================================================
+   45. ROUTE LIST
+   ========================================================= */
+
+function updateRouteList() {
+
+  const list =
+    document.getElementById(
+      "routeList"
+    );
+
+  list.innerHTML =
+    "";
+
+  if (
+    transportRoutes.length === 0
+  ) {
+
+    list.innerHTML =
+      `
+        <div class="route-empty">
+          No transportation routes created yet.
+        </div>
+      `;
+
+    return;
+
+  }
+
+  transportRoutes.forEach(
+    function(route) {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+      div.className =
+        "route-item";
+
+      const distance =
+        route.analysis
+          ? `${formatNumber(route.analysis.distanceKm)} km`
+          : "Analyzing...";
+
+      const warningCount =
+        route.analysis
+          ? route.analysis.warnings.length
+          : 0;
+
+      div.innerHTML = `
+
+        <div class="route-item-header">
+
+          <div
+            class="route-color"
+            style="
+              background:${route.color};
+            "
+          ></div>
+
+          <div class="route-item-name">
+            ${escapeHTML(route.name)}
+          </div>
+
+        </div>
+
+        <div class="route-item-meta">
+
+          ${escapeHTML(transportTypes[route.type]?.name || route.type)}
+
+          · ${distance} · ${route.lineWidth || 6}px
+
+          <br>
+
+          ${route.points.length} alignment points
+
+          ${
+            route.analysis
+              ? `
+                ·
+                <span class="route-status-chip ${
+                  route.analysis.status === "danger"
+                    ? "route-status-danger"
+                    : route.analysis.status === "warning"
+                      ? "route-status-warning"
+                      : route.analysis.status === "unavailable"
+                        ? "route-status-unavailable"
+                        : "route-status-ok"
+                }">${escapeHTML(route.analysis.statusLabel || "Checked")}</span>
+              `
+              : ""
+          }
+
+        </div>
+
+        <div
+          style="
+            margin-top:6px;
+            display:flex;
+            gap:4px;
+          "
+        >
+
+          <button
+            style="
+              font-size:9px;
+              padding:5px 7px;
+            "
+            onclick="event.stopPropagation();zoomToTransportRoute('${route.id}')"
+          >
+            Locate
+          </button>
+
+          <button
+            style="
+              font-size:9px;
+              padding:5px 7px;
+            "
+            onclick="event.stopPropagation();renameTransportRoute('${route.id}')"
+          >
+            Rename
+          </button>
+
+          <button
+            style="
+              font-size:9px;
+              padding:5px 7px;
+              background:#b91c1c;
+            "
+            onclick="event.stopPropagation();deleteTransportRoute('${route.id}')"
+          >
+            Delete
+          </button>
+
+        </div>
+
+      `;
+
+      div.addEventListener(
+        "click",
+        function() {
+
+          selectTransportRoute(
+            route
+          );
+
+        }
+      );
+
+      list.appendChild(
+        div
+      );
 
     }
   );
@@ -4739,7 +5385,943 @@ function drawRoute(
 
 
 /* =========================================================
-   34. SEARCH LOCATION
+   46. SELECT ROUTE
+   ========================================================= */
+
+function selectTransportRoute(
+  route
+) {
+
+  if (
+    !route
+  ) {
+    return;
+  }
+
+  if (route.line) {
+    route.line.eachLayer(layer => {
+      if (layer.setStyle) {
+        layer.setStyle({pane:"routePane"});
+      }
+    });
+  }
+
+  document.getElementById(
+    "analysisContent"
+  ).innerHTML =
+    buildRouteAnalysisHTML(
+      route
+    );
+
+}
+
+
+/* =========================================================
+   47. DELETE ROUTE
+   ========================================================= */
+
+function deleteTransportRoute(
+  id
+) {
+
+  const index =
+    transportRoutes.findIndex(
+      route =>
+        String(route.id) ===
+        String(id)
+    );
+
+  if (
+    index === -1
+  ) {
+    return;
+  }
+
+  const route =
+    transportRoutes[index];
+
+  if (route.line) {
+
+    map.removeLayer(
+      route.line
+    );
+
+  }
+
+  route.warningLayers
+    .forEach(
+      layer => {
+
+        if (
+          map.hasLayer(layer)
+        ) {
+
+          map.removeLayer(
+            layer
+          );
+
+        }
+
+      }
+    );
+
+  transportRoutes.splice(
+    index,
+    1
+  );
+
+  updateRouteList();
+
+  document.getElementById(
+    "analysisContent"
+  ).innerHTML =
+    "Select or finish a route to view its analysis.";
+
+}
+
+
+
+/* =========================================================
+   48. RENAME ROUTE
+   ========================================================= */
+
+function renameTransportRoute(id) {
+
+  const route =
+    transportRoutes.find(
+      item =>
+        String(item.id) ===
+        String(id)
+    );
+
+  if (!route) {
+    return;
+  }
+
+  const proposed =
+    prompt(
+      "Enter a new route name:",
+      route.name
+    );
+
+  if (proposed === null) {
+    return;
+  }
+
+  const name =
+    proposed.trim();
+
+  if (!name) {
+    return;
+  }
+
+  route.name =
+    name;
+
+  updateRouteList();
+  selectTransportRoute(route);
+
+}
+
+
+/* =========================================================
+   49. ZOOM ROUTE
+   ========================================================= */
+
+function zoomToTransportRoute(
+  id
+) {
+
+  const route =
+    transportRoutes.find(
+      item =>
+        String(item.id) ===
+        String(id)
+    );
+
+  if (
+    !route ||
+    !route.points.length
+  ) {
+    return;
+  }
+
+  const bounds =
+    L.latLngBounds(
+      route.points
+    );
+
+  map.fitBounds(
+    bounds,
+    {
+      padding:
+        [50,50],
+
+      maxZoom:
+        15
+    }
+  );
+
+}
+
+
+/* =========================================================
+   49. DISTANCE
+   ========================================================= */
+
+function calculatePolylineDistance(
+  points
+) {
+
+  let meters =
+    0;
+
+  for (
+    let i = 1;
+    i < points.length;
+    i++
+  ) {
+
+    meters +=
+      points[i - 1].distanceTo(
+        points[i]
+      );
+
+  }
+
+  return meters;
+
+}
+
+
+/* =========================================================
+   50. INTERPOLATE POINTS
+   ========================================================= */
+
+function sampleRoutePoints(
+  points,
+  maxSamples = 30
+) {
+
+  if (
+    points.length <= 2
+  ) {
+    return points;
+  }
+
+  const totalDistance =
+    calculatePolylineDistance(
+      points
+    );
+
+  if (
+    totalDistance <= 0
+  ) {
+    return points;
+  }
+
+  const samples = [];
+
+  for (
+    let i = 0;
+    i <= maxSamples;
+    i++
+  ) {
+
+    const targetDistance =
+      (
+        i /
+        maxSamples
+      ) *
+      totalDistance;
+
+    let accumulated =
+      0;
+
+    let found =
+      null;
+
+    for (
+      let j = 1;
+      j < points.length;
+      j++
+    ) {
+
+      const segment =
+        points[j - 1].distanceTo(
+          points[j]
+        );
+
+      if (
+        accumulated +
+        segment >=
+        targetDistance
+      ) {
+
+        const remaining =
+          targetDistance -
+          accumulated;
+
+        const ratio =
+          segment === 0
+            ? 0
+            : remaining /
+              segment;
+
+        found =
+          L.latLng(
+
+            points[j - 1].lat +
+            (
+              points[j].lat -
+              points[j - 1].lat
+            ) *
+            ratio,
+
+            points[j - 1].lng +
+            (
+              points[j].lng -
+              points[j - 1].lng
+            ) *
+            ratio
+
+          );
+
+        break;
+
+      }
+
+      accumulated +=
+        segment;
+
+    }
+
+    if (!found) {
+
+      found =
+        points[
+          points.length - 1
+        ];
+
+    }
+
+    samples.push(
+      found
+    );
+
+  }
+
+  return samples;
+
+}
+
+
+/* =========================================================
+   51. ELEVATION BATCH
+   ========================================================= */
+
+async function fetchRouteElevations(
+  points
+) {
+
+  /*
+     Open-Elevation accepts multiple locations.
+  */
+
+  const locations =
+    points.map(
+      point =>
+        `${point.lat},${point.lng}`
+    ).join("|");
+
+  const url =
+    `https://api.open-elevation.com/api/v1/lookup?locations=${encodeURIComponent(locations)}`;
+
+  const response =
+    await fetch(
+      url
+    );
+
+  if (
+    !response.ok
+  ) {
+
+    throw new Error(
+      "Elevation service unavailable."
+    );
+
+  }
+
+  const data =
+    await response.json();
+
+  if (
+    !data ||
+    !data.results
+  ) {
+
+    throw new Error(
+      "No elevation data returned."
+    );
+
+  }
+
+  return data.results.map(
+    result =>
+      Number(
+        result.elevation
+      )
+  );
+
+}
+
+
+/* =========================================================
+   51b. APPLY ROUTE VISUAL STATUS
+   ========================================================= */
+
+function applyRouteVisualStatus(route) {
+
+  if (
+    !route ||
+    !route.line
+  ) {
+    return;
+  }
+
+  const status =
+    route.analysis?.status;
+
+  const color =
+    status === "danger"
+      ? "#dc2626"
+      : status === "warning"
+        ? "#f59e0b"
+        : status === "unavailable"
+          ? "#9ca3af"
+          : route.color;
+
+  const dashArray =
+    status === "danger"
+      ? "6 5"
+      : status === "warning"
+        ? "10 6"
+        : null;
+
+  route.line.eachLayer(
+    layer => {
+
+      if (
+        !layer.setStyle
+      ) {
+        return;
+      }
+
+      /* Skip the white halo/outline layer underneath. */
+      if (
+        layer.options.color === "#ffffff"
+      ) {
+        return;
+      }
+
+      layer.setStyle({
+        color,
+        dashArray
+      });
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   52. ROUTE ANALYSIS
+   ========================================================= */
+
+async function analyzeTransportRoute(route) {
+
+  const analysisContent = document.getElementById("analysisContent");
+  analysisContent.innerHTML = `<div class="analysis-box analysis-neutral">⏳ Checking terrain, water, protected areas and mode constraints...</div>`;
+
+  try {
+    const samples = sampleRoutePoints(route.points, 25);
+    const [elevationResult, waterResult, protectedResult] = await Promise.all([
+      fetchElevationSafe(samples),
+      fetchWaterFeaturesSafe(route.points),
+      fetchDENRProtectedAreasSafe(route.points)
+    ]);
+
+    route.analysis = calculateRouteAnalysis(route, samples, elevationResult.values, {
+      water:waterResult,
+      protectedAreas:protectedResult
+    });
+
+    drawRouteWarnings(route, samples, elevationResult.values);
+    applyRouteVisualStatus(route);
+    analysisContent.innerHTML = buildRouteAnalysisHTML(route);
+  } catch(error) {
+    console.warn("Route analysis failed:", error);
+    const distanceKm = calculatePolylineDistance(route.points)/1000;
+    route.analysis = {
+      distanceKm, elevations:[], minElevation:null, maxElevation:null, elevationChange:null,
+      maxGradient:null,
+      warnings:[{type:"data",severity:"warning",title:"Planning data unavailable",message:"One or more live geographic datasets could not be confirmed."}],
+      terrainStatus:"unavailable", waterCrossings:0, waterStatus:"unavailable",
+      protectedIntersections:0, protectedStatus:"unavailable", chokepoints:0,
+      status:"unavailable", statusLabel:"Data incomplete", samples
+    };
+    analysisContent.innerHTML = buildRouteAnalysisHTML(route);
+    applyRouteVisualStatus(route);
+  }
+
+  updateRouteList();
+}
+
+/* =========================================================
+   53. CALCULATE ANALYSIS
+   ========================================================= */
+
+function calculateRouteAnalysis(route, samples, elevations, geographic = {}) {
+
+  const profile = transportTypes[route.type];
+  const distanceKm = calculatePolylineDistance(route.points) / 1000;
+  const validElevations = elevations.filter(Number.isFinite);
+
+  const minElevation = validElevations.length ? Math.min(...validElevations) : null;
+  const maxElevation = validElevations.length ? Math.max(...validElevations) : null;
+  const elevationChange = minElevation !== null ? maxElevation - minElevation : null;
+
+  let maxGradient = null;
+  let steepestIndex = -1;
+
+  if (validElevations.length > 1) {
+    maxGradient = 0;
+    for (let i = 1; i < elevations.length; i++) {
+      const previous = elevations[i - 1];
+      const current = elevations[i];
+      if (!Number.isFinite(previous) || !Number.isFinite(current)) continue;
+
+      const segmentDistance = samples[i - 1].distanceTo(samples[i]);
+      if (segmentDistance <= 0) continue;
+
+      const gradient = Math.abs(current - previous) / segmentDistance * 100;
+      if (gradient > maxGradient) {
+        maxGradient = gradient;
+        steepestIndex = i;
+      }
+    }
+  }
+
+  const warnings = [];
+
+  if (maxGradient !== null && profile.maxPreferredGrade !== null) {
+    if (maxGradient > profile.maxCriticalGrade) {
+      warnings.push({
+        type:"gradient", severity:"danger", index:steepestIndex,
+        title:"Excessive grade for this mode",
+        message:`Estimated maximum grade is ${formatNumber(maxGradient)}%, beyond the ${formatNumber(profile.maxCriticalGrade)}% critical planning envelope for ${profile.name}.`
+      });
+    } else if (maxGradient > profile.maxPreferredGrade) {
+      warnings.push({
+        type:"gradient", severity:"warning", index:steepestIndex,
+        title:"Steep grade for this mode",
+        message:`Estimated maximum grade is ${formatNumber(maxGradient)}%, above the ${formatNumber(profile.maxPreferredGrade)}% preferred operating envelope for ${profile.name}.`
+      });
+    }
+  }
+
+  if (elevationChange !== null && elevationChange >= 300 && profile.terrainFlexibility !== "water") {
+    warnings.push({
+      type:"terrain",
+      severity:elevationChange >= 600 ? "danger" : "warning",
+      title:"Difficult terrain",
+      message:`Sampled elevation changes by approximately ${formatNumber(elevationChange)} m along the alignment.`
+    });
+  }
+
+  const water = geographic.water || {status:"unavailable",crossings:0,features:[],waterFraction:0};
+
+  if (water.status === "confirmed") {
+    if (water.crossings > 0 && !profile.waterAllowed) {
+      warnings.push({
+        type:"water",
+        severity:water.maxCrossingKm > 5 ? "danger" : "warning",
+        title:"Water crossing",
+        message:`${water.crossings} mapped water feature crossing${water.crossings === 1 ? "" : "s"} detected; ${profile.name} would require ${profile.waterCrossing}.`
+      });
+    }
+    if (profile.waterAllowed && water.waterFraction < 0.15 && route.type === "FERRY") {
+      warnings.push({
+        type:"water",
+        severity:"warning",
+        title:"Limited suitable water",
+        message:"Only a small portion of the proposed ferry alignment is over mapped water. Check navigability, terminals and landing conditions."
+      });
+    }
+  } else {
+    warnings.push({
+      type:"water-data", severity:"warning",
+      title:"Water data unavailable",
+      message:"The live water dataset could not be confirmed, so water-crossing status is not definitive."
+    });
+  }
+
+  const protectedAreas = geographic.protectedAreas || {status:"unavailable",intersections:[],nearby:0};
+
+  if (protectedAreas.status === "confirmed") {
+    if (protectedAreas.intersections.length) {
+      protectedAreas.intersections.forEach(pa => {
+        warnings.push({
+          type:"protected", severity:"danger",
+          title:"DENR protected-area intersection",
+          message:`The proposed alignment intersects ${pa.name || "a DENR-BMB protected area"}. Avoidance or formal environmental review is required before treating this alignment as feasible.`
+        });
+      });
+    } else if ((protectedAreas.nearby || 0) > 0) {
+      warnings.push({
+        type:"protected-nearby", severity:"warning",
+        title:"Near DENR protected area",
+        message:`${protectedAreas.nearby} DENR-BMB protected-area boundary/boundaries are within approximately 1 km of the proposed alignment.`
+      });
+    }
+  } else {
+    warnings.push({
+      type:"protected-data", severity:"warning",
+      title:"DENR protected-area data unavailable",
+      message:"The official DENR-BMB GIS query did not return confirmed geometry, so protected-area status is unavailable."
+    });
+  }
+
+  const chokepoints = detectPotentialChokepoints(route, samples, geographic);
+  warnings.push(...chokepoints);
+
+  const dangerCount = warnings.filter(w => w.severity === "danger").length;
+  const status =
+    dangerCount ? "danger" :
+    warnings.length ? "warning" :
+    (water.status === "unavailable" || protectedAreas.status === "unavailable" || !validElevations.length)
+      ? "unavailable" : "ok";
+
+  return {
+    distanceKm, elevations, minElevation, maxElevation, elevationChange,
+    maxGradient, warnings,
+    terrainStatus:validElevations.length ? "confirmed" : "unavailable",
+    waterCrossings:water.crossings || 0,
+    waterStatus:water.status,
+    protectedIntersections:protectedAreas.intersections?.length || 0,
+    protectedStatus:protectedAreas.status,
+    chokepoints:chokepoints.length,
+    status,
+    statusLabel:status==="danger" ? "High concern" : status==="warning" ? "Review needed" : status==="unavailable" ? "Data incomplete" : "No major flags",
+    samples
+  };
+}
+
+function detectPotentialChokepoints(route, samples, geographic) {
+  const warnings = [];
+
+  if ((geographic.water?.crossings || 0) > 0 && route.type !== "FERRY") {
+    warnings.push({
+      type:"chokepoint", severity:"warning",
+      title:"Potential infrastructure chokepoint",
+      message:"A water crossing concentrates the alignment at a bridge, tunnel or elevated structure location."
+    });
+  }
+
+  if ((geographic.protectedAreas?.intersections?.length || 0) > 0) {
+    warnings.push({
+      type:"chokepoint", severity:"danger",
+      title:"Potential environmental chokepoint",
+      message:"A protected-area intersection may leave limited feasible corridor choices."
+    });
+  }
+
+  return warnings;
+}
+
+function makeWarningMarker(point, symbol, severe=false) {
+  return L.marker(point, {
+    icon:L.divIcon({
+      className:"",
+      html:`<div class="warning-marker ${severe ? "" : "yellow"}">${symbol}</div>`,
+      iconSize:[22,22], iconAnchor:[11,11]
+    }),
+    zIndexOffset:2600
+  }).addTo(map);
+}
+
+function clearRouteWarningLayers(route) {
+  route.warningLayers = route.warningLayers || [];
+  route.warningLayers.forEach(layer => {
+    if (map.hasLayer(layer)) map.removeLayer(layer);
+  });
+  route.warningLayers = [];
+}
+
+function drawRouteWarnings(route, samples, elevations) {
+  clearRouteWarningLayers(route);
+  if (!route.analysis) return;
+
+  route.analysis.warnings.forEach(warning => {
+    let index = Number.isFinite(warning.index) ? warning.index : Math.floor(samples.length/2);
+    index = Math.max(0, Math.min(samples.length-1,index));
+
+    const marker = makeWarningMarker(
+      samples[index],
+      warning.type==="gradient" ? "↗" :
+      warning.type==="protected" ? "⚠" :
+      warning.type==="water" ? "≋" : "!",
+      warning.severity==="danger"
+    );
+
+    marker.bindPopup(`<strong>${escapeHTML(warning.title)}</strong><br><br>${escapeHTML(warning.message)}`);
+    route.warningLayers.push(marker);
+  });
+}
+
+/* =========================================================
+   56. ROUTE ANALYSIS HTML
+   ========================================================= */
+
+function buildRouteAnalysisHTML(route) {
+
+  if (!route.analysis) {
+    return `<div class="analysis-box analysis-neutral">⏳ Live planning analysis is still running...</div>`;
+  }
+
+  const a = route.analysis;
+  let html = `
+    <strong>${escapeHTML(route.name)}</strong><br>
+    Mode: ${escapeHTML(transportTypes[route.type]?.name || route.type)}<br>
+    Line width: ${formatNumber(route.lineWidth || 6)} px<br>
+    Alignment points: ${route.points.length}<br>
+    Distance: ${formatNumber(a.distanceKm)} km
+  `;
+
+  if (a.minElevation !== null) {
+    html += `<br>Minimum elevation: ${formatNumber(a.minElevation)} m
+      <br>Maximum elevation: ${formatNumber(a.maxElevation)} m
+      <br>Elevation variation: ${formatNumber(a.elevationChange)} m
+      <br>Maximum estimated grade: ${a.maxGradient === null ? "Unavailable" : formatNumber(a.maxGradient)+"%"}`;
+  } else {
+    html += `<br>Terrain: <strong>Unavailable</strong>`;
+  }
+
+  html += `<br>Water crossings: ${a.waterStatus==="confirmed" ? a.waterCrossings : "Unavailable"}
+    <br>DENR protected-area intersections: ${a.protectedStatus==="confirmed" ? a.protectedIntersections : "Unavailable"}
+    <br>Potential chokepoints: ${a.chokepoints}`;
+
+  if (!a.warnings.length) {
+    html += `<div class="analysis-box analysis-ok">🟢 <strong>No major confirmed planning flags.</strong><br>Current live datasets returned no major conflicts for the alignment.</div>`;
+  } else {
+    a.warnings.forEach(warning => {
+      html += `<div class="analysis-box ${warning.severity==="danger" ? "analysis-danger" : "analysis-warning"}">
+        ${warning.severity==="danger" ? "🔴" : "🟠"}
+        <strong>${escapeHTML(warning.title)}</strong><br>
+        ${escapeHTML(warning.message)}
+      </div>`;
+    });
+  }
+
+  html += `<div style="margin-top:7px;font-size:9px;color:#756b5c;">
+    Live data status is explicit. Missing datasets are reported as unavailable and are not treated as evidence of suitability.
+    Conceptual planning only; detailed engineering and environmental review remain required.
+  </div>`;
+
+  return html;
+}
+
+/* =========================================================
+   56A. LIVE GEOGRAPHIC ANALYSIS
+   ========================================================= */
+
+const LIVE_DATA = {
+  elevationUrl:"https://api.open-elevation.com/api/v1/lookup",
+  overpassUrl:"https://overpass-api.de/api/interpreter",
+  denrProtectedUrl:"https://services1.arcgis.com/IwZZTMxZCmAmFYvF/ArcGIS/rest/services/DENR_BMB/FeatureServer/2/query"
+};
+
+let liveAnalysisTimer = null;
+let liveAnalysisRequestId = 0;
+let lastLiveGeometryKey = "";
+
+function scheduleLiveRouteAnalysis(points,type) {
+  if (!points || points.length < 1) return;
+  clearTimeout(liveAnalysisTimer);
+  liveAnalysisTimer=setTimeout(()=>runLiveRouteAnalysis(points,type),650);
+}
+
+async function runLiveRouteAnalysis(points,type) {
+  if (!transportDrawing.active || points.length<1) return;
+
+  const requestId=++liveAnalysisRequestId;
+  const geometryKey=points.map(p=>`${p.lat.toFixed(5)},${p.lng.toFixed(5)}`).join("|");
+  if (geometryKey===lastLiveGeometryKey) return;
+  lastLiveGeometryKey=geometryKey;
+
+  const statusEl=document.getElementById("dataSourceStatus");
+  if(statusEl) statusEl.textContent="🟡 Checking terrain, water and DENR-BMB protected areas…";
+
+  const preview=points.length>1 ? sampleRoutePoints(points,Math.min(12,Math.max(4,points.length*2))) : points;
+
+  const [elevationResult,waterResult,protectedResult]=await Promise.all([
+    fetchElevationSafe(preview),
+    fetchWaterFeaturesSafe(preview),
+    fetchDENRProtectedAreasSafe(points)
+  ]);
+
+  if(requestId!==liveAnalysisRequestId || !transportDrawing.active) return;
+
+  const tempRoute={name:"Current alignment",type,points,warningLayers:[]};
+  const analysis=calculateRouteAnalysis(tempRoute,preview,elevationResult.values,{
+    water:waterResult, protectedAreas:protectedResult
+  });
+
+  updateLivePreviewVisuals(analysis);
+  updateLiveDrawingStatus(analysis);
+
+  if(statusEl){
+    const t=elevationResult.status==="confirmed"?"terrain ✓":"terrain unavailable";
+    const w=waterResult.status==="confirmed"?"water ✓":"water unavailable";
+    const d=protectedResult.status==="confirmed"?"DENR-BMB ✓":"DENR-BMB unavailable";
+    statusEl.textContent=`Live check: ${t} · ${w} · ${d}`;
+  }
+}
+
+async function fetchElevationSafe(points) {
+  if(!points.length) return {status:"unavailable",values:[]};
+  try{
+    const locations=points.map(p=>`${p.lat},${p.lng}`).join("|");
+    const response=await fetch(`${LIVE_DATA.elevationUrl}?locations=${encodeURIComponent(locations)}`,{cache:"no-store"});
+    if(!response.ok) throw new Error("Elevation request failed");
+    const data=await response.json();
+    const values=(data.results||[]).map(r=>Number(r.elevation));
+    if(!values.length || values.some(v=>!Number.isFinite(v))) throw new Error("Elevation data incomplete");
+    return {status:"confirmed",values};
+  }catch(error){
+    console.warn("Live elevation unavailable:",error);
+    return {status:"unavailable",values:[]};
+  }
+}
+
+function routeBBox(points,pad=0.02) {
+  const lats=points.map(p=>p.lat), lngs=points.map(p=>p.lng);
+  return {south:Math.min(...lats)-pad,west:Math.min(...lngs)-pad,north:Math.max(...lats)+pad,east:Math.max(...lngs)+pad};
+}
+
+async function fetchWaterFeaturesSafe(points) {
+  if(points.length<2) return {status:"unavailable",crossings:0,features:[],waterFraction:0,maxCrossingKm:0};
+
+  const b=routeBBox(points,0.015);
+  const query=`[out:json][timeout:20];(way["natural"="water"](${b.south},${b.west},${b.north},${b.east});way["waterway"~"river|canal|stream"](${b.south},${b.west},${b.north},${b.east}););out tags geom;`;
+
+  try{
+    const response=await fetch(`${LIVE_DATA.overpassUrl}?data=${encodeURIComponent(query)}`,{cache:"no-store"});
+    if(!response.ok) throw new Error("Water service failed");
+    const data=await response.json();
+    const features=[];
+
+    (data.elements||[]).forEach(el=>{
+      if(!el.geometry||el.geometry.length<2)return;
+      const coords=el.geometry.map(p=>[p.lon,p.lat]);
+      const closed=coords.length>=4 && coords[0][0]===coords[coords.length-1][0] && coords[0][1]===coords[coords.length-1][1];
+      features.push({
+        type:"Feature",properties:el.tags||{},
+        geometry:closed?{type:"Polygon",coordinates:[coords]}:{type:"LineString",coordinates:coords}
+      });
+    });
+
+    const routeLine=turf.lineString(points.map(p=>[p.lng,p.lat]));
+    let crossings=0;
+    features.forEach(feature=>{try{if(turf.booleanIntersects(routeLine,feature))crossings++;}catch(e){}});
+
+    const samplePts=sampleRoutePoints(points,Math.max(8,Math.min(30,points.length*4)));
+    let wetSamples=0;
+    samplePts.forEach(p=>{
+      const pt=turf.point([p.lng,p.lat]);
+      if(features.some(f=>{
+        try{return f.geometry.type==="Polygon" && turf.booleanPointInPolygon(pt,f);}catch(e){return false;}
+      })) wetSamples++;
+    });
+
+    return {
+      status:"confirmed",crossings,features,
+      waterFraction:samplePts.length?wetSamples/samplePts.length:0,
+      maxCrossingKm:crossings?Math.min(50,turf.length(routeLine,{units:"kilometers"})):0
+    };
+  }catch(error){
+    console.warn("Live water data unavailable:",error);
+    return {status:"unavailable",crossings:0,features:[],waterFraction:0,maxCrossingKm:0};
+  }
+}
+
+async function fetchDENRProtectedAreasSafe(points) {
+  if(points.length<2)return {status:"unavailable",intersections:[],nearby:0};
+
+  try{
+    const routeLine=turf.lineString(points.map(p=>[p.lng,p.lat]));
+    const buffered=turf.buffer(routeLine,1,{units:"kilometers"});
+    const rings=buffered?.geometry?.coordinates?.[0];
+
+    if(!rings || rings.length<4) throw new Error("Could not build protected-area search corridor");
+
+    const geometry={rings};
+    const params=new URLSearchParams({
+      f:"geojson",where:"1=1",geometry:JSON.stringify(geometry),
+      geometryType:"esriGeometryPolygon",inSR:"4326",
+      spatialRel:"esriSpatialRelIntersects",
+      outFields:"PA_Name,LegalBasis,Status,Category,Area_Ha",
+      returnGeometry:"true",outSR:"4326"
+    });
+
+    const response=await fetch(`${LIVE_DATA.denrProtectedUrl}?${params.toString()}`,{cache:"no-store"});
+    if(!response.ok)throw new Error("DENR-BMB protected-area service failed");
+    const geojson=await response.json();
+
+    const intersections=[];
+    let nearby=0;
+
+    (geojson.features||[]).forEach(f=>{
+      let intersects=false;
+      try{ intersects=turf.booleanIntersects(routeLine,f); }catch(e){}
+      const item={
+        name:f.properties?.PA_Name||"DENR-BMB protected area",
+        legalBasis:f.properties?.LegalBasis||"",
+        status:f.properties?.Status||"",
+        category:f.properties?.Category||"",
+        areaHa:f.properties?.Area_Ha||null
+      };
+      if(intersects) intersections.push(item);
+      else nearby++;
+    });
+
+    return {status:"confirmed",intersections,nearby};
+  }catch(error){
+    console.warn("DENR-BMB protected-area data unavailable:",error);
+    return {status:"unavailable",intersections:[],nearby:0};
+  }
+}
+
+function updateLivePreviewVisuals(analysis) {
+  if(!transportDrawing.previewLine)return;
+  const color=analysis.status==="danger"?"#dc2626":analysis.status==="warning"?"#f59e0b":transportTypes[transportDrawing.type].color;
+  transportDrawing.previewLine.setStyle({
+    color,weight:getSelectedRouteLineWidth(),opacity:.82,
+    dashArray:analysis.status==="danger"?"6 5":"8 8"
+  });
+}
+
+function updateLiveDrawingStatus(analysis) {
+  const status=document.getElementById("drawStatus");
+  if(!status)return;
+  const icon=analysis.status==="danger"?"🔴":analysis.status==="warning"?"🟠":analysis.status==="unavailable"?"🟡":"🟢";
+  const firstWarnings=analysis.warnings.slice(0,2).map(w=>w.title);
+  status.textContent=`${icon} ${transportTypes[transportDrawing.type].name}: ${analysis.distanceKm.toFixed(1)} km · ${firstWarnings.length?firstWarnings.join(" · "):"No major live flags"}`;
+}
+
+/* =========================================================
+   57. SEARCH LOCATION
    ========================================================= */
 
 let searchMarker = null;
@@ -4752,22 +6334,18 @@ async function searchLocation() {
       "locationSearch"
     );
 
-
   const query =
     input.value.trim();
-
 
   const status =
     document.getElementById(
       "searchStatus"
     );
 
-
   const results =
     document.getElementById(
       "searchResults"
     );
-
 
   if (!query) {
 
@@ -4778,20 +6356,16 @@ async function searchLocation() {
 
   }
 
-
   status.textContent =
     "Searching...";
 
-
   results.innerHTML =
     "";
-
 
   try {
 
     const url =
       `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=8&countrycodes=ph&q=${encodeURIComponent(query)}`;
-
 
     const response =
       await fetch(
@@ -4804,7 +6378,6 @@ async function searchLocation() {
         }
       );
 
-
     if (!response.ok) {
 
       throw new Error(
@@ -4813,10 +6386,8 @@ async function searchLocation() {
 
     }
 
-
     const data =
       await response.json();
-
 
     if (!data.length) {
 
@@ -4827,10 +6398,8 @@ async function searchLocation() {
 
     }
 
-
     status.textContent =
       `${data.length} result${data.length === 1 ? "" : "s"} found.`;
-
 
     data.forEach(
       function(item) {
@@ -4840,10 +6409,8 @@ async function searchLocation() {
             "div"
           );
 
-
         div.className =
           "search-result-item";
-
 
         div.innerHTML = `
 
@@ -4871,28 +6438,18 @@ async function searchLocation() {
 
         `;
 
-
         div.addEventListener(
           "click",
           function() {
 
-            const lat =
-              Number(item.lat);
-
-
-            const lng =
-              Number(item.lon);
-
-
             locateSearchResult(
-              lat,
-              lng,
+              Number(item.lat),
+              Number(item.lon),
               item.display_name
             );
 
           }
         );
-
 
         results.appendChild(
           div
@@ -4900,12 +6457,6 @@ async function searchLocation() {
 
       }
     );
-
-
-    /*
-       Automatically zoom to the
-       first result.
-    */
 
     locateSearchResult(
       Number(data[0].lat),
@@ -4921,7 +6472,6 @@ async function searchLocation() {
       error
     );
 
-
     status.textContent =
       "Search failed. Please try again.";
 
@@ -4930,7 +6480,9 @@ async function searchLocation() {
 }
 
 
-function handleSearchKey(event) {
+function handleSearchKey(
+  event
+) {
 
   if (
     event.key === "Enter"
@@ -4944,7 +6496,7 @@ function handleSearchKey(event) {
 
 
 /* =========================================================
-   35. LOCATE SEARCH RESULT
+   58. LOCATE SEARCH RESULT
    ========================================================= */
 
 function locateSearchResult(
@@ -4960,7 +6512,6 @@ function locateSearchResult(
     );
 
   }
-
 
   searchMarker =
     L.marker(
@@ -4990,14 +6541,11 @@ function locateSearchResult(
       }
     ).addTo(map);
 
-
   searchMarker.bindPopup(
     `<strong>${escapeHTML(name)}</strong>`
   );
 
-
   searchMarker.openPopup();
-
 
   map.setView(
     [lat,lng],
@@ -5011,20 +6559,387 @@ function locateSearchResult(
 }
 
 
+
+
 /* =========================================================
-   36. LANDMARK SEARCH
+   GPS-LIKE PIN-TO-PIN LAND ROUTING
    ========================================================= */
 
-/*
-   This uses Overpass / OpenStreetMap data.
+let pinToPinRouteLayer = null;
+let pinToPinRouteRequest = 0;
 
-   The query asks for actual OSM objects
-   rather than relying on a hard-coded
-   landmark database.
+/* Small cursor target used only while the Transportation Planner is drawing. */
+let drawingCursorMarker = null;
 
-   That means the returned locations can
-   change as OSM data changes.
-*/
+function updateDrawingCursorMarker(latlng, snapped = null) {
+
+  if (!transportDrawing.active) {
+    if (drawingCursorMarker && map.hasLayer(drawingCursorMarker)) {
+      map.removeLayer(drawingCursorMarker);
+    }
+    drawingCursorMarker = null;
+    return;
+  }
+
+  const point =
+    snapped
+      ? snapped.latlng
+      : latlng;
+
+  if (!drawingCursorMarker) {
+
+    drawingCursorMarker =
+      L.circleMarker(
+        point,
+        {
+          radius: 6,
+          color: "#17365d",
+          weight: 2,
+          fillColor: "#ffffff",
+          fillOpacity: 0.95,
+          interactive: false,
+          pane: "routePreviewPane"
+        }
+      ).addTo(map);
+
+  }
+  else {
+
+    drawingCursorMarker.setLatLng(
+      point
+    );
+
+  }
+
+}
+
+function refreshPinRouteSelectors() {
+
+  const start =
+    document.getElementById("gpsStartPin");
+
+  const end =
+    document.getElementById("gpsEndPin");
+
+  if (!start || !end) return;
+
+  const previousStart = start.value;
+  const previousEnd = end.value;
+
+  const options = placedPins
+    .map(pin => `
+      <option value="${escapeHTML(String(pin.id))}">
+        ${escapeHTML(pin.name)}${pin.type ? " · " + escapeHTML(pin.type) : ""}
+      </option>
+    `)
+    .join("");
+
+  start.innerHTML =
+    `<option value="">Choose a transportation pin</option>${options}`;
+
+  end.innerHTML =
+    `<option value="">Choose a transportation pin</option>${options}`;
+
+  if (placedPins.some(pin => String(pin.id) === previousStart)) {
+    start.value = previousStart;
+  }
+
+  if (placedPins.some(pin => String(pin.id) === previousEnd)) {
+    end.value = previousEnd;
+  }
+}
+
+function getPinById(id) {
+  return placedPins.find(
+    pin => String(pin.id) === String(id)
+  ) || null;
+}
+
+function clearPinToPinRoute() {
+
+  if (pinToPinRouteLayer && map.hasLayer(pinToPinRouteLayer)) {
+    map.removeLayer(pinToPinRouteLayer);
+  }
+
+  pinToPinRouteLayer = null;
+
+  const status =
+    document.getElementById("gpsRouteStatus");
+
+  if (status) {
+    status.textContent =
+      "Choose two transportation pins to calculate a mostly land-based route.";
+  }
+}
+
+async function createPinToPinRoute() {
+
+  const startPin =
+    getPinById(
+      document.getElementById("gpsStartPin")?.value
+    );
+
+  const endPin =
+    getPinById(
+      document.getElementById("gpsEndPin")?.value
+    );
+
+  const status =
+    document.getElementById("gpsRouteStatus");
+
+  if (!startPin || !endPin) {
+    if (status) {
+      status.textContent =
+        "⚠️ Select both a start pin and a destination pin.";
+    }
+    return;
+  }
+
+  if (String(startPin.id) === String(endPin.id)) {
+    if (status) {
+      status.textContent =
+        "⚠️ Start and destination must be different pins.";
+    }
+    return;
+  }
+
+  clearPinToPinRoute();
+
+  if (status) {
+    status.textContent =
+      "🟡 Finding a mostly land-based road route…";
+  }
+
+  const requestId = ++pinToPinRouteRequest;
+
+  try {
+
+    /*
+      OSRM's public routing service uses OpenStreetMap road data.
+      The driving profile is deliberately used here because the
+      requested GPS-like function is intended to prefer land
+      transportation rather than a straight geographic line.
+    */
+    const url =
+      `https://router.project-osrm.org/route/v1/driving/` +
+      `${startPin.longitude},${startPin.latitude};` +
+      `${endPin.longitude},${endPin.latitude}` +
+      `?overview=full&geometries=geojson&steps=true`;
+
+    const response =
+      await fetch(url, {
+        cache: "no-store"
+      });
+
+    if (!response.ok) {
+      throw new Error("Routing service unavailable.");
+    }
+
+    const data =
+      await response.json();
+
+    if (
+      requestId !== pinToPinRouteRequest ||
+      !data.routes ||
+      !data.routes.length
+    ) {
+      throw new Error("No routable land connection was returned.");
+    }
+
+    const route =
+      data.routes[0];
+
+    if (
+      !route.geometry ||
+      !route.geometry.coordinates ||
+      route.geometry.coordinates.length < 2
+    ) {
+      throw new Error("Routing service returned no usable geometry.");
+    }
+
+    const latLngs =
+      route.geometry.coordinates.map(
+        coordinate =>
+          [
+            coordinate[1],
+            coordinate[0]
+          ]
+      );
+
+    pinToPinRouteLayer =
+      L.polyline(
+        latLngs,
+        {
+          color: "#17365d",
+          weight: 6,
+          opacity: .9,
+          dashArray: "10 6",
+          lineCap: "round",
+          lineJoin: "round",
+          interactive: false,
+          pane: "routePane",
+          className: "gps-route-line"
+        }
+      ).addTo(map);
+
+    const kilometers =
+      Number(route.distance) / 1000;
+
+    const minutes =
+      Number(route.duration) / 60;
+
+    map.fitBounds(
+      pinToPinRouteLayer.getBounds(),
+      {
+        padding: [50,50],
+        maxZoom: 15
+      }
+    );
+
+    if (status) {
+      status.innerHTML =
+        `🟢 Land route found: <strong>${formatNumber(kilometers)} km</strong> · ` +
+        `about <strong>${formatNumber(minutes)} min</strong>.<br>` +
+        `${escapeHTML(startPin.name)} → ${escapeHTML(endPin.name)}`
+        + `<br><span style="color:#66727e;">Based on OpenStreetMap road-network data.</span>`;
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "Pin-to-pin routing unavailable:",
+      error
+    );
+
+    if (status) {
+      status.innerHTML =
+        `🔴 <strong>Land route unavailable.</strong><br>` +
+        `The routing service did not return a confirmed road route. ` +
+        `No straight-line route was substituted.`;
+    }
+  }
+}
+
+/* =========================================================
+   BUILT-IN LANDMARKS / TOURIST SPOTS
+   ========================================================= */
+
+const builtInLandmarks = [
+  {name:"Baguio City", type:"City / Tourist Destination", region:"car", lat:16.4023, lon:120.5960},
+  {name:"Burnham Park", type:"Park", region:"car", lat:16.4120, lon:120.5960},
+  {name:"Mines View Park", type:"Viewpoint", region:"car", lat:16.4124, lon:120.6200},
+  {name:"Vigan Heritage Village", type:"Historic Place", region:"region1", lat:17.5747, lon:120.3869},
+  {name:"Hundred Islands National Park", type:"Tourist Attraction", region:"region1", lat:16.1900, lon:120.0000},
+  {name:"San Juan, La Union", type:"Beach / Tourist Destination", region:"region1", lat:16.6680, lon:120.3300},
+  {name:"Banaue Rice Terraces", type:"Tourist Attraction", region:"car", lat:16.9199, lon:121.0592},
+  {name:"Mayon Volcano", type:"Natural Landmark", region:"region5", lat:13.2570, lon:123.6850},
+  {name:"Cagsawa Ruins", type:"Historic Place", region:"region5", lat:13.1528, lon:123.7130},
+  {name:"Puerto Princesa Underground River", type:"Tourist Attraction", region:"region4b", lat:10.1780, lon:118.9250},
+  {name:"Boracay White Beach", type:"Beach", region:"region6", lat:11.9674, lon:121.9248},
+  {name:"Miagao Church", type:"Historic Place", region:"region6", lat:10.6427, lon:122.2358},
+  {name:"Chocolate Hills", type:"Tourist Attraction", region:"region7", lat:9.8280, lon:124.1420},
+  {name:"Magellan's Cross", type:"Historic Place", region:"region7", lat:10.2930, lon:123.9020},
+  {name:"Fort San Pedro", type:"Historic Place", region:"region7", lat:10.2940, lon:123.9050},
+  {name:"Kawasan Falls", type:"Waterfall", region:"region7", lat:9.8020, lon:123.3750},
+  {name:"Rizal Park", type:"Park", region:"ncr", lat:14.5826, lon:120.9794},
+  {name:"Intramuros", type:"Historic Place", region:"ncr", lat:14.5896, lon:120.9747},
+  {name:"National Museum of the Philippines", type:"Museum", region:"ncr", lat:14.5858, lon:120.9819},
+  {name:"Quezon Memorial Circle", type:"Monument / Park", region:"ncr", lat:14.6514, lon:121.0493},
+  {name:"Manila Ocean Park", type:"Tourist Attraction", region:"ncr", lat:14.5790, lon:120.9720},
+  {name:"Tagaytay", type:"Tourist Destination / Viewpoint", region:"region4a", lat:14.1153, lon:120.9621},
+  {name:"Taal Volcano", type:"Natural Landmark", region:"region4a", lat:14.0020, lon:120.9930},
+  {name:"Pagsanjan Falls", type:"Waterfall", region:"region4a", lat:14.2720, lon:121.4550},
+  {name:"Davao Crocodile Park", type:"Tourist Attraction", region:"region11", lat:7.1040, lon:125.6240},
+  {name:"Mount Apo", type:"Natural Landmark", region:"region11", lat:6.9880, lon:125.2700},
+  {name:"Tinago Falls", type:"Waterfall", region:"region10", lat:8.1670, lon:124.0470},
+  {name:"Camiguin", type:"Tourist Destination", region:"region10", lat:9.1730, lon:124.7290},
+  {name:"Siargao Cloud 9", type:"Beach / Tourist Attraction", region:"region13", lat:9.8150, lon:126.1620},
+  {name:"Tinuy-an Falls", type:"Waterfall", region:"region13", lat:8.8590, lon:125.5320},
+  {name:"Enchanted River", type:"Tourist Attraction", region:"region13", lat:8.8620, lon:126.2940}
+];
+
+function getBuiltInLandmarks(regionKey, type) {
+  return builtInLandmarks.filter(place => {
+    const regionMatch =
+      regionKey === "all" ||
+      regionKey === "philippines" ||
+      place.region === regionKey;
+
+    const normalized = String(place.type).toLowerCase();
+    const typeMatch =
+      type === "tourism" ||
+      (type === "attraction" && normalized.includes("attraction")) ||
+      (type === "museum" && normalized.includes("museum")) ||
+      (type === "monument" && normalized.includes("monument")) ||
+      (type === "viewpoint" && normalized.includes("viewpoint")) ||
+      (type === "park" && normalized.includes("park")) ||
+      (type === "beach" && normalized.includes("beach")) ||
+      (type === "waterfall" && normalized.includes("waterfall")) ||
+      (type === "church" && normalized.includes("church")) ||
+      (type === "historic" && normalized.includes("historic"));
+
+    return regionMatch && typeMatch;
+  });
+}
+
+function showBuiltInLandmarks(regionKey, type, results, status) {
+  const places = getBuiltInLandmarks(regionKey, type);
+
+  places.forEach(place => {
+    const marker = L.circleMarker(
+      [place.lat, place.lon],
+      {
+        radius: 7,
+        color: "#ffffff",
+        weight: 2,
+        fillColor: "#f97316",
+        fillOpacity: .95
+      }
+    );
+
+    marker.bindPopup(`
+      <strong>${escapeHTML(place.name)}</strong>
+      <br>${escapeHTML(place.type)}
+      <br><br>
+      <button onclick="pinLandmark(${place.lat},${place.lon},'${escapeJS(place.name)}','${escapeJS(place.type)}')">
+        📍 Add Pin
+      </button>
+    `);
+
+    marker.addTo(landmarkLayerGroup);
+  });
+
+  places.slice(0, 50).forEach(place => {
+    const div = document.createElement("div");
+    div.className = "search-result-item";
+    div.innerHTML = `
+      <div class="search-result-name">${escapeHTML(place.name)}</div>
+      <div class="search-result-type">${escapeHTML(place.type)} · Built-in</div>
+      <div class="search-result-pin">Click to locate</div>
+    `;
+    div.addEventListener("click", () => {
+      map.setView([place.lat, place.lon], 14, {animate:true});
+      landmarkLayerGroup.eachLayer(layer => {
+        const ll = layer.getLatLng();
+        if (Math.abs(ll.lat - place.lat) < .00001 && Math.abs(ll.lng - place.lon) < .00001) {
+          layer.openPopup();
+        }
+      });
+    });
+    results.appendChild(div);
+  });
+
+  if (places.length) {
+    status.textContent =
+      `${places.length} built-in landmark${places.length === 1 ? "" : "s"} available. Live OpenStreetMap results can also be added below.`;
+  }
+
+  return places;
+}
+
+/* =========================================================
+   59. LANDMARK SEARCH
+   ========================================================= */
 
 async function findLandmarks() {
 
@@ -5033,151 +6948,111 @@ async function findLandmarks() {
       "landmarkRegion"
     ).value;
 
-
   const type =
     document.getElementById(
       "landmarkType"
     ).value;
-
 
   const status =
     document.getElementById(
       "landmarkStatus"
     );
 
-
   const results =
     document.getElementById(
       "landmarkResults"
     );
 
-
   status.textContent =
-    "Searching OpenStreetMap...";
-
+    "Loading built-in landmarks and OpenStreetMap results...";
 
   results.innerHTML =
     "";
 
+  clearLandmarkMarkers();
+
+  landmarkLayerGroup =
+    L.layerGroup().addTo(map);
+
+  showBuiltInLandmarks(
+    regionKey,
+    type,
+    results,
+    status
+  );
 
   const bounds =
     getRegionBounds(
       regionKey
     );
 
-
   let selector;
-
 
   switch(type) {
 
     case "museum":
-
       selector =
         `["tourism"="museum"]`;
-
       break;
-
 
     case "monument":
-
       selector =
         `["historic"="monument"]`;
-
       break;
-
 
     case "viewpoint":
-
       selector =
         `["tourism"="viewpoint"]`;
-
       break;
-
 
     case "park":
-
       selector =
         `["leisure"="park"]`;
-
       break;
-
 
     case "beach":
-
       selector =
         `["natural"="beach"]`;
-
       break;
-
 
     case "waterfall":
-
       selector =
         `["natural"="waterfall"]`;
-
       break;
-
 
     case "church":
-
       selector =
         `["amenity"="place_of_worship"]["religion"="christian"]`;
-
       break;
-
 
     case "historic":
-
       selector =
         `["historic"]`;
-
       break;
-
 
     case "attraction":
-
       selector =
         `["tourism"="attraction"]`;
-
       break;
 
-
-    case "tourism":
-
     default:
-
       selector =
         `["tourism"]`;
-
       break;
 
   }
 
-
   const south =
     bounds[0];
-
 
   const west =
     bounds[1];
 
-
   const north =
     bounds[2];
 
-
   const east =
     bounds[3];
-
-
-  /*
-     Search nodes, ways and relations.
-
-     The center is requested so that
-     ways/relations have a usable
-     coordinate.
-  */
 
   const query = `
 
@@ -5197,15 +7072,9 @@ async function findLandmarks() {
 
   `;
 
-
   try {
 
-    /*
-       Try the main Overpass server first.
-    */
-
     let response;
-
 
     try {
 
@@ -5213,13 +7082,11 @@ async function findLandmarks() {
         await fetch(
           "https://overpass-api.de/api/interpreter",
           {
-
             method:
               "POST",
 
             body:
               query
-
           }
         );
 
@@ -5231,18 +7098,15 @@ async function findLandmarks() {
         await fetch(
           "https://overpass.kumi.systems/api/interpreter",
           {
-
             method:
               "POST",
 
             body:
               query
-
           }
         );
 
     }
-
 
     if (!response.ok) {
 
@@ -5252,10 +7116,8 @@ async function findLandmarks() {
 
     }
 
-
     const data =
       await response.json();
-
 
     if (
       !data.elements ||
@@ -5263,24 +7125,14 @@ async function findLandmarks() {
     ) {
 
       status.textContent =
-        "No matching mapped places were found for this region and category.";
+        "No matching mapped places were found.";
 
       return;
 
     }
 
-
-    /*
-       Remove duplicate-looking results.
-    */
-
-    const unique =
-      [];
-
-
-    const seen =
-      new Set();
-
+    const unique = [];
+    const seen = new Set();
 
     data.elements.forEach(
       function(item) {
@@ -5288,14 +7140,11 @@ async function findLandmarks() {
         const tags =
           item.tags || {};
 
-
         let lat =
           item.lat;
 
-
         let lon =
           item.lon;
-
 
         if (
           lat === undefined &&
@@ -5310,44 +7159,35 @@ async function findLandmarks() {
 
         }
 
-
         if (
           lat === undefined ||
           lon === undefined
         ) {
-
           return;
-
         }
-
 
         const name =
           tags.name ||
           tags["name:en"] ||
           "Unnamed mapped place";
 
-
         const key =
           `${name}|${Number(lat).toFixed(5)}|${Number(lon).toFixed(5)}`;
 
-
-        if (seen.has(key)) {
-
+        if (
+          seen.has(key)
+        ) {
           return;
-
         }
 
-
         seen.add(key);
-
 
         unique.push({
 
           id:
             item.id,
 
-          name:
-            name,
+          name,
 
           lat:
             Number(lat),
@@ -5355,19 +7195,12 @@ async function findLandmarks() {
           lon:
             Number(lon),
 
-          tags:
-            tags
+          tags
 
         });
 
       }
     );
-
-
-    /*
-       Limit display to avoid putting
-       thousands of markers on the map.
-    */
 
     const places =
       unique.slice(
@@ -5375,27 +7208,14 @@ async function findLandmarks() {
         300
       );
 
-
     status.textContent =
       `${unique.length} mapped place${unique.length === 1 ? "" : "s"} found. Showing ${places.length}.`;
 
-
-    /*
-       Remove previous landmark markers.
-    */
-
-    clearLandmarkMarkers();
-
-
-    /*
-       Create a layer group.
-    */
-
-    landmarkLayerGroup =
-      L.layerGroup().addTo(
-        map
-      );
-
+    /* Keep the built-in landmark layer and append live OSM results. */
+    if (!landmarkLayerGroup) {
+      landmarkLayerGroup =
+        L.layerGroup().addTo(map);
+    }
 
     places.forEach(
       function(place) {
@@ -5407,7 +7227,6 @@ async function findLandmarks() {
               place.lon
             ],
             {
-
               radius:
                 6,
 
@@ -5422,10 +7241,8 @@ async function findLandmarks() {
 
               fillOpacity:
                 .9
-
             }
           );
-
 
         marker.bindPopup(`
 
@@ -5456,18 +7273,12 @@ async function findLandmarks() {
 
         `);
 
-
         marker.addTo(
           landmarkLayerGroup
         );
 
       }
     );
-
-
-    /*
-       Show result list.
-    */
 
     places.slice(
       0,
@@ -5480,10 +7291,8 @@ async function findLandmarks() {
             "div"
           );
 
-
         div.className =
           "search-result-item";
-
 
         div.innerHTML = `
 
@@ -5511,7 +7320,6 @@ async function findLandmarks() {
 
         `;
 
-
         div.addEventListener(
           "click",
           function() {
@@ -5528,18 +7336,11 @@ async function findLandmarks() {
               }
             );
 
-
-            /*
-               Find the corresponding
-               marker and open it.
-            */
-
             landmarkLayerGroup.eachLayer(
               function(layer) {
 
                 const ll =
                   layer.getLatLng();
-
 
                 if (
                   Math.abs(
@@ -5562,7 +7363,6 @@ async function findLandmarks() {
           }
         );
 
-
         results.appendChild(
           div
         );
@@ -5570,13 +7370,9 @@ async function findLandmarks() {
       }
     );
 
-
-    /*
-       Fit all results if there are
-       several places.
-    */
-
-    if (places.length > 0) {
+    if (
+      places.length > 0
+    ) {
 
       const bounds =
         L.latLngBounds(
@@ -5589,17 +7385,14 @@ async function findLandmarks() {
           )
         );
 
-
       map.fitBounds(
         bounds,
         {
-
           padding:
             [30,30],
 
           maxZoom:
             12
-
         }
       );
 
@@ -5614,9 +7407,8 @@ async function findLandmarks() {
       error
     );
 
-
     status.textContent =
-      "Could not retrieve landmark data. Please try again in a moment.";
+      "Could not retrieve landmark data.";
 
   }
 
@@ -5624,7 +7416,7 @@ async function findLandmarks() {
 
 
 /* =========================================================
-   37. LANDMARK HELPERS
+   60. LANDMARK HELPERS
    ========================================================= */
 
 let landmarkLayerGroup = null;
@@ -5632,7 +7424,9 @@ let landmarkLayerGroup = null;
 
 function clearLandmarkMarkers() {
 
-  if (landmarkLayerGroup) {
+  if (
+    landmarkLayerGroup
+  ) {
 
     map.removeLayer(
       landmarkLayerGroup
@@ -5646,12 +7440,13 @@ function clearLandmarkMarkers() {
 }
 
 
-function getPlaceCategory(tags) {
+function getPlaceCategory(
+  tags
+) {
 
   if (!tags) {
     return "Mapped place";
   }
-
 
   if (tags.tourism) {
 
@@ -5661,7 +7456,6 @@ function getPlaceCategory(tags) {
 
   }
 
-
   if (tags.historic) {
 
     return capitalize(
@@ -5669,7 +7463,6 @@ function getPlaceCategory(tags) {
     );
 
   }
-
 
   if (tags.natural) {
 
@@ -5679,7 +7472,6 @@ function getPlaceCategory(tags) {
 
   }
 
-
   if (tags.leisure) {
 
     return capitalize(
@@ -5687,7 +7479,6 @@ function getPlaceCategory(tags) {
     );
 
   }
-
 
   if (tags.amenity) {
 
@@ -5697,18 +7488,18 @@ function getPlaceCategory(tags) {
 
   }
 
-
   return "Mapped place";
 
 }
 
 
-function capitalize(value) {
+function capitalize(
+  value
+) {
 
   if (!value) {
     return "";
   }
-
 
   return String(value)
     .replace(
@@ -5724,7 +7515,9 @@ function capitalize(value) {
 }
 
 
-function escapeJS(text) {
+function escapeJS(
+  text
+) {
 
   return String(text)
     .replace(
@@ -5752,7 +7545,7 @@ function escapeJS(text) {
 
 
 /* =========================================================
-   38. PIN LANDMARK
+   61. PIN LANDMARK
    ========================================================= */
 
 function pinLandmark(
@@ -5773,7 +7566,6 @@ function pinLandmark(
       "#f97316"
     );
 
-
   map.setView(
     [
       lat,
@@ -5786,8 +7578,9 @@ function pinLandmark(
     }
   );
 
-
-  if (pin.marker) {
+  if (
+    pin.marker
+  ) {
 
     pin.marker.openTooltip();
 
@@ -5797,24 +7590,17 @@ function pinLandmark(
 
 
 /* =========================================================
-   39. REGION BOUNDS
+   62. REGION BOUNDS
    ========================================================= */
 
-function getRegionBounds(regionKey) {
-
-  /*
-     Returns:
-
-     [south, west, north, east]
-
-     These are intentionally generous
-     geographic boxes.
-
-     The Overpass query then retrieves
-     actual OSM objects inside the box.
-  */
+function getRegionBounds(
+  regionKey
+) {
 
   const bounds = {
+
+    all:
+      [4.5,116.0,21.5,127.5],
 
     philippines:
       [4.5,116.0,21.5,127.5],
@@ -5875,7 +7661,6 @@ function getRegionBounds(regionKey) {
 
   };
 
-
   return (
     bounds[regionKey] ||
     bounds.philippines
@@ -5885,7 +7670,7 @@ function getRegionBounds(regionKey) {
 
 
 /* =========================================================
-   40. FIT VIEW
+   63. FIT VIEW
    ========================================================= */
 
 function resetView() {
@@ -5901,7 +7686,6 @@ function fitSelectedRegion() {
     calibrations[
       currentCalibration
     ];
-
 
   if (
     currentCalibration ===
@@ -5919,18 +7703,15 @@ function fitSelectedRegion() {
       }
     );
 
-
     return;
 
   }
-
 
   const center =
     L.latLng(
       c.lat,
       c.lng
     );
-
 
   map.setView(
     center,
@@ -5947,7 +7728,7 @@ function fitSelectedRegion() {
 
 
 /* =========================================================
-   41. PHILIPPINES
+   64. PHILIPPINES
    ========================================================= */
 
 function locatePhilippines() {
@@ -5957,7 +7738,6 @@ function locatePhilippines() {
   ).value =
     "philippines";
 
-
   changeCalibration(
     "philippines"
   );
@@ -5966,34 +7746,7 @@ function locatePhilippines() {
 
 
 /* =========================================================
-   42. INITIALIZATION
-   ========================================================= */
-
-updateCalibrationInfo();
-
-
-map.setView(
-  [
-    calibrations.region1.lat,
-    calibrations.region1.lng
-  ],
-  8
-);
-
-
-map.whenReady(
-  function() {
-
-    drawCartesianGrid();
-
-    updateRoutePinSelectors();
-
-  }
-);
-
-
-/* =========================================================
-   43. KEYBOARD
+   65. KEYBOARD SHORTCUTS
    ========================================================= */
 
 document.addEventListener(
@@ -6003,39 +7756,55 @@ document.addEventListener(
     const tag =
       document.activeElement.tagName;
 
-
     if (
       tag === "SELECT" ||
       tag === "INPUT" ||
       tag === "TEXTAREA"
     ) {
-
       return;
-
     }
-
 
     const key =
       event.key.toLowerCase();
 
+    if (
+      key === "r"
+    ) {
 
-    if (key === "r") {
       resetView();
+
     }
 
+    if (
+      key === "g"
+    ) {
 
-    if (key === "g") {
       toggleGrid();
+
     }
 
+    if (
+      key === "c"
+    ) {
 
-    if (key === "c") {
       toggleLabels();
+
     }
 
+    if (
+      key === "t"
+    ) {
 
-    if (key === "t") {
       toggleTerrain();
+
+    }
+
+    if (
+      key === "escape"
+    ) {
+
+      cancelTransportDrawing();
+
     }
 
   }
@@ -6043,55 +7812,71 @@ document.addEventListener(
 
 
 /* =========================================================
-   44. DEBUG
+   66. INITIALIZATION
+   ========================================================= */
+
+updateCalibrationInfo();
+
+map.setView(
+  [
+    calibrations.region1.lat,
+    calibrations.region1.lng
+  ],
+  8
+);
+
+map.whenReady(
+  function() {
+
+    drawCartesianGrid();
+
+    updatePinCount();
+    refreshPinRouteSelectors();
+
+    updateRouteList();
+
+  }
+);
+
+
+/* =========================================================
+   67. DEBUG
    ========================================================= */
 
 console.log(
-  "Philippines Cartesian Planning Map loaded."
+  "Philippines Transportation Planning Map loaded."
 );
 
 console.log(
-  "Colored pin system loaded."
+  "Cartesian planning grid enabled."
 );
 
 console.log(
-  "Route planner loaded."
+  "Pin system enabled."
 );
 
 console.log(
-  "OSRM road routing enabled."
+  "Transportation drawing system enabled."
+);
+
+console.log(
+  "Snap-to-point system enabled."
+);
+
+console.log(
+  "Terrain analysis enabled."
+);
+
+console.log(
+  "MRT / LRT / Rail / BRT planning enabled."
+);
+
+console.log(
+  "OpenStreetMap search enabled."
 );
 
 console.log(
   "OpenStreetMap landmark search enabled."
-);
-
-console.log(
-  "Current calibration:",
-  calibrations[currentCalibration].name
-);
-
-console.log(
-  "Scale:",
-  `1 unit = ${KM_PER_UNIT} km`
-);
-
-console.log(
-  "Cartesian plane:",
-  "400 × 400"
-);
-
-console.log(
-  "Coordinate range:",
-  "-200 to +200"
-);
-
-console.log(
-  "North = +Y"
-);
-
-console.log(
-  "East = +X"
 );
 
 </script>
