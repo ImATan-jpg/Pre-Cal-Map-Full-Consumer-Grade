@@ -1,0 +1,6100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+Philippines Cartesian Transportation Planning Map
+</title>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+
+  background:
+    linear-gradient(
+      135deg,
+      #dfe9f3,
+      #f7f9fb
+    );
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  color: #17212b;
+
+  min-height: 100vh;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 18px;
+}
+
+
+/* =========================================================
+   PROJECT
+   ========================================================= */
+
+.project {
+
+  width: min(98vw, 1450px);
+
+  background: white;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 12px 40px rgba(0,0,0,.18);
+
+  padding: 18px;
+
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+h1 {
+
+  text-align: center;
+
+  margin:
+    0 0 4px;
+
+  color: #17365d;
+
+  font-size: 25px;
+
+}
+
+.subtitle {
+
+  text-align: center;
+
+  color: #66727e;
+
+  font-size: 13px;
+
+  margin-bottom: 12px;
+
+}
+
+
+/* =========================================================
+   CALIBRATION
+   ========================================================= */
+
+.calibration-panel {
+
+  background:
+    linear-gradient(
+      135deg,
+      #eef5fb,
+      #f8fbfd
+    );
+
+  border:
+    1px solid #cbd8e5;
+
+  border-radius: 9px;
+
+  padding: 12px;
+
+  margin-bottom: 12px;
+
+}
+
+.calibration-title {
+
+  font-size: 13px;
+
+  font-weight: bold;
+
+  color: #17365d;
+
+  margin-bottom: 8px;
+
+}
+
+.calibration-row {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+}
+
+.calibration-row label {
+
+  font-size: 11px;
+
+  font-weight: bold;
+
+}
+
+select,
+input {
+
+  border:
+    1px solid #9eacb9;
+
+  border-radius: 6px;
+
+  padding:
+    7px 9px;
+
+  background: white;
+
+  color: #17212b;
+
+  font-size: 12px;
+
+}
+
+select {
+
+  cursor: pointer;
+
+}
+
+input {
+
+  outline: none;
+
+}
+
+input:focus,
+select:focus {
+
+  border-color: #24558e;
+
+  box-shadow:
+    0 0 0 2px rgba(36,85,142,.12);
+
+}
+
+.calibration-info {
+
+  margin-top: 9px;
+
+  font-size: 11px;
+
+  line-height: 1.6;
+
+  color: #59636d;
+
+}
+
+#calibrationName {
+
+  font-weight: bold;
+
+  color: #17365d;
+
+}
+
+#originDisplay {
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-weight: bold;
+
+  color: #c1121f;
+
+}
+
+#scaleDisplay {
+
+  font-weight: bold;
+
+  color: #17365d;
+
+}
+
+
+/* =========================================================
+   WORKSPACE
+   ========================================================= */
+
+.workspace {
+
+  display: grid;
+
+  grid-template-columns:
+    255px
+    minmax(0, 1fr)
+    255px;
+
+  gap: 10px;
+
+  align-items: start;
+
+}
+
+
+/* =========================================================
+   SIDEBARS
+   ========================================================= */
+
+.sidebar {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+}
+
+.sidebar-panel {
+
+  border-radius: 9px;
+
+  padding: 11px;
+
+}
+
+
+/* =========================================================
+   LEFT PIN PANEL
+   ========================================================= */
+
+.pin-panel {
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff7e8,
+      #fffdf7
+    );
+
+  border:
+    1px solid #e3cf9f;
+
+}
+
+.pin-panel-title {
+
+  font-size: 13px;
+
+  font-weight: bold;
+
+  color: #7a4b00;
+
+  margin-bottom: 9px;
+
+}
+
+.pin-row {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+}
+
+.pin-row label {
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  color: #59451f;
+
+}
+
+.pin-name,
+.pin-type {
+
+  width: 100%;
+
+}
+
+.color-options {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, 1fr);
+
+  gap: 7px;
+
+  margin-top: 4px;
+
+}
+
+.color-button {
+
+  width: 27px;
+
+  height: 27px;
+
+  padding: 0;
+
+  border-radius: 50%;
+
+  border:
+    3px solid white;
+
+  box-shadow:
+    0 0 0 1px #8995a1;
+
+  cursor: pointer;
+
+  transition:
+    transform .12s ease,
+    box-shadow .12s ease;
+
+}
+
+.color-button:hover {
+
+  transform:
+    scale(1.12);
+
+}
+
+.color-button.selected {
+
+  box-shadow:
+    0 0 0 2px #17212b,
+    0 0 0 4px white;
+
+  transform:
+    scale(1.08);
+
+}
+
+.pin-instructions {
+
+  margin-top: 9px;
+
+  font-size: 10px;
+
+  color: #6b6255;
+
+  line-height: 1.5;
+
+}
+
+.pin-count {
+
+  margin-top: 8px;
+
+  font-size: 11px;
+
+  color: #6b6255;
+
+  font-weight: bold;
+
+}
+
+
+/* =========================================================
+   ROUTE PLANNER
+   ========================================================= */
+
+.route-panel {
+
+  background:
+    linear-gradient(
+      135deg,
+      #edf8ef,
+      #fbfffc
+    );
+
+  border:
+    1px solid #a9d2b0;
+
+}
+
+.route-title {
+
+  font-size: 13px;
+
+  font-weight: bold;
+
+  color: #216b35;
+
+  margin-bottom: 9px;
+
+}
+
+.route-label {
+
+  display: block;
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  color: #31513a;
+
+  margin:
+    7px 0 4px;
+
+}
+
+.route-select {
+
+  width: 100%;
+
+}
+
+.route-buttons {
+
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 5px;
+
+  margin-top: 9px;
+
+}
+
+.route-buttons button {
+
+  padding:
+    7px 5px;
+
+  font-size: 10px;
+
+}
+
+.route-status {
+
+  margin-top: 9px;
+
+  padding: 8px;
+
+  border-radius: 6px;
+
+  background: #f4faf5;
+
+  border:
+    1px solid #c9dfcd;
+
+  color: #48604d;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+
+}
+
+.route-result {
+
+  margin-top: 8px;
+
+  display: none;
+
+  font-size: 10px;
+
+  line-height: 1.55;
+
+}
+
+.route-result strong {
+
+  color: #17365d;
+
+}
+
+.route-legend {
+
+  margin-top: 9px;
+
+  padding-top: 8px;
+
+  border-top:
+    1px solid #c9dfcd;
+
+  font-size: 9px;
+
+  line-height: 1.7;
+
+}
+
+.legend-green {
+
+  color: #159447;
+
+  font-weight: bold;
+
+}
+
+.legend-blue {
+
+  color: #1677d2;
+
+  font-weight: bold;
+
+}
+
+.legend-orange {
+
+  color: #e87900;
+
+  font-weight: bold;
+
+}
+
+
+/* =========================================================
+   RIGHT SEARCH PANEL
+   ========================================================= */
+
+.search-panel {
+
+  background:
+    linear-gradient(
+      135deg,
+      #eef4ff,
+      #fafcff
+    );
+
+  border:
+    1px solid #b8c9e4;
+
+}
+
+.search-title {
+
+  font-size: 13px;
+
+  font-weight: bold;
+
+  color: #244f86;
+
+  margin-bottom: 9px;
+
+}
+
+.search-label {
+
+  display: block;
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  margin:
+    7px 0 4px;
+
+  color: #3c5066;
+
+}
+
+.search-input {
+
+  width: 100%;
+
+}
+
+.search-button {
+
+  width: 100%;
+
+  margin-top: 8px;
+
+}
+
+.search-results {
+
+  margin-top: 8px;
+
+  max-height: 220px;
+
+  overflow-y: auto;
+
+  font-size: 10px;
+
+}
+
+.search-result-item {
+
+  padding: 7px;
+
+  margin-bottom: 5px;
+
+  border:
+    1px solid #d4deea;
+
+  border-radius: 6px;
+
+  background: white;
+
+  cursor: pointer;
+
+}
+
+.search-result-item:hover {
+
+  background: #eef5ff;
+
+}
+
+.search-result-name {
+
+  font-weight: bold;
+
+  color: #17365d;
+
+}
+
+.search-result-type {
+
+  color: #66727e;
+
+  margin-top: 2px;
+
+}
+
+.search-result-pin {
+
+  margin-top: 5px;
+
+  color: #246b39;
+
+  font-weight: bold;
+
+}
+
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+.map-column {
+
+  min-width: 0;
+
+}
+
+#map {
+
+  width: 100%;
+
+  height: 680px;
+
+  border:
+    2px solid #263746;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  position: relative;
+
+  background: #dfe7ed;
+
+}
+
+.leaflet-container {
+
+  width: 100%;
+
+  height: 100%;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+}
+
+
+/* =========================================================
+   CARTESIAN OVERLAY
+   ========================================================= */
+
+.cartesian-overlay {
+
+  pointer-events: none;
+
+  overflow: visible;
+
+}
+
+.cartesian-overlay line {
+
+  vector-effect:
+    non-scaling-stroke;
+
+}
+
+.cartesian-grid {
+
+  stroke: #34495e;
+
+  stroke-width: .65;
+
+  opacity: .18;
+
+}
+
+.cartesian-grid-major {
+
+  stroke: #34495e;
+
+  stroke-width: 1.15;
+
+  opacity: .34;
+
+}
+
+.cartesian-grid-10 {
+
+  stroke: #34495e;
+
+  stroke-width: 1.5;
+
+  opacity: .43;
+
+}
+
+.cartesian-axis {
+
+  stroke: #111827;
+
+  stroke-width: 2.5;
+
+  opacity: .88;
+
+}
+
+.coordinate-number {
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  fill: #263746;
+
+  paint-order: stroke;
+
+  stroke: white;
+
+  stroke-width: 3px;
+
+  stroke-linejoin: round;
+
+}
+
+.axis-label {
+
+  font-size: 11px;
+
+  font-weight: bold;
+
+  fill: #111827;
+
+  paint-order: stroke;
+
+  stroke: white;
+
+  stroke-width: 3px;
+
+}
+
+
+/* =========================================================
+   CUSTOM PIN
+   ========================================================= */
+
+.custom-pin {
+
+  position: relative;
+
+  width: 34px;
+
+  height: 44px;
+
+  cursor: pointer;
+
+}
+
+.pin-shape {
+
+  position: absolute;
+
+  left: 4px;
+
+  top: 2px;
+
+  width: 26px;
+
+  height: 26px;
+
+  border-radius:
+    50% 50% 50% 0;
+
+  transform:
+    rotate(-45deg);
+
+  border:
+    3px solid white;
+
+  box-shadow:
+    0 2px 5px rgba(0,0,0,.45);
+
+}
+
+.pin-dot {
+
+  position: absolute;
+
+  left: 12px;
+
+  top: 10px;
+
+  width: 10px;
+
+  height: 10px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  border:
+    2px solid rgba(0,0,0,.25);
+
+}
+
+
+/* =========================================================
+   PIN POPUP
+   ========================================================= */
+
+.pin-popup {
+
+  background:
+    rgba(20,28,36,.96);
+
+  color: white;
+
+  padding: 9px 11px;
+
+  border-radius: 7px;
+
+  min-width: 210px;
+
+  box-shadow:
+    0 4px 15px rgba(0,0,0,.35);
+
+  font-size: 11px;
+
+  line-height: 1.55;
+
+}
+
+.pin-popup-title {
+
+  font-size: 13px;
+
+  font-weight: bold;
+
+  margin-bottom: 3px;
+
+}
+
+.pin-popup-type {
+
+  color: #b9d8ff;
+
+  font-weight: bold;
+
+  margin-bottom: 5px;
+
+}
+
+.pin-popup-coordinates {
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  color: #ffd166;
+
+}
+
+.pin-popup-elevation {
+
+  color: #9ef01a;
+
+}
+
+
+/* =========================================================
+   ROUTE LINE
+   ========================================================= */
+
+.route-line {
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
+
+}
+
+.route-line-outline {
+
+  stroke: white;
+
+  stroke-width: 8;
+
+  opacity: .85;
+
+}
+
+.route-line-land {
+
+  stroke: #16a34a;
+
+  stroke-width: 5;
+
+}
+
+.route-line-water {
+
+  stroke: #1677d2;
+
+  stroke-width: 5;
+
+}
+
+.route-line-unknown {
+
+  stroke: #f97316;
+
+  stroke-width: 5;
+
+}
+
+
+/* =========================================================
+   TERRAIN NOTE
+   ========================================================= */
+
+.terrain-note {
+
+  position: absolute;
+
+  bottom: 10px;
+
+  right: 10px;
+
+  z-index: 1000;
+
+  background:
+    rgba(255,255,255,.92);
+
+  border:
+    1px solid #999;
+
+  border-radius: 5px;
+
+  padding:
+    5px 7px;
+
+  font-size: 10px;
+
+  pointer-events: none;
+
+}
+
+
+/* =========================================================
+   CONTROLS
+   ========================================================= */
+
+.controls {
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin-top: 10px;
+
+}
+
+button {
+
+  background: #17365d;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 7px;
+
+  padding:
+    8px 12px;
+
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition:
+    background .15s ease,
+    transform .1s ease;
+
+}
+
+button:hover {
+
+  background: #24558e;
+
+}
+
+button:active {
+
+  transform:
+    scale(.97);
+
+}
+
+
+/* =========================================================
+   INFORMATION
+   ========================================================= */
+
+.info {
+
+  margin-top: 10px;
+
+  padding: 10px;
+
+  background: #edf5fb;
+
+  border-left:
+    5px solid #17365d;
+
+  border-radius: 5px;
+
+  font-size: 12px;
+
+  line-height: 1.55;
+
+}
+
+#mouseCoordinate {
+
+  font-weight: bold;
+
+  color: #c1121f;
+
+  font-family:
+    "Courier New",
+    monospace;
+
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+
+  margin-top: 12px;
+
+  text-align: center;
+
+  font-size: 11px;
+
+  font-weight: bold;
+
+  color: #34495e;
+
+  line-height: 1.6;
+
+}
+
+.instructions {
+
+  text-align: center;
+
+  margin-top: 8px;
+
+  color: #59636d;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+
+}
+
+
+/* =========================================================
+   RIGHT DRAG
+   ========================================================= */
+
+#map.right-dragging {
+
+  cursor:
+    grabbing !important;
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .workspace {
+
+    grid-template-columns:
+      220px
+      minmax(0, 1fr)
+      220px;
+
+  }
+
+}
+
+@media (max-width: 850px) {
+
+  body {
+
+    padding: 8px;
+
+  }
+
+  .project {
+
+    width: 100%;
+
+    padding: 10px;
+
+  }
+
+  .workspace {
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+  .sidebar {
+
+    width: 100%;
+
+  }
+
+  #map {
+
+    height: 600px;
+
+  }
+
+  h1 {
+
+    font-size: 19px;
+
+  }
+
+}
+
+@media (max-width: 500px) {
+
+  #map {
+
+    height: 500px;
+
+  }
+
+}
+
+
+/* =========================================================
+   SEARCH MARKER
+   ========================================================= */
+
+.search-location-marker {
+
+  width: 22px;
+
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: #2563eb;
+
+  border:
+    4px solid white;
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.45);
+
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.loading {
+
+  opacity: .65;
+
+  pointer-events: none;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="project">
+
+
+<h1>
+Philippines Cartesian Planning Map
+</h1>
+
+<div class="subtitle">
+
+Interactive geographic map with calibrated
+400 × 400 Cartesian planning grid
+
+</div>
+
+
+<!-- =======================================================
+     CALIBRATION
+     ======================================================= -->
+
+<div class="calibration-panel">
+
+  <div class="calibration-title">
+
+    Coordinate Calibration
+
+  </div>
+
+  <div class="calibration-row">
+
+    <label for="calibrationSelect">
+      Coordinate Reference:
+    </label>
+
+    <select
+      id="calibrationSelect"
+      onchange="changeCalibration(this.value)"
+    >
+
+      <option value="philippines">
+        🇵🇭 Philippines — Whole Country
+      </option>
+
+      <option value="region1" selected>
+        Region I — Ilocos Region
+      </option>
+
+      <option value="region2">
+        Region II — Cagayan Valley
+      </option>
+
+      <option value="region3">
+        Region III — Central Luzon
+      </option>
+
+      <option value="region4a">
+        Region IV-A — CALABARZON
+      </option>
+
+      <option value="region4b">
+        Region IV-B — MIMAROPA
+      </option>
+
+      <option value="region5">
+        Region V — Bicol Region
+      </option>
+
+      <option value="region6">
+        Region VI — Western Visayas
+      </option>
+
+      <option value="region7">
+        Region VII — Central Visayas
+      </option>
+
+      <option value="region8">
+        Region VIII — Eastern Visayas
+      </option>
+
+      <option value="region9">
+        Region IX — Zamboanga Peninsula
+      </option>
+
+      <option value="region10">
+        Region X — Northern Mindanao
+      </option>
+
+      <option value="region11">
+        Region XI — Davao Region
+      </option>
+
+      <option value="region12">
+        Region XII — SOCCSKSARGEN
+      </option>
+
+      <option value="region13">
+        Region XIII — Caraga
+      </option>
+
+      <option value="nir">
+        Negros Island Region — NIR
+      </option>
+
+      <option value="car">
+        Cordillera Administrative Region — CAR
+      </option>
+
+      <option value="ncr">
+        National Capital Region — NCR
+      </option>
+
+      <option value="barmm">
+        BARMM
+      </option>
+
+    </select>
+
+
+    <label for="unitScaleSelect">
+      Unit Scale:
+    </label>
+
+    <select
+      id="unitScaleSelect"
+      onchange="changeUnitScale(this.value)"
+    >
+
+      <option value="1">
+        1 unit = 1 km
+      </option>
+
+      <option value="2">
+        1 unit = 2 km
+      </option>
+
+      <option value="5">
+        1 unit = 5 km
+      </option>
+
+      <option value="10" selected>
+        1 unit = 10 km
+      </option>
+
+      <option value="20">
+        1 unit = 20 km
+      </option>
+
+      <option value="25">
+        1 unit = 25 km
+      </option>
+
+      <option value="50">
+        1 unit = 50 km
+      </option>
+
+      <option value="100">
+        1 unit = 100 km
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <div class="calibration-info">
+
+    Current calibration:
+
+    <span id="calibrationName">
+      Region I — Ilocos Region
+    </span>
+
+    <br>
+
+    Mathematical origin:
+
+    <span id="originDisplay">
+      (0,0)
+    </span>
+
+    <br>
+
+    Scale:
+
+    <span id="scaleDisplay">
+      1 coordinate unit = 10 km
+    </span>
+
+    <br>
+
+    Grid:
+    <strong>400 × 400 units</strong>
+
+    ·
+
+    Range:
+    <strong>−200 to +200</strong>
+
+    <br>
+
+    Total geographic width:
+
+    <strong id="geographicWidth">
+      4,000 km
+    </strong>
+
+    ×
+
+    <strong id="geographicHeight">
+      4,000 km
+    </strong>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     THREE COLUMN WORKSPACE
+     ======================================================= -->
+
+<div class="workspace">
+
+
+<!-- =======================================================
+     LEFT SIDEBAR
+     ======================================================= -->
+
+<div class="sidebar">
+
+
+<!-- PIN PANEL -->
+
+<div class="sidebar-panel pin-panel">
+
+  <div class="pin-panel-title">
+    📍 Pin Placement
+  </div>
+
+
+  <div class="pin-row">
+
+    <label>
+      Pin Type
+    </label>
+
+    <input
+      id="pinType"
+      class="pin-type"
+      type="text"
+      value="Major Area"
+      placeholder="e.g. Major Area"
+    >
+
+
+    <label>
+      Pin Name
+    </label>
+
+    <input
+      id="pinName"
+      class="pin-name"
+      type="text"
+      value="Unnamed Location"
+      placeholder="e.g. Laoag City"
+    >
+
+  </div>
+
+
+  <div class="pin-row"
+       style="margin-top:9px;">
+
+    <label>
+      Pin Color
+    </label>
+
+    <div class="color-options">
+
+      <button
+        type="button"
+        class="color-button selected"
+        data-color="#e63946"
+        style="background:#e63946"
+        title="Red"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#2563eb"
+        style="background:#2563eb"
+        title="Blue"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#16a34a"
+        style="background:#16a34a"
+        title="Green"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#facc15"
+        style="background:#facc15"
+        title="Yellow"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#9333ea"
+        style="background:#9333ea"
+        title="Purple"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#f97316"
+        style="background:#f97316"
+        title="Orange"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#0891b2"
+        style="background:#0891b2"
+        title="Cyan"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#ec4899"
+        style="background:#ec4899"
+        title="Pink"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#374151"
+        style="background:#374151"
+        title="Black"
+        onclick="selectPinColor(this)"
+      ></button>
+
+    </div>
+
+  </div>
+
+
+  <div class="pin-instructions">
+
+    <strong>Double-click</strong>
+    anywhere on the map to place the selected pin.
+
+    <br>
+
+    <strong>Hover</strong>
+    over a pin to view its information.
+
+    <br>
+
+    <strong>Hold a pin for 2 seconds</strong>
+    to remove it.
+
+  </div>
+
+
+  <div class="pin-count">
+
+    Pins currently placed:
+    <span id="pinCount">0</span>
+
+  </div>
+
+</div>
+
+
+<!-- ROUTE PLANNER -->
+
+<div class="sidebar-panel route-panel">
+
+  <div class="route-title">
+    🧭 Route Planner
+  </div>
+
+
+  <label class="route-label">
+    Start Pin
+  </label>
+
+  <select
+    id="routeStart"
+    class="route-select"
+  >
+
+    <option value="">
+      Select start pin...
+    </option>
+
+  </select>
+
+
+  <label class="route-label">
+    Destination Pin
+  </label>
+
+  <select
+    id="routeEnd"
+    class="route-select"
+  >
+
+    <option value="">
+      Select destination...
+    </option>
+
+  </select>
+
+
+  <div class="route-buttons">
+
+    <button
+      onclick="calculateRoute()"
+    >
+      Find Route
+    </button>
+
+    <button
+      onclick="clearRoute()"
+    >
+      Clear
+    </button>
+
+  </div>
+
+
+  <div
+    id="routeStatus"
+    class="route-status"
+  >
+    Add at least two pins to use the route planner.
+  </div>
+
+
+  <div
+    id="routeResult"
+    class="route-result"
+  ></div>
+
+
+  <div class="route-legend">
+
+    <span class="legend-green">
+      ● Green
+    </span>
+    Land / road route
+
+    <br>
+
+    <span class="legend-blue">
+      ● Blue
+    </span>
+    Water / ferry route
+
+    <br>
+
+    <span class="legend-orange">
+      ● Orange
+    </span>
+    Unclassified route
+
+  </div>
+
+</div>
+
+</div>
+
+
+<!-- =======================================================
+     MAP
+     ======================================================= -->
+
+<div class="map-column">
+
+  <div id="map">
+
+    <div
+      class="terrain-note"
+      id="terrainNote"
+    >
+      Terrain layer hidden
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     RIGHT SIDEBAR
+     ======================================================= -->
+
+<div class="sidebar">
+
+
+<div class="sidebar-panel search-panel">
+
+  <div class="search-title">
+    🔎 Location Search
+  </div>
+
+
+  <label class="search-label">
+    Search location
+  </label>
+
+  <input
+    id="locationSearch"
+    class="search-input"
+    type="text"
+    placeholder="e.g. SM Fairview, Vigan..."
+    onkeydown="handleSearchKey(event)"
+  >
+
+
+  <button
+    class="search-button"
+    onclick="searchLocation()"
+  >
+    Search Location
+  </button>
+
+
+  <div
+    id="searchStatus"
+    style="
+      margin-top:7px;
+      font-size:10px;
+      color:#66727e;
+      line-height:1.4;
+    "
+  >
+    Search for a place and the map will zoom to it.
+  </div>
+
+
+  <div
+    id="searchResults"
+    class="search-results"
+  ></div>
+
+</div>
+
+
+<div class="sidebar-panel search-panel">
+
+  <div class="search-title">
+    🗺️ Places & Landmarks
+  </div>
+
+
+  <label class="search-label">
+    Region
+  </label>
+
+  <select
+    id="landmarkRegion"
+    class="search-input"
+  >
+
+    <option value="all">
+      All Philippines
+    </option>
+
+    <option value="region1">
+      Region I — Ilocos Region
+    </option>
+
+    <option value="region2">
+      Region II — Cagayan Valley
+    </option>
+
+    <option value="region3">
+      Region III — Central Luzon
+    </option>
+
+    <option value="region4a">
+      Region IV-A — CALABARZON
+    </option>
+
+    <option value="region4b">
+      Region IV-B — MIMAROPA
+    </option>
+
+    <option value="region5">
+      Region V — Bicol Region
+    </option>
+
+    <option value="region6">
+      Region VI — Western Visayas
+    </option>
+
+    <option value="region7">
+      Region VII — Central Visayas
+    </option>
+
+    <option value="region8">
+      Region VIII — Eastern Visayas
+    </option>
+
+    <option value="region9">
+      Region IX — Zamboanga Peninsula
+    </option>
+
+    <option value="region10">
+      Region X — Northern Mindanao
+    </option>
+
+    <option value="region11">
+      Region XI — Davao Region
+    </option>
+
+    <option value="region12">
+      Region XII — SOCCSKSARGEN
+    </option>
+
+    <option value="region13">
+      Region XIII — Caraga
+    </option>
+
+    <option value="nir">
+      Negros Island Region
+    </option>
+
+    <option value="car">
+      Cordillera Administrative Region
+    </option>
+
+    <option value="ncr">
+      National Capital Region
+    </option>
+
+    <option value="barmm">
+      BARMM
+    </option>
+
+  </select>
+
+
+  <label class="search-label">
+    Place Type
+  </label>
+
+  <select
+    id="landmarkType"
+    class="search-input"
+  >
+
+    <option value="tourism">
+      All Landmarks & Tourist Spots
+    </option>
+
+    <option value="attraction">
+      Tourist Attractions
+    </option>
+
+    <option value="museum">
+      Museums
+    </option>
+
+    <option value="monument">
+      Monuments
+    </option>
+
+    <option value="viewpoint">
+      Viewpoints
+    </option>
+
+    <option value="park">
+      Parks
+    </option>
+
+    <option value="beach">
+      Beaches
+    </option>
+
+    <option value="waterfall">
+      Waterfalls
+    </option>
+
+    <option value="church">
+      Churches
+    </option>
+
+    <option value="historic">
+      Historic Places
+    </option>
+
+  </select>
+
+
+  <button
+    class="search-button"
+    onclick="findLandmarks()"
+  >
+    Find Matching Places
+  </button>
+
+
+  <div
+    id="landmarkStatus"
+    style="
+      margin-top:7px;
+      font-size:10px;
+      color:#66727e;
+      line-height:1.4;
+    "
+  >
+    Choose a region and place type.
+  </div>
+
+
+  <div
+    id="landmarkResults"
+    class="search-results"
+  ></div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- =======================================================
+     CONTROLS
+     ======================================================= -->
+
+<div class="controls">
+
+  <button onclick="resetView()">
+    Reset View
+  </button>
+
+  <button onclick="fitSelectedRegion()">
+    Fit Calibration Area
+  </button>
+
+  <button onclick="toggleGrid()">
+    Toggle Grid
+  </button>
+
+  <button onclick="toggleLabels()">
+    Toggle Coordinates
+  </button>
+
+  <button onclick="toggleTerrain()">
+    Mountains / Terrain
+  </button>
+
+  <button onclick="locatePhilippines()">
+    Philippines
+  </button>
+
+  <button onclick="clearAllPins()">
+    Clear All Pins
+  </button>
+
+</div>
+
+
+<!-- =======================================================
+     INFORMATION
+     ======================================================= -->
+
+<div class="info">
+
+  <strong>
+    Cursor Coordinate:
+  </strong>
+
+  <span id="mouseCoordinate">
+    Move your mouse over the map
+  </span>
+
+  <br>
+
+  <strong>
+    Navigation:
+  </strong>
+
+  Mouse wheel = zoom ·
+  Right-click + drag = pan ·
+  Double-click = place pin
+
+  <br>
+
+  <strong>
+    Coordinate System:
+  </strong>
+
+  +X = East ·
+  −X = West ·
+  +Y = North ·
+  −Y = South
+
+</div>
+
+
+<div class="footer">
+
+  Coordinate scale:
+  <span id="footerScale">
+    1 unit = 10 km
+  </span>
+
+  <br>
+
+  Cartesian plane:
+  400 × 400 units
+
+  <br>
+
+  Coordinate range:
+  −200 ≤ X ≤ +200 ·
+  −200 ≤ Y ≤ +200
+
+</div>
+
+
+<div class="instructions">
+
+  The Cartesian coordinate system is calibrated independently
+  from the geographic map.
+
+  <br>
+
+  Changing the coordinate reference changes the mathematical
+  origin.
+
+  <br>
+
+  Changing the unit scale changes how many kilometers each
+  Cartesian unit represents.
+
+  <br>
+
+  Pins automatically update their Cartesian coordinates when
+  the calibration or scale changes.
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   PHILIPPINES CARTESIAN PLANNING MAP
+   ========================================================= */
+
+
+/* =========================================================
+   1. BASIC SETTINGS
+   ========================================================= */
+
+let KM_PER_UNIT = 10;
+
+let METERS_PER_UNIT =
+  KM_PER_UNIT * 1000;
+
+
+const X_MIN = -200;
+
+const X_MAX = 200;
+
+const Y_MIN = -200;
+
+const Y_MAX = 200;
+
+
+/* =========================================================
+   2. CALIBRATIONS
+   ========================================================= */
+
+const calibrations = {
+
+  philippines: {
+    name: "Philippines — Whole Country",
+    lat: 12.8797,
+    lng: 121.7740
+  },
+
+  region1: {
+    name: "Region I — Ilocos Region",
+    lat: 16.55,
+    lng: 120.45
+  },
+
+  region2: {
+    name: "Region II — Cagayan Valley",
+    lat: 17.6567,
+    lng: 121.7333
+  },
+
+  region3: {
+    name: "Region III — Central Luzon",
+    lat: 15.20,
+    lng: 120.75
+  },
+
+  region4a: {
+    name: "Region IV-A — CALABARZON",
+    lat: 14.10,
+    lng: 121.25
+  },
+
+  region4b: {
+    name: "Region IV-B — MIMAROPA",
+    lat: 11.90,
+    lng: 121.50
+  },
+
+  region5: {
+    name: "Region V — Bicol Region",
+    lat: 13.35,
+    lng: 123.40
+  },
+
+  region6: {
+    name: "Region VI — Western Visayas",
+    lat: 11.00,
+    lng: 122.00
+  },
+
+  region7: {
+    name: "Region VII — Central Visayas",
+    lat: 10.25,
+    lng: 123.75
+  },
+
+  region8: {
+    name: "Region VIII — Eastern Visayas",
+    lat: 11.30,
+    lng: 125.00
+  },
+
+  region9: {
+    name: "Region IX — Zamboanga Peninsula",
+    lat: 7.85,
+    lng: 123.20
+  },
+
+  region10: {
+    name: "Region X — Northern Mindanao",
+    lat: 8.75,
+    lng: 124.85
+  },
+
+  region11: {
+    name: "Region XI — Davao Region",
+    lat: 7.10,
+    lng: 125.60
+  },
+
+  region12: {
+    name: "Region XII — SOCCSKSARGEN",
+    lat: 6.60,
+    lng: 124.72
+  },
+
+  region13: {
+    name: "Region XIII — Caraga",
+    lat: 8.80,
+    lng: 125.80
+  },
+
+  nir: {
+    name: "Negros Island Region — NIR",
+    lat: 10.00,
+    lng: 123.10
+  },
+
+  car: {
+    name: "Cordillera Administrative Region — CAR",
+    lat: 17.25,
+    lng: 120.80
+  },
+
+  ncr: {
+    name: "National Capital Region — NCR",
+    lat: 14.60,
+    lng: 121.00
+  },
+
+  barmm: {
+    name: "BARMM",
+    lat: 7.95,
+    lng: 124.35
+  }
+
+};
+
+
+/* =========================================================
+   3. MAP
+   ========================================================= */
+
+const map =
+  L.map(
+    "map",
+    {
+
+      dragging: false,
+
+      zoomControl: true,
+
+      scrollWheelZoom: true,
+
+      doubleClickZoom: false,
+
+      attributionControl: true
+
+    }
+  );
+
+
+/* =========================================================
+   4. BASE MAP
+   ========================================================= */
+
+const streetLayer =
+  L.tileLayer(
+
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
+    {
+
+      maxZoom: 19,
+
+      attribution:
+        "&copy; OpenStreetMap contributors"
+
+    }
+
+  ).addTo(map);
+
+
+/* =========================================================
+   5. TERRAIN
+   ========================================================= */
+
+const terrainLayer =
+  L.tileLayer(
+
+    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+
+    {
+
+      maxZoom: 17,
+
+      opacity: 0.82,
+
+      attribution:
+        "Map data: OpenStreetMap contributors, SRTM | Map style: OpenTopoMap"
+
+    }
+
+  );
+
+
+let terrainVisible = false;
+
+
+/* =========================================================
+   6. CALIBRATION
+   ========================================================= */
+
+let currentCalibration = "region1";
+
+let currentOrigin =
+  L.latLng(
+    calibrations[currentCalibration].lat,
+    calibrations[currentCalibration].lng
+  );
+
+
+const crs = map.options.crs;
+
+
+let projectedOrigin =
+  crs.project(
+    currentOrigin
+  );
+
+
+/* =========================================================
+   7. COORDINATE CONVERSION
+   ========================================================= */
+
+function coordinateToLatLng(x, y) {
+
+  const projectedPoint =
+    L.point(
+
+      projectedOrigin.x +
+      x * METERS_PER_UNIT,
+
+      projectedOrigin.y -
+      y * METERS_PER_UNIT
+
+    );
+
+  return crs.unproject(
+    projectedPoint
+  );
+
+}
+
+
+function latLngToCoordinate(latlng) {
+
+  const projected =
+    crs.project(latlng);
+
+
+  const x =
+    (
+      projected.x -
+      projectedOrigin.x
+    ) /
+    METERS_PER_UNIT;
+
+
+  const y =
+    (
+      projectedOrigin.y -
+      projected.y
+    ) /
+    METERS_PER_UNIT;
+
+
+  return {
+    x: x,
+    y: y
+  };
+
+}
+
+
+/* =========================================================
+   8. FORMAT
+   ========================================================= */
+
+function formatNumber(number) {
+
+  return Number(number)
+    .toLocaleString(
+      "en-US",
+      {
+        maximumFractionDigits: 2
+      }
+    );
+
+}
+
+
+/* =========================================================
+   9. CALIBRATION INFO
+   ========================================================= */
+
+function updateCalibrationInfo() {
+
+  const scaleText =
+    `1 coordinate unit = ${formatNumber(KM_PER_UNIT)} km`;
+
+
+  document.getElementById(
+    "scaleDisplay"
+  ).textContent =
+    scaleText;
+
+
+  document.getElementById(
+    "footerScale"
+  ).textContent =
+    `1 unit = ${formatNumber(KM_PER_UNIT)} km`;
+
+
+  const totalWidth =
+    X_MAX - X_MIN;
+
+
+  const totalHeight =
+    Y_MAX - Y_MIN;
+
+
+  document.getElementById(
+    "geographicWidth"
+  ).textContent =
+    `${formatNumber(totalWidth * KM_PER_UNIT)} km`;
+
+
+  document.getElementById(
+    "geographicHeight"
+  ).textContent =
+    `${formatNumber(totalHeight * KM_PER_UNIT)} km`;
+
+}
+
+
+/* =========================================================
+   10. CHANGE SCALE
+   ========================================================= */
+
+function changeUnitScale(value) {
+
+  const newScale =
+    Number(value);
+
+
+  if (
+    !Number.isFinite(newScale) ||
+    newScale <= 0
+  ) {
+
+    return;
+
+  }
+
+
+  KM_PER_UNIT =
+    newScale;
+
+
+  METERS_PER_UNIT =
+    KM_PER_UNIT * 1000;
+
+
+  updateCalibrationInfo();
+
+  drawCartesianGrid();
+
+  refreshAllPinCoordinates();
+
+}
+
+
+/* =========================================================
+   11. CHANGE CALIBRATION
+   ========================================================= */
+
+function changeCalibration(key) {
+
+  if (!calibrations[key]) {
+    return;
+  }
+
+
+  currentCalibration =
+    key;
+
+
+  currentOrigin =
+    L.latLng(
+      calibrations[key].lat,
+      calibrations[key].lng
+    );
+
+
+  projectedOrigin =
+    crs.project(
+      currentOrigin
+    );
+
+
+  document.getElementById(
+    "calibrationName"
+  ).textContent =
+    calibrations[key].name;
+
+
+  drawCartesianGrid();
+
+  refreshAllPinCoordinates();
+
+  fitSelectedRegion();
+
+}
+
+
+/* =========================================================
+   12. CARTESIAN SVG
+   ========================================================= */
+
+const mapElement =
+  document.getElementById(
+    "map"
+  );
+
+
+const cartesianSVG =
+  document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "svg"
+  );
+
+
+cartesianSVG.setAttribute(
+  "class",
+  "cartesian-overlay"
+);
+
+
+cartesianSVG.style.position =
+  "absolute";
+
+cartesianSVG.style.left =
+  "0";
+
+cartesianSVG.style.top =
+  "0";
+
+cartesianSVG.style.width =
+  "100%";
+
+cartesianSVG.style.height =
+  "100%";
+
+cartesianSVG.style.zIndex =
+  "450";
+
+cartesianSVG.style.pointerEvents =
+  "none";
+
+
+mapElement.appendChild(
+  cartesianSVG
+);
+
+
+const overlayGroup =
+  document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "g"
+  );
+
+
+cartesianSVG.appendChild(
+  overlayGroup
+);
+
+
+/* =========================================================
+   13. GRID
+   ========================================================= */
+
+let gridVisible = true;
+
+let labelsVisible = true;
+
+
+function createLine(
+  x1,
+  y1,
+  x2,
+  y2,
+  className
+) {
+
+  const line =
+    document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "line"
+    );
+
+
+  line.setAttribute("x1", x1);
+
+  line.setAttribute("y1", y1);
+
+  line.setAttribute("x2", x2);
+
+  line.setAttribute("y2", y2);
+
+  line.setAttribute(
+    "class",
+    className
+  );
+
+
+  return line;
+
+}
+
+
+function createText(
+  x,
+  y,
+  text,
+  anchor = "middle",
+  className = "coordinate-number"
+) {
+
+  const label =
+    document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "text"
+    );
+
+
+  label.setAttribute(
+    "x",
+    x
+  );
+
+  label.setAttribute(
+    "y",
+    y
+  );
+
+  label.setAttribute(
+    "class",
+    className
+  );
+
+  label.setAttribute(
+    "text-anchor",
+    anchor
+  );
+
+
+  label.textContent =
+    text;
+
+
+  return label;
+
+}
+
+
+function getGridStep() {
+
+  const zoom =
+    map.getZoom();
+
+
+  if (zoom >= 11) {
+    return 1;
+  }
+
+  if (zoom >= 9) {
+    return 2;
+  }
+
+  if (zoom >= 7) {
+    return 5;
+  }
+
+  return 10;
+
+}
+
+
+/* =========================================================
+   14. DRAW GRID
+   ========================================================= */
+
+function drawCartesianGrid() {
+
+  while (
+    overlayGroup.firstChild
+  ) {
+
+    overlayGroup.removeChild(
+      overlayGroup.firstChild
+    );
+
+  }
+
+
+  if (!gridVisible) {
+    return;
+  }
+
+
+  const step =
+    getGridStep();
+
+
+  for (
+    let x = X_MIN;
+    x <= X_MAX;
+    x += step
+  ) {
+
+    const top =
+      map.latLngToContainerPoint(
+        coordinateToLatLng(
+          x,
+          Y_MAX
+        )
+      );
+
+
+    const bottom =
+      map.latLngToContainerPoint(
+        coordinateToLatLng(
+          x,
+          Y_MIN
+        )
+      );
+
+
+    let lineClass =
+      "cartesian-grid";
+
+
+    if (x === 0) {
+
+      lineClass =
+        "cartesian-axis";
+
+    }
+
+    else if (x % 10 === 0) {
+
+      lineClass =
+        "cartesian-grid-10";
+
+    }
+
+    else if (x % 5 === 0) {
+
+      lineClass =
+        "cartesian-grid-major";
+
+    }
+
+
+    overlayGroup.appendChild(
+      createLine(
+        top.x,
+        top.y,
+        bottom.x,
+        bottom.y,
+        lineClass
+      )
+    );
+
+
+    if (
+      labelsVisible &&
+      x % 10 === 0 &&
+      x !== 0
+    ) {
+
+      overlayGroup.appendChild(
+        createText(
+          bottom.x,
+          bottom.y - 6,
+          x
+        )
+      );
+
+    }
+
+  }
+
+
+  for (
+    let y = Y_MIN;
+    y <= Y_MAX;
+    y += step
+  ) {
+
+    const left =
+      map.latLngToContainerPoint(
+        coordinateToLatLng(
+          X_MIN,
+          y
+        )
+      );
+
+
+    const right =
+      map.latLngToContainerPoint(
+        coordinateToLatLng(
+          X_MAX,
+          y
+        )
+      );
+
+
+    let lineClass =
+      "cartesian-grid";
+
+
+    if (y === 0) {
+
+      lineClass =
+        "cartesian-axis";
+
+    }
+
+    else if (y % 10 === 0) {
+
+      lineClass =
+        "cartesian-grid-10";
+
+    }
+
+    else if (y % 5 === 0) {
+
+      lineClass =
+        "cartesian-grid-major";
+
+    }
+
+
+    overlayGroup.appendChild(
+      createLine(
+        left.x,
+        left.y,
+        right.x,
+        right.y,
+        lineClass
+      )
+    );
+
+
+    if (
+      labelsVisible &&
+      y % 10 === 0 &&
+      y !== 0
+    ) {
+
+      overlayGroup.appendChild(
+        createText(
+          left.x + 6,
+          left.y + 4,
+          y,
+          "start"
+        )
+      );
+
+    }
+
+  }
+
+
+  const originPoint =
+    map.latLngToContainerPoint(
+      currentOrigin
+    );
+
+
+  if (labelsVisible) {
+
+    overlayGroup.appendChild(
+      createText(
+        originPoint.x + 8,
+        originPoint.y - 8,
+        "0,0",
+        "start"
+      )
+    );
+
+  }
+
+
+  const cross = 8;
+
+
+  overlayGroup.appendChild(
+    createLine(
+      originPoint.x - cross,
+      originPoint.y,
+      originPoint.x + cross,
+      originPoint.y,
+      "cartesian-axis"
+    )
+  );
+
+
+  overlayGroup.appendChild(
+    createLine(
+      originPoint.x,
+      originPoint.y - cross,
+      originPoint.x,
+      originPoint.y + cross,
+      "cartesian-axis"
+    )
+  );
+
+
+  const eastPoint =
+    map.latLngToContainerPoint(
+      coordinateToLatLng(
+        X_MAX,
+        0
+      )
+    );
+
+
+  if (labelsVisible) {
+
+    overlayGroup.appendChild(
+      createText(
+        eastPoint.x - 8,
+        eastPoint.y - 10,
+        "+X EAST",
+        "end",
+        "axis-label"
+      )
+    );
+
+  }
+
+
+  const northPoint =
+    map.latLngToContainerPoint(
+      coordinateToLatLng(
+        0,
+        Y_MAX
+      )
+    );
+
+
+  if (labelsVisible) {
+
+    overlayGroup.appendChild(
+      createText(
+        northPoint.x + 10,
+        northPoint.y + 15,
+        "+Y NORTH",
+        "start",
+        "axis-label"
+      )
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   15. GRID EVENTS
+   ========================================================= */
+
+map.on(
+  "zoom move resize zoomend moveend",
+  drawCartesianGrid
+);
+
+
+/* =========================================================
+   16. MOUSE COORDINATES
+   ========================================================= */
+
+map.on(
+  "mousemove",
+  function(event) {
+
+    const coordinate =
+      latLngToCoordinate(
+        event.latlng
+      );
+
+
+    const x =
+      Math.round(
+        coordinate.x * 10
+      ) / 10;
+
+
+    const y =
+      Math.round(
+        coordinate.y * 10
+      ) / 10;
+
+
+    document.getElementById(
+      "mouseCoordinate"
+    ).textContent =
+      `(${x}, ${y})`;
+
+  }
+);
+
+
+/* =========================================================
+   17. RIGHT CLICK PANNING
+   ========================================================= */
+
+mapElement.addEventListener(
+  "contextmenu",
+  function(event) {
+
+    event.preventDefault();
+
+  }
+);
+
+
+let rightDragging = false;
+
+let lastMousePosition = null;
+
+
+mapElement.addEventListener(
+  "mousedown",
+  function(event) {
+
+    if (event.button !== 2) {
+      return;
+    }
+
+
+    rightDragging = true;
+
+
+    lastMousePosition = {
+
+      x: event.clientX,
+
+      y: event.clientY
+
+    };
+
+
+    mapElement.classList.add(
+      "right-dragging"
+    );
+
+
+    event.preventDefault();
+
+  }
+);
+
+
+window.addEventListener(
+  "mousemove",
+  function(event) {
+
+    if (!rightDragging) {
+      return;
+    }
+
+
+    const dx =
+      event.clientX -
+      lastMousePosition.x;
+
+
+    const dy =
+      event.clientY -
+      lastMousePosition.y;
+
+
+    map.panBy(
+      [
+        -dx,
+        -dy
+      ],
+      {
+        animate: false
+      }
+    );
+
+
+    lastMousePosition = {
+
+      x: event.clientX,
+
+      y: event.clientY
+
+    };
+
+  }
+);
+
+
+window.addEventListener(
+  "mouseup",
+  function(event) {
+
+    if (event.button !== 2) {
+      return;
+    }
+
+
+    rightDragging = false;
+
+    lastMousePosition = null;
+
+
+    mapElement.classList.remove(
+      "right-dragging"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   18. TOGGLES
+   ========================================================= */
+
+function toggleGrid() {
+
+  gridVisible =
+    !gridVisible;
+
+  drawCartesianGrid();
+
+}
+
+
+function toggleLabels() {
+
+  labelsVisible =
+    !labelsVisible;
+
+  drawCartesianGrid();
+
+}
+
+
+function toggleTerrain() {
+
+  terrainVisible =
+    !terrainVisible;
+
+
+  if (terrainVisible) {
+
+    terrainLayer.addTo(
+      map
+    );
+
+
+    document.getElementById(
+      "terrainNote"
+    ).textContent =
+      "🏔 Terrain / elevation visible";
+
+  }
+
+  else {
+
+    map.removeLayer(
+      terrainLayer
+    );
+
+
+    document.getElementById(
+      "terrainNote"
+    ).textContent =
+      "Terrain layer hidden";
+
+  }
+
+
+  cartesianSVG.style.zIndex =
+    "450";
+
+}
+
+
+/* =========================================================
+   19. PIN SYSTEM
+   ========================================================= */
+
+let selectedPinColor =
+  "#e63946";
+
+
+const placedPins = [];
+
+
+function selectPinColor(button) {
+
+  selectedPinColor =
+    button.dataset.color;
+
+
+  document
+    .querySelectorAll(
+      ".color-button"
+    )
+    .forEach(
+      function(item) {
+
+        item.classList.remove(
+          "selected"
+        );
+
+      }
+    );
+
+
+  button.classList.add(
+    "selected"
+  );
+
+}
+
+
+/* =========================================================
+   20. PIN ICON
+   ========================================================= */
+
+function createPinIcon(color) {
+
+  return L.divIcon({
+
+    className: "",
+
+    html:
+
+      `<div class="custom-pin">
+
+        <div
+          class="pin-shape"
+          style="background:${color};"
+        ></div>
+
+        <div class="pin-dot"></div>
+
+      </div>`,
+
+    iconSize:
+      [34,44],
+
+    iconAnchor:
+      [17,42],
+
+    popupAnchor:
+      [0,-42]
+
+  });
+
+}
+
+
+/* =========================================================
+   21. PIN INFORMATION
+   ========================================================= */
+
+function buildPinInformation(pin) {
+
+  const coordinate =
+    latLngToCoordinate(
+      L.latLng(
+        pin.latitude,
+        pin.longitude
+      )
+    );
+
+
+  const x =
+    Math.round(
+      coordinate.x * 100
+    ) / 100;
+
+
+  const y =
+    Math.round(
+      coordinate.y * 100
+    ) / 100;
+
+
+  let elevationText =
+    "Unavailable";
+
+
+  if (
+    pin.elevation !== null &&
+    pin.elevation !== undefined
+  ) {
+
+    elevationText =
+      `${formatNumber(pin.elevation)} m`;
+
+  }
+
+
+  return `
+
+    <div class="pin-popup">
+
+      <div class="pin-popup-title">
+        ${escapeHTML(pin.name)}
+      </div>
+
+      <div class="pin-popup-type">
+        ${escapeHTML(pin.type)}
+      </div>
+
+      <div>
+        <strong>Latitude:</strong>
+        ${pin.latitude.toFixed(6)}
+      </div>
+
+      <div>
+        <strong>Longitude:</strong>
+        ${pin.longitude.toFixed(6)}
+      </div>
+
+      <div class="pin-popup-coordinates">
+
+        <strong>Cartesian:</strong>
+
+        X = ${x},
+        Y = ${y}
+
+      </div>
+
+      <div class="pin-popup-elevation">
+
+        <strong>Elevation:</strong>
+
+        ${elevationText}
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+function escapeHTML(text) {
+
+  return String(text)
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   22. ADD PIN
+   ========================================================= */
+
+function addPin(latlng, customName = null, customType = null, customColor = null) {
+
+  const nameInput =
+    document.getElementById(
+      "pinName"
+    );
+
+
+  const typeInput =
+    document.getElementById(
+      "pinType"
+    );
+
+
+  const name =
+    customName ||
+    nameInput.value.trim() ||
+    "Unnamed Location";
+
+
+  const type =
+    customType ||
+    typeInput.value.trim() ||
+    "Area";
+
+
+  const pin = {
+
+    id:
+      Date.now() +
+      Math.random(),
+
+    name:
+      name,
+
+    type:
+      type,
+
+    color:
+      customColor ||
+      selectedPinColor,
+
+    latitude:
+      latlng.lat,
+
+    longitude:
+      latlng.lng,
+
+    elevation:
+      null,
+
+    marker:
+      null
+
+  };
+
+
+  pin.marker =
+    L.marker(
+      latlng,
+      {
+
+        icon:
+          createPinIcon(
+            pin.color
+          ),
+
+        interactive:
+          true,
+
+        zIndexOffset:
+          1000
+
+      }
+    ).addTo(map);
+
+
+  pin.marker.bindTooltip(
+
+    buildPinInformation(
+      pin
+    ),
+
+    {
+
+      direction:
+        "top",
+
+      offset:
+        [0,-40],
+
+      opacity:
+        1,
+
+      permanent:
+        false,
+
+      className:
+        "pin-tooltip"
+
+    }
+
+  );
+
+
+  pin.marker.on(
+    "mouseover",
+    function() {
+
+      this.openTooltip();
+
+    }
+  );
+
+
+  pin.marker.on(
+    "mouseout",
+    function() {
+
+      this.closeTooltip();
+
+    }
+  );
+
+
+  setupPinLongPress(
+    pin
+  );
+
+
+  placedPins.push(
+    pin
+  );
+
+
+  updatePinCount();
+
+  updateRoutePinSelectors();
+
+
+  fetchElevation(
+    pin
+  );
+
+
+  return pin;
+
+}
+
+
+/* =========================================================
+   23. LONG PRESS
+   ========================================================= */
+
+function setupPinLongPress(pin) {
+
+  let holdTimer = null;
+
+  let holdTriggered = false;
+
+
+  function startHold() {
+
+    holdTriggered =
+      false;
+
+
+    holdTimer =
+      setTimeout(
+        function() {
+
+          holdTriggered =
+            true;
+
+          removePin(
+            pin
+          );
+
+        },
+        2000
+      );
+
+  }
+
+
+  function cancelHold() {
+
+    if (holdTimer) {
+
+      clearTimeout(
+        holdTimer
+      );
+
+      holdTimer =
+        null;
+
+    }
+
+  }
+
+
+  pin.marker.on(
+    "mousedown",
+    function(event) {
+
+      if (
+        event.originalEvent.button !== 0
+      ) {
+
+        return;
+
+      }
+
+      startHold();
+
+    }
+  );
+
+
+  pin.marker.on(
+    "mouseup",
+    cancelHold
+  );
+
+
+  pin.marker.on(
+    "mouseout",
+    cancelHold
+  );
+
+
+  pin.marker.on(
+    "click",
+    function(event) {
+
+      if (holdTriggered) {
+
+        event.originalEvent.preventDefault();
+
+        event.originalEvent.stopPropagation();
+
+      }
+
+    }
+  );
+
+
+  pin.marker.on(
+    "touchstart",
+    startHold
+  );
+
+
+  pin.marker.on(
+    "touchend",
+    cancelHold
+  );
+
+
+  pin.marker.on(
+    "touchcancel",
+    cancelHold
+  );
+
+}
+
+
+/* =========================================================
+   24. REMOVE PIN
+   ========================================================= */
+
+function removePin(pin) {
+
+  if (pin.marker) {
+
+    map.removeLayer(
+      pin.marker
+    );
+
+  }
+
+
+  const index =
+    placedPins.indexOf(
+      pin
+    );
+
+
+  if (index !== -1) {
+
+    placedPins.splice(
+      index,
+      1
+    );
+
+  }
+
+
+  updatePinCount();
+
+  updateRoutePinSelectors();
+
+}
+
+
+/* =========================================================
+   25. CLEAR PINS
+   ========================================================= */
+
+function clearAllPins() {
+
+  if (
+    placedPins.length === 0
+  ) {
+
+    return;
+
+  }
+
+
+  const confirmed =
+    confirm(
+      "Remove all pins from the map?"
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  placedPins.forEach(
+    function(pin) {
+
+      if (pin.marker) {
+
+        map.removeLayer(
+          pin.marker
+        );
+
+      }
+
+    }
+  );
+
+
+  placedPins.length =
+    0;
+
+
+  updatePinCount();
+
+  updateRoutePinSelectors();
+
+  clearRoute();
+
+}
+
+
+/* =========================================================
+   26. PIN COUNT
+   ========================================================= */
+
+function updatePinCount() {
+
+  document.getElementById(
+    "pinCount"
+  ).textContent =
+    placedPins.length;
+
+}
+
+
+/* =========================================================
+   27. REFRESH PINS
+   ========================================================= */
+
+function refreshAllPinCoordinates() {
+
+  placedPins.forEach(
+    function(pin) {
+
+      if (pin.marker) {
+
+        pin.marker.setTooltipContent(
+
+          buildPinInformation(
+            pin
+          )
+
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   28. ELEVATION
+   ========================================================= */
+
+async function fetchElevation(pin) {
+
+  try {
+
+    const url =
+      `https://api.open-elevation.com/api/v1/lookup?locations=${pin.latitude},${pin.longitude}`;
+
+
+    const response =
+      await fetch(
+        url
+      );
+
+
+    if (!response.ok) {
+      throw new Error(
+        "Elevation request failed"
+      );
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      data &&
+      data.results &&
+      data.results.length > 0 &&
+      Number.isFinite(
+        Number(
+          data.results[0].elevation
+        )
+      )
+    ) {
+
+      pin.elevation =
+        Number(
+          data.results[0].elevation
+        );
+
+
+      if (pin.marker) {
+
+        pin.marker.setTooltipContent(
+
+          buildPinInformation(
+            pin
+          )
+
+        );
+
+      }
+
+    }
+
+  }
+
+  catch(error) {
+
+    console.warn(
+      "Elevation unavailable:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   29. DOUBLE CLICK
+   ========================================================= */
+
+map.on(
+  "dblclick",
+  function(event) {
+
+    addPin(
+      event.latlng
+    );
+
+  }
+);
+
+
+/* =========================================================
+   30. ROUTE SELECTORS
+   ========================================================= */
+
+function updateRoutePinSelectors() {
+
+  const start =
+    document.getElementById(
+      "routeStart"
+    );
+
+
+  const end =
+    document.getElementById(
+      "routeEnd"
+    );
+
+
+  const oldStart =
+    start.value;
+
+
+  const oldEnd =
+    end.value;
+
+
+  start.innerHTML =
+    `<option value="">Select start pin...</option>`;
+
+
+  end.innerHTML =
+    `<option value="">Select destination...</option>`;
+
+
+  placedPins.forEach(
+    function(pin, index) {
+
+      const label =
+        `${index + 1}. ${pin.name}`;
+
+
+      const startOption =
+        document.createElement(
+          "option"
+        );
+
+
+      startOption.value =
+        pin.id;
+
+
+      startOption.textContent =
+        label;
+
+
+      start.appendChild(
+        startOption
+      );
+
+
+      const endOption =
+        document.createElement(
+          "option"
+        );
+
+
+      endOption.value =
+        pin.id;
+
+
+      endOption.textContent =
+        label;
+
+
+      end.appendChild(
+        endOption
+      );
+
+    }
+  );
+
+
+  if (
+    placedPins.some(
+      pin => String(pin.id) === oldStart
+    )
+  ) {
+
+    start.value =
+      oldStart;
+
+  }
+
+
+  if (
+    placedPins.some(
+      pin => String(pin.id) === oldEnd
+    )
+  ) {
+
+    end.value =
+      oldEnd;
+
+  }
+
+
+  const status =
+    document.getElementById(
+      "routeStatus"
+    );
+
+
+  if (
+    placedPins.length < 2
+  ) {
+
+    status.textContent =
+      "Add at least two pins to use the route planner.";
+
+  }
+
+  else {
+
+    status.textContent =
+      "Select a start and destination pin.";
+
+  }
+
+}
+
+
+/* =========================================================
+   31. ROUTE LAYER
+   ========================================================= */
+
+let activeRouteLayers = [];
+
+
+function clearRoute() {
+
+  activeRouteLayers.forEach(
+    function(layer) {
+
+      map.removeLayer(
+        layer
+      );
+
+    }
+  );
+
+
+  activeRouteLayers = [];
+
+
+  document.getElementById(
+    "routeResult"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "routeResult"
+  ).innerHTML =
+    "";
+
+
+  document.getElementById(
+    "routeStatus"
+  ).textContent =
+    placedPins.length >= 2
+      ? "Select a start and destination pin."
+      : "Add at least two pins to use the route planner.";
+
+}
+
+
+/* =========================================================
+   32. ROUTE CALCULATION
+   ========================================================= */
+
+async function calculateRoute() {
+
+  const startId =
+    document.getElementById(
+      "routeStart"
+    ).value;
+
+
+  const endId =
+    document.getElementById(
+      "routeEnd"
+    ).value;
+
+
+  if (!startId || !endId) {
+
+    document.getElementById(
+      "routeStatus"
+    ).textContent =
+      "Please select both a start pin and a destination pin.";
+
+    return;
+
+  }
+
+
+  if (startId === endId) {
+
+    document.getElementById(
+      "routeStatus"
+    ).textContent =
+      "Start and destination must be different pins.";
+
+    return;
+
+  }
+
+
+  const startPin =
+    placedPins.find(
+      pin =>
+        String(pin.id) ===
+        String(startId)
+    );
+
+
+  const endPin =
+    placedPins.find(
+      pin =>
+        String(pin.id) ===
+        String(endId)
+    );
+
+
+  if (!startPin || !endPin) {
+
+    return;
+
+  }
+
+
+  clearRoute();
+
+
+  const status =
+    document.getElementById(
+      "routeStatus"
+    );
+
+
+  status.textContent =
+    "⏳ Finding the best road route...";
+
+
+  const routePanel =
+    document.querySelector(
+      ".route-panel"
+    );
+
+
+  routePanel.classList.add(
+    "loading"
+  );
+
+
+  try {
+
+    /*
+       OSRM uses:
+
+       longitude,latitude
+
+       rather than:
+
+       latitude,longitude
+    */
+
+    const coordinates =
+      `${startPin.longitude},${startPin.latitude};${endPin.longitude},${endPin.latitude}`;
+
+
+    const url =
+      `https://router.project-osrm.org/route/v1/driving/${coordinates}?overview=full&geometries=geojson&steps=true&annotations=true`;
+
+
+    const response =
+      await fetch(
+        url
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Routing server returned an error."
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      data.code !== "Ok" ||
+      !data.routes ||
+      !data.routes.length
+    ) {
+
+      throw new Error(
+        "No drivable route was found."
+      );
+
+    }
+
+
+    const route =
+      data.routes[0];
+
+
+    drawRoute(
+      route,
+      startPin,
+      endPin
+    );
+
+
+    const distanceKm =
+      route.distance / 1000;
+
+
+    const durationMinutes =
+      route.duration / 60;
+
+
+    let durationText;
+
+
+    if (
+      durationMinutes >= 60
+    ) {
+
+      const hours =
+        Math.floor(
+          durationMinutes / 60
+        );
+
+
+      const minutes =
+        Math.round(
+          durationMinutes % 60
+        );
+
+
+      durationText =
+        `${hours} hr ${minutes} min`;
+
+    }
+
+    else {
+
+      durationText =
+        `${Math.round(durationMinutes)} min`;
+
+    }
+
+
+    document.getElementById(
+      "routeResult"
+    ).style.display =
+      "block";
+
+
+    document.getElementById(
+      "routeResult"
+    ).innerHTML = `
+
+      <strong>Route found</strong>
+
+      <br>
+
+      From:
+      ${escapeHTML(startPin.name)}
+
+      <br>
+
+      To:
+      ${escapeHTML(endPin.name)}
+
+      <br><br>
+
+      <strong>Distance:</strong>
+      ${formatNumber(distanceKm)} km
+
+      <br>
+
+      <strong>Estimated travel:</strong>
+      ${durationText}
+
+      <br><br>
+
+      <strong>Routing:</strong>
+      OpenStreetMap road network
+
+    `;
+
+
+    status.textContent =
+      "✅ Route found. The map is following the available road network.";
+
+  }
+
+  catch(error) {
+
+    console.error(
+      "Route error:",
+      error
+    );
+
+
+    status.textContent =
+      `❌ ${error.message}`;
+
+  }
+
+  finally {
+
+    routePanel.classList.remove(
+      "loading"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   33. DRAW ROUTE
+   ========================================================= */
+
+function drawRoute(
+  route,
+  startPin,
+  endPin
+) {
+
+  clearRoute();
+
+
+  const coordinates =
+    route.geometry.coordinates;
+
+
+  const latLngs =
+    coordinates.map(
+      coordinate =>
+        [
+          coordinate[1],
+          coordinate[0]
+        ]
+    );
+
+
+  /*
+     White outline makes the route
+     visible over the map.
+  */
+
+  const outline =
+    L.polyline(
+      latLngs,
+      {
+
+        color:
+          "#ffffff",
+
+        weight:
+          10,
+
+        opacity:
+          .9,
+
+        lineCap:
+          "round",
+
+        lineJoin:
+          "round",
+
+        interactive:
+          false
+
+      }
+    ).addTo(map);
+
+
+  activeRouteLayers.push(
+    outline
+  );
+
+
+  /*
+     Main route.
+
+     OSRM's standard driving profile
+     follows the available drivable road
+     network.
+
+     Green is used as the default
+     land/road route.
+
+  */
+
+  const mainRoute =
+    L.polyline(
+      latLngs,
+      {
+
+        color:
+          "#16a34a",
+
+        weight:
+          6,
+
+        opacity:
+          .9,
+
+        lineCap:
+          "round",
+
+        lineJoin:
+          "round",
+
+        interactive:
+          false
+
+      }
+    ).addTo(map);
+
+
+  activeRouteLayers.push(
+    mainRoute
+  );
+
+
+  /*
+     Look at the route steps.
+
+     Ferry steps are drawn blue.
+
+     Bridge steps remain green because
+     bridges are land/road crossings.
+  */
+
+  if (
+    route.legs &&
+    route.legs.length
+  ) {
+
+    route.legs.forEach(
+      function(leg) {
+
+        if (
+          !leg.steps ||
+          !leg.steps.length
+        ) {
+
+          return;
+
+        }
+
+
+        leg.steps.forEach(
+          function(step) {
+
+            const isFerry =
+              step.mode === "ferry" ||
+              (
+                step.maneuver &&
+                step.maneuver.type === "ferry"
+              ) ||
+              /ferry/i.test(
+                step.name || ""
+              );
+
+
+            if (!isFerry) {
+
+              return;
+
+            }
+
+
+            if (
+              !step.geometry ||
+              !step.geometry.coordinates
+            ) {
+
+              return;
+
+            }
+
+
+            const ferryLatLngs =
+              step.geometry.coordinates.map(
+                coordinate =>
+                  [
+                    coordinate[1],
+                    coordinate[0]
+                  ]
+              );
+
+
+            const ferryLine =
+              L.polyline(
+                ferryLatLngs,
+                {
+
+                  color:
+                    "#1677d2",
+
+                  weight:
+                    7,
+
+                  opacity:
+                    .95,
+
+                  lineCap:
+                    "round",
+
+                  lineJoin:
+                    "round",
+
+                  interactive:
+                    false
+
+                }
+              ).addTo(map);
+
+
+            activeRouteLayers.push(
+              ferryLine
+            );
+
+          }
+        );
+
+      }
+    );
+
+  }
+
+
+  /*
+     Start/end route markers.
+  */
+
+  const startMarker =
+    L.circleMarker(
+      [
+        startPin.latitude,
+        startPin.longitude
+      ],
+      {
+
+        radius:
+          8,
+
+        color:
+          "white",
+
+        weight:
+          3,
+
+        fillColor:
+          "#16a34a",
+
+        fillOpacity:
+          1,
+
+        zIndexOffset:
+          2000
+
+      }
+    ).addTo(map);
+
+
+  startMarker.bindTooltip(
+    `Start: ${escapeHTML(startPin.name)}`
+  );
+
+
+  activeRouteLayers.push(
+    startMarker
+  );
+
+
+  const endMarker =
+    L.circleMarker(
+      [
+        endPin.latitude,
+        endPin.longitude
+      ],
+      {
+
+        radius:
+          8,
+
+        color:
+          "white",
+
+        weight:
+          3,
+
+        fillColor:
+          "#dc2626",
+
+        fillOpacity:
+          1,
+
+        zIndexOffset:
+          2000
+
+      }
+    ).addTo(map);
+
+
+  endMarker.bindTooltip(
+    `Destination: ${escapeHTML(endPin.name)}`
+  );
+
+
+  activeRouteLayers.push(
+    endMarker
+  );
+
+
+  /*
+     Fit the entire route.
+  */
+
+  const bounds =
+    L.latLngBounds(
+      latLngs
+    );
+
+
+  map.fitBounds(
+    bounds,
+    {
+
+      padding:
+        [50,50],
+
+      maxZoom:
+        15
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   34. SEARCH LOCATION
+   ========================================================= */
+
+let searchMarker = null;
+
+
+async function searchLocation() {
+
+  const input =
+    document.getElementById(
+      "locationSearch"
+    );
+
+
+  const query =
+    input.value.trim();
+
+
+  const status =
+    document.getElementById(
+      "searchStatus"
+    );
+
+
+  const results =
+    document.getElementById(
+      "searchResults"
+    );
+
+
+  if (!query) {
+
+    status.textContent =
+      "Enter a location to search.";
+
+    return;
+
+  }
+
+
+  status.textContent =
+    "Searching...";
+
+
+  results.innerHTML =
+    "";
+
+
+  try {
+
+    const url =
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=8&countrycodes=ph&q=${encodeURIComponent(query)}`;
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          headers: {
+            "Accept":
+              "application/json"
+          }
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Search service unavailable."
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.length) {
+
+      status.textContent =
+        "No matching Philippine locations found.";
+
+      return;
+
+    }
+
+
+    status.textContent =
+      `${data.length} result${data.length === 1 ? "" : "s"} found.`;
+
+
+    data.forEach(
+      function(item) {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "search-result-item";
+
+
+        div.innerHTML = `
+
+          <div class="search-result-name">
+
+            ${escapeHTML(
+              item.display_name
+            )}
+
+          </div>
+
+          <div class="search-result-type">
+
+            ${escapeHTML(
+              item.type || "Location"
+            )}
+
+          </div>
+
+          <div class="search-result-pin">
+
+            Click to locate
+
+          </div>
+
+        `;
+
+
+        div.addEventListener(
+          "click",
+          function() {
+
+            const lat =
+              Number(item.lat);
+
+
+            const lng =
+              Number(item.lon);
+
+
+            locateSearchResult(
+              lat,
+              lng,
+              item.display_name
+            );
+
+          }
+        );
+
+
+        results.appendChild(
+          div
+        );
+
+      }
+    );
+
+
+    /*
+       Automatically zoom to the
+       first result.
+    */
+
+    locateSearchResult(
+      Number(data[0].lat),
+      Number(data[0].lon),
+      data[0].display_name
+    );
+
+  }
+
+  catch(error) {
+
+    console.error(
+      error
+    );
+
+
+    status.textContent =
+      "Search failed. Please try again.";
+
+  }
+
+}
+
+
+function handleSearchKey(event) {
+
+  if (
+    event.key === "Enter"
+  ) {
+
+    searchLocation();
+
+  }
+
+}
+
+
+/* =========================================================
+   35. LOCATE SEARCH RESULT
+   ========================================================= */
+
+function locateSearchResult(
+  lat,
+  lng,
+  name
+) {
+
+  if (searchMarker) {
+
+    map.removeLayer(
+      searchMarker
+    );
+
+  }
+
+
+  searchMarker =
+    L.marker(
+      [lat,lng],
+      {
+
+        icon:
+          L.divIcon({
+
+            className:
+              "",
+
+            html:
+              `<div class="search-location-marker"></div>`,
+
+            iconSize:
+              [22,22],
+
+            iconAnchor:
+              [11,11]
+
+          }),
+
+        zIndexOffset:
+          3000
+
+      }
+    ).addTo(map);
+
+
+  searchMarker.bindPopup(
+    `<strong>${escapeHTML(name)}</strong>`
+  );
+
+
+  searchMarker.openPopup();
+
+
+  map.setView(
+    [lat,lng],
+    16,
+    {
+      animate:
+        true
+    }
+  );
+
+}
+
+
+/* =========================================================
+   36. LANDMARK SEARCH
+   ========================================================= */
+
+/*
+   This uses Overpass / OpenStreetMap data.
+
+   The query asks for actual OSM objects
+   rather than relying on a hard-coded
+   landmark database.
+
+   That means the returned locations can
+   change as OSM data changes.
+*/
+
+async function findLandmarks() {
+
+  const regionKey =
+    document.getElementById(
+      "landmarkRegion"
+    ).value;
+
+
+  const type =
+    document.getElementById(
+      "landmarkType"
+    ).value;
+
+
+  const status =
+    document.getElementById(
+      "landmarkStatus"
+    );
+
+
+  const results =
+    document.getElementById(
+      "landmarkResults"
+    );
+
+
+  status.textContent =
+    "Searching OpenStreetMap...";
+
+
+  results.innerHTML =
+    "";
+
+
+  const bounds =
+    getRegionBounds(
+      regionKey
+    );
+
+
+  let selector;
+
+
+  switch(type) {
+
+    case "museum":
+
+      selector =
+        `["tourism"="museum"]`;
+
+      break;
+
+
+    case "monument":
+
+      selector =
+        `["historic"="monument"]`;
+
+      break;
+
+
+    case "viewpoint":
+
+      selector =
+        `["tourism"="viewpoint"]`;
+
+      break;
+
+
+    case "park":
+
+      selector =
+        `["leisure"="park"]`;
+
+      break;
+
+
+    case "beach":
+
+      selector =
+        `["natural"="beach"]`;
+
+      break;
+
+
+    case "waterfall":
+
+      selector =
+        `["natural"="waterfall"]`;
+
+      break;
+
+
+    case "church":
+
+      selector =
+        `["amenity"="place_of_worship"]["religion"="christian"]`;
+
+      break;
+
+
+    case "historic":
+
+      selector =
+        `["historic"]`;
+
+      break;
+
+
+    case "attraction":
+
+      selector =
+        `["tourism"="attraction"]`;
+
+      break;
+
+
+    case "tourism":
+
+    default:
+
+      selector =
+        `["tourism"]`;
+
+      break;
+
+  }
+
+
+  const south =
+    bounds[0];
+
+
+  const west =
+    bounds[1];
+
+
+  const north =
+    bounds[2];
+
+
+  const east =
+    bounds[3];
+
+
+  /*
+     Search nodes, ways and relations.
+
+     The center is requested so that
+     ways/relations have a usable
+     coordinate.
+  */
+
+  const query = `
+
+    [out:json][timeout:60];
+
+    (
+
+      node${selector}(${south},${west},${north},${east});
+
+      way${selector}(${south},${west},${north},${east});
+
+      relation${selector}(${south},${west},${north},${east});
+
+    );
+
+    out center tags;
+
+  `;
+
+
+  try {
+
+    /*
+       Try the main Overpass server first.
+    */
+
+    let response;
+
+
+    try {
+
+      response =
+        await fetch(
+          "https://overpass-api.de/api/interpreter",
+          {
+
+            method:
+              "POST",
+
+            body:
+              query
+
+          }
+        );
+
+    }
+
+    catch(error) {
+
+      response =
+        await fetch(
+          "https://overpass.kumi.systems/api/interpreter",
+          {
+
+            method:
+              "POST",
+
+            body:
+              query
+
+          }
+        );
+
+    }
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Landmark data service unavailable."
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data.elements ||
+      !data.elements.length
+    ) {
+
+      status.textContent =
+        "No matching mapped places were found for this region and category.";
+
+      return;
+
+    }
+
+
+    /*
+       Remove duplicate-looking results.
+    */
+
+    const unique =
+      [];
+
+
+    const seen =
+      new Set();
+
+
+    data.elements.forEach(
+      function(item) {
+
+        const tags =
+          item.tags || {};
+
+
+        let lat =
+          item.lat;
+
+
+        let lon =
+          item.lon;
+
+
+        if (
+          lat === undefined &&
+          item.center
+        ) {
+
+          lat =
+            item.center.lat;
+
+          lon =
+            item.center.lon;
+
+        }
+
+
+        if (
+          lat === undefined ||
+          lon === undefined
+        ) {
+
+          return;
+
+        }
+
+
+        const name =
+          tags.name ||
+          tags["name:en"] ||
+          "Unnamed mapped place";
+
+
+        const key =
+          `${name}|${Number(lat).toFixed(5)}|${Number(lon).toFixed(5)}`;
+
+
+        if (seen.has(key)) {
+
+          return;
+
+        }
+
+
+        seen.add(key);
+
+
+        unique.push({
+
+          id:
+            item.id,
+
+          name:
+            name,
+
+          lat:
+            Number(lat),
+
+          lon:
+            Number(lon),
+
+          tags:
+            tags
+
+        });
+
+      }
+    );
+
+
+    /*
+       Limit display to avoid putting
+       thousands of markers on the map.
+    */
+
+    const places =
+      unique.slice(
+        0,
+        300
+      );
+
+
+    status.textContent =
+      `${unique.length} mapped place${unique.length === 1 ? "" : "s"} found. Showing ${places.length}.`;
+
+
+    /*
+       Remove previous landmark markers.
+    */
+
+    clearLandmarkMarkers();
+
+
+    /*
+       Create a layer group.
+    */
+
+    landmarkLayerGroup =
+      L.layerGroup().addTo(
+        map
+      );
+
+
+    places.forEach(
+      function(place) {
+
+        const marker =
+          L.circleMarker(
+            [
+              place.lat,
+              place.lon
+            ],
+            {
+
+              radius:
+                6,
+
+              color:
+                "#ffffff",
+
+              weight:
+                2,
+
+              fillColor:
+                "#f59e0b",
+
+              fillOpacity:
+                .9
+
+            }
+          );
+
+
+        marker.bindPopup(`
+
+          <strong>
+            ${escapeHTML(place.name)}
+          </strong>
+
+          <br>
+
+          ${escapeHTML(
+            getPlaceCategory(
+              place.tags
+            )
+          )}
+
+          <br><br>
+
+          <button
+            onclick="pinLandmark(
+              ${place.lat},
+              ${place.lon},
+              '${escapeJS(place.name)}',
+              '${escapeJS(getPlaceCategory(place.tags))}'
+            )"
+          >
+            📍 Add Pin
+          </button>
+
+        `);
+
+
+        marker.addTo(
+          landmarkLayerGroup
+        );
+
+      }
+    );
+
+
+    /*
+       Show result list.
+    */
+
+    places.slice(
+      0,
+      50
+    ).forEach(
+      function(place) {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "search-result-item";
+
+
+        div.innerHTML = `
+
+          <div class="search-result-name">
+
+            ${escapeHTML(place.name)}
+
+          </div>
+
+          <div class="search-result-type">
+
+            ${escapeHTML(
+              getPlaceCategory(
+                place.tags
+              )
+            )}
+
+          </div>
+
+          <div class="search-result-pin">
+
+            Click to locate
+
+          </div>
+
+        `;
+
+
+        div.addEventListener(
+          "click",
+          function() {
+
+            map.setView(
+              [
+                place.lat,
+                place.lon
+              ],
+              16,
+              {
+                animate:
+                  true
+              }
+            );
+
+
+            /*
+               Find the corresponding
+               marker and open it.
+            */
+
+            landmarkLayerGroup.eachLayer(
+              function(layer) {
+
+                const ll =
+                  layer.getLatLng();
+
+
+                if (
+                  Math.abs(
+                    ll.lat -
+                    place.lat
+                  ) < .00001 &&
+                  Math.abs(
+                    ll.lng -
+                    place.lon
+                  ) < .00001
+                ) {
+
+                  layer.openPopup();
+
+                }
+
+              }
+            );
+
+          }
+        );
+
+
+        results.appendChild(
+          div
+        );
+
+      }
+    );
+
+
+    /*
+       Fit all results if there are
+       several places.
+    */
+
+    if (places.length > 0) {
+
+      const bounds =
+        L.latLngBounds(
+          places.map(
+            place =>
+              [
+                place.lat,
+                place.lon
+              ]
+          )
+        );
+
+
+      map.fitBounds(
+        bounds,
+        {
+
+          padding:
+            [30,30],
+
+          maxZoom:
+            12
+
+        }
+      );
+
+    }
+
+  }
+
+  catch(error) {
+
+    console.error(
+      "Landmark search error:",
+      error
+    );
+
+
+    status.textContent =
+      "Could not retrieve landmark data. Please try again in a moment.";
+
+  }
+
+}
+
+
+/* =========================================================
+   37. LANDMARK HELPERS
+   ========================================================= */
+
+let landmarkLayerGroup = null;
+
+
+function clearLandmarkMarkers() {
+
+  if (landmarkLayerGroup) {
+
+    map.removeLayer(
+      landmarkLayerGroup
+    );
+
+    landmarkLayerGroup =
+      null;
+
+  }
+
+}
+
+
+function getPlaceCategory(tags) {
+
+  if (!tags) {
+    return "Mapped place";
+  }
+
+
+  if (tags.tourism) {
+
+    return capitalize(
+      tags.tourism
+    );
+
+  }
+
+
+  if (tags.historic) {
+
+    return capitalize(
+      tags.historic
+    );
+
+  }
+
+
+  if (tags.natural) {
+
+    return capitalize(
+      tags.natural
+    );
+
+  }
+
+
+  if (tags.leisure) {
+
+    return capitalize(
+      tags.leisure
+    );
+
+  }
+
+
+  if (tags.amenity) {
+
+    return capitalize(
+      tags.amenity
+    );
+
+  }
+
+
+  return "Mapped place";
+
+}
+
+
+function capitalize(value) {
+
+  if (!value) {
+    return "";
+  }
+
+
+  return String(value)
+    .replace(
+      /_/g,
+      " "
+    )
+    .replace(
+      /\b\w/g,
+      char =>
+        char.toUpperCase()
+    );
+
+}
+
+
+function escapeJS(text) {
+
+  return String(text)
+    .replace(
+      /\\/g,
+      "\\\\"
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    )
+    .replace(
+      /"/g,
+      '\\"'
+    )
+    .replace(
+      /\n/g,
+      "\\n"
+    )
+    .replace(
+      /\r/g,
+      "\\r"
+    );
+
+}
+
+
+/* =========================================================
+   38. PIN LANDMARK
+   ========================================================= */
+
+function pinLandmark(
+  lat,
+  lon,
+  name,
+  type
+) {
+
+  const pin =
+    addPin(
+      L.latLng(
+        lat,
+        lon
+      ),
+      name,
+      type,
+      "#f97316"
+    );
+
+
+  map.setView(
+    [
+      lat,
+      lon
+    ],
+    16,
+    {
+      animate:
+        true
+    }
+  );
+
+
+  if (pin.marker) {
+
+    pin.marker.openTooltip();
+
+  }
+
+}
+
+
+/* =========================================================
+   39. REGION BOUNDS
+   ========================================================= */
+
+function getRegionBounds(regionKey) {
+
+  /*
+     Returns:
+
+     [south, west, north, east]
+
+     These are intentionally generous
+     geographic boxes.
+
+     The Overpass query then retrieves
+     actual OSM objects inside the box.
+  */
+
+  const bounds = {
+
+    philippines:
+      [4.5,116.0,21.5,127.5],
+
+    region1:
+      [15.7,119.4,18.7,121.7],
+
+    region2:
+      [15.5,120.7,19.7,123.5],
+
+    region3:
+      [13.7,119.4,16.7,122.0],
+
+    region4a:
+      [13.0,120.0,15.2,122.2],
+
+    region4b:
+      [8.0,117.0,13.5,122.5],
+
+    region5:
+      [11.8,122.5,14.8,125.0],
+
+    region6:
+      [9.5,121.0,12.8,124.0],
+
+    region7:
+      [9.0,123.0,11.8,125.0],
+
+    region8:
+      [9.5,124.0,13.0,126.8],
+
+    region9:
+      [5.5,121.0,9.8,124.5],
+
+    region10:
+      [7.0,123.5,10.2,126.0],
+
+    region11:
+      [5.0,124.0,8.8,127.0],
+
+    region12:
+      [5.0,123.0,8.0,126.0],
+
+    region13:
+      [7.5,124.5,10.5,127.0],
+
+    nir:
+      [9.0,121.5,11.5,124.5],
+
+    car:
+      [16.0,120.0,18.5,122.0],
+
+    ncr:
+      [14.35,120.80,14.85,121.20],
+
+    barmm:
+      [5.0,119.0,9.0,125.0]
+
+  };
+
+
+  return (
+    bounds[regionKey] ||
+    bounds.philippines
+  );
+
+}
+
+
+/* =========================================================
+   40. FIT VIEW
+   ========================================================= */
+
+function resetView() {
+
+  fitSelectedRegion();
+
+}
+
+
+function fitSelectedRegion() {
+
+  const c =
+    calibrations[
+      currentCalibration
+    ];
+
+
+  if (
+    currentCalibration ===
+    "philippines"
+  ) {
+
+    map.fitBounds(
+      [
+        [4.5,116.0],
+        [21.5,127.5]
+      ],
+      {
+        padding:
+          [20,20]
+      }
+    );
+
+
+    return;
+
+  }
+
+
+  const center =
+    L.latLng(
+      c.lat,
+      c.lng
+    );
+
+
+  map.setView(
+    center,
+    currentCalibration === "region1"
+      ? 8
+      : 7,
+    {
+      animate:
+        true
+    }
+  );
+
+}
+
+
+/* =========================================================
+   41. PHILIPPINES
+   ========================================================= */
+
+function locatePhilippines() {
+
+  document.getElementById(
+    "calibrationSelect"
+  ).value =
+    "philippines";
+
+
+  changeCalibration(
+    "philippines"
+  );
+
+}
+
+
+/* =========================================================
+   42. INITIALIZATION
+   ========================================================= */
+
+updateCalibrationInfo();
+
+
+map.setView(
+  [
+    calibrations.region1.lat,
+    calibrations.region1.lng
+  ],
+  8
+);
+
+
+map.whenReady(
+  function() {
+
+    drawCartesianGrid();
+
+    updateRoutePinSelectors();
+
+  }
+);
+
+
+/* =========================================================
+   43. KEYBOARD
+   ========================================================= */
+
+document.addEventListener(
+  "keydown",
+  function(event) {
+
+    const tag =
+      document.activeElement.tagName;
+
+
+    if (
+      tag === "SELECT" ||
+      tag === "INPUT" ||
+      tag === "TEXTAREA"
+    ) {
+
+      return;
+
+    }
+
+
+    const key =
+      event.key.toLowerCase();
+
+
+    if (key === "r") {
+      resetView();
+    }
+
+
+    if (key === "g") {
+      toggleGrid();
+    }
+
+
+    if (key === "c") {
+      toggleLabels();
+    }
+
+
+    if (key === "t") {
+      toggleTerrain();
+    }
+
+  }
+);
+
+
+/* =========================================================
+   44. DEBUG
+   ========================================================= */
+
+console.log(
+  "Philippines Cartesian Planning Map loaded."
+);
+
+console.log(
+  "Colored pin system loaded."
+);
+
+console.log(
+  "Route planner loaded."
+);
+
+console.log(
+  "OSRM road routing enabled."
+);
+
+console.log(
+  "OpenStreetMap landmark search enabled."
+);
+
+console.log(
+  "Current calibration:",
+  calibrations[currentCalibration].name
+);
+
+console.log(
+  "Scale:",
+  `1 unit = ${KM_PER_UNIT} km`
+);
+
+console.log(
+  "Cartesian plane:",
+  "400 × 400"
+);
+
+console.log(
+  "Coordinate range:",
+  "-200 to +200"
+);
+
+console.log(
+  "North = +Y"
+);
+
+console.log(
+  "East = +X"
+);
+
+</script>
+
+</body>
+</html>
