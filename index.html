@@ -2164,6 +2164,246 @@ Interactive Cartesian transportation planning environment
 </div>
 
 
+<!-- MATH MODE -->
+
+<div class="panel search-panel" id="mathModePanel">
+
+  <div class="panel-title search-title">
+    📐 Math Mode
+  </div>
+
+  <div style="font-size:10px;color:#66727e;line-height:1.4;margin-bottom:7px;">
+    Explore the linear equations, circles and systems of equations
+    behind your transportation network.
+  </div>
+
+  <button
+    class="search-button"
+    id="mathModeToggleButton"
+    onclick="toggleMathMode()"
+  >
+    Enable Math Mode
+  </button>
+
+  <div id="mathModeBody" style="display:none;margin-top:9px;">
+
+    <!-- INSPECTOR -->
+
+    <label class="search-label">
+      Inspect a Route
+    </label>
+
+    <select
+      id="mathInspectRoute"
+      class="search-input"
+      data-placeholder="Choose a route"
+      onchange="inspectRouteMath()"
+    >
+      <option value="">Choose a route</option>
+    </select>
+
+    <label class="search-label" style="margin-top:7px;">
+      Inspect a Hub / Circle
+    </label>
+
+    <select
+      id="mathInspectCircle"
+      class="search-input"
+      data-placeholder="Choose a circle"
+      onchange="inspectCircleMath()"
+    >
+      <option value="">Choose a circle</option>
+    </select>
+
+    <div
+      id="mathInspectorOutput"
+      class="search-results"
+      style="margin-top:7px;"
+    ></div>
+
+
+    <!-- CIRCLE TOOL -->
+
+    <div style="margin-top:12px;border-top:1px solid #e3e8ee;padding-top:9px;">
+
+      <label class="search-label">
+        Hubs, Roundabouts & Coverage Circles
+      </label>
+
+      <button
+        class="search-button"
+        id="circleDrawButton"
+        onclick="startCircleDrawing()"
+      >
+        ⭕ Draw Circle
+      </button>
+
+      <button
+        class="search-button"
+        style="margin-top:5px;background:#66727e;"
+        onclick="clearAllMathCircles()"
+      >
+        Clear All Circles
+      </button>
+
+      <div
+        id="circleDrawStatus"
+        style="margin-top:6px;font-size:10px;color:#66727e;line-height:1.4;"
+      >
+        Click a center point, then click again to set the radius.
+      </div>
+
+      <div id="circleList" style="margin-top:6px;"></div>
+
+    </div>
+
+
+    <!-- PARALLEL / PERPENDICULAR CONSTRUCTION -->
+
+    <div style="margin-top:12px;border-top:1px solid #e3e8ee;padding-top:9px;">
+
+      <label class="search-label">
+        Construct a Parallel/Perpendicular Corridor
+      </label>
+
+      <select
+        id="corridorReferenceRoute"
+        class="search-input"
+        data-placeholder="Choose a reference route"
+      >
+        <option value="">Choose a reference route</option>
+      </select>
+
+      <select
+        id="corridorNewMode"
+        class="search-input"
+        style="margin-top:5px;"
+      >
+        <option value="ROAD">🛣 Road</option>
+        <option value="BUS">🚌 Bus</option>
+        <option value="MRT">🚇 MRT</option>
+        <option value="LRT">🚈 LRT</option>
+        <option value="BIKE">🚲 Bike Lane</option>
+      </select>
+
+      <div style="display:flex;gap:5px;margin-top:5px;">
+
+        <button
+          class="search-button"
+          style="flex:1;"
+          onclick="startCorridorConstruction('parallel')"
+        >
+          ∥ Parallel
+        </button>
+
+        <button
+          class="search-button"
+          style="flex:1;"
+          onclick="startCorridorConstruction('perpendicular')"
+        >
+          ⟂ Perpendicular
+        </button>
+
+      </div>
+
+      <div
+        id="corridorStatus"
+        style="margin-top:6px;font-size:10px;color:#66727e;line-height:1.4;"
+      >
+        Choose a reference route, pick parallel or perpendicular, then click a point on the map to build through it.
+      </div>
+
+    </div>
+
+
+    <!-- LINE-LINE INTERSECTION -->
+
+    <div style="margin-top:12px;border-top:1px solid #e3e8ee;padding-top:9px;">
+
+      <label class="search-label">
+        Transfer Stations (Line ∩ Line)
+      </label>
+
+      <select
+        id="intersectRouteA"
+        class="search-input"
+        data-placeholder="Route A"
+      >
+        <option value="">Route A</option>
+      </select>
+
+      <select
+        id="intersectRouteB"
+        class="search-input"
+        style="margin-top:5px;"
+        data-placeholder="Route B"
+      >
+        <option value="">Route B</option>
+      </select>
+
+      <button
+        class="search-button"
+        style="margin-top:5px;"
+        onclick="findLineLineIntersectionUI()"
+      >
+        Solve System
+      </button>
+
+      <div
+        id="lineLineResult"
+        class="search-results"
+        style="margin-top:6px;"
+      ></div>
+
+    </div>
+
+
+    <!-- LINE-CIRCLE INTERSECTION -->
+
+    <div style="margin-top:12px;border-top:1px solid #e3e8ee;padding-top:9px;">
+
+      <label class="search-label">
+        Route ∩ Hub Coverage (Line ∩ Circle)
+      </label>
+
+      <select
+        id="intersectRouteC"
+        class="search-input"
+        data-placeholder="Choose a route"
+      >
+        <option value="">Choose a route</option>
+      </select>
+
+      <select
+        id="intersectCircleC"
+        class="search-input"
+        style="margin-top:5px;"
+        data-placeholder="Choose a circle"
+      >
+        <option value="">Choose a circle</option>
+      </select>
+
+      <button
+        class="search-button"
+        style="margin-top:5px;"
+        onclick="findLineCircleIntersectionUI()"
+      >
+        Solve System
+      </button>
+
+      <div
+        id="lineCircleResult"
+        class="search-results"
+        style="margin-top:6px;"
+      ></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
 <!-- =======================================================
      CONTROLS
      ======================================================= -->
@@ -3139,6 +3379,26 @@ map.on(
 
     }
 
+    if (
+      circleDrawing.active
+    ) {
+
+      updateCircleDrawingPreview(
+        event.latlng
+      );
+
+    }
+
+    if (
+      corridorConstruction.active
+    ) {
+
+      updateCorridorConstructionPreview(
+        event.latlng
+      );
+
+    }
+
   }
 );
 
@@ -3171,6 +3431,26 @@ mapElement.addEventListener(
     ) {
 
       updateDrawingPreview(
+        latlng
+      );
+
+    }
+
+    if (
+      circleDrawing.active
+    ) {
+
+      updateCircleDrawingPreview(
+        latlng
+      );
+
+    }
+
+    if (
+      corridorConstruction.active
+    ) {
+
+      updateCorridorConstructionPreview(
         latlng
       );
 
@@ -4059,6 +4339,311 @@ let routeNumber = 1;
 
 
 /* =========================================================
+   30b. MATH MODE STATE
+   ========================================================= */
+
+const mathMode = {
+  active: false
+};
+
+const mathCircles = [];
+
+let circleNumber = 1;
+
+const circleDrawing = {
+  active: false,
+  centerLatLng: null,
+  centerXY: null,
+  previewCircle: null,
+  previewRadiusLine: null
+};
+
+const corridorConstruction = {
+  active: false,
+  mode: null,
+  referenceRouteId: null,
+  newMode: "ROAD",
+  throughXY: null,
+  throughLatLng: null,
+  slope: null,
+  vertical: false,
+  previewLine: null,
+  vertexMarker: null
+};
+
+const mathMarkers = [];
+
+
+/* =========================================================
+   30c. CARTESIAN LINE / CIRCLE MATH HELPERS
+   ========================================================= */
+
+/*
+   All math-mode calculations are done in the app's own Cartesian
+   grid units (the same (x, y) system already shown to the user
+   as "Cursor Coordinate" and used for the grid), NOT in raw
+   latitude/longitude. This keeps every equation shown to the
+   user consistent with the coordinate plane they already see.
+*/
+
+function computeLineFromXY(p1, p2) {
+
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+
+  if (Math.abs(dx) < 1e-9) {
+    return {
+      vertical: true,
+      x: p1.x,
+      slope: null,
+      intercept: null
+    };
+  }
+
+  const slope = dy / dx;
+  const intercept = p1.y - slope * p1.x;
+
+  return {
+    vertical: false,
+    x: null,
+    slope,
+    intercept
+  };
+
+}
+
+function formatLineEquation(line) {
+
+  if (line.vertical) {
+    return `x = ${formatNumber(line.x)}`;
+  }
+
+  const m = formatNumber(line.slope);
+  const bAbs = formatNumber(Math.abs(line.intercept));
+  const sign = line.intercept >= 0 ? "+" : "−";
+
+  return `y = ${m}x ${sign} ${bAbs}`;
+
+}
+
+function routeToXYPoints(route) {
+
+  return route.points.map(
+    point => latLngToCoordinate(point)
+  );
+
+}
+
+function routeCorridorLine(route) {
+
+  const xyPoints = routeToXYPoints(route);
+
+  const first = xyPoints[0];
+  const last = xyPoints[xyPoints.length - 1];
+
+  return {
+    line: computeLineFromXY(first, last),
+    first,
+    last
+  };
+
+}
+
+function areSlopesParallel(m1, v1, m2, v2, tol = 0.02) {
+
+  if (v1 && v2) return true;
+  if (v1 || v2) return false;
+
+  return Math.abs(m1 - m2) < tol;
+
+}
+
+function areSlopesPerpendicular(m1, v1, m2, v2, tol = 0.05) {
+
+  if (v1 && m2 === 0) return true;
+  if (v2 && m1 === 0) return true;
+  if (v1 || v2) return false;
+
+  return Math.abs(m1 * m2 + 1) < tol;
+
+}
+
+function perpendicularSlope(line) {
+
+  if (line.vertical) {
+    return {
+      vertical: false,
+      slope: 0
+    };
+  }
+
+  if (Math.abs(line.slope) < 1e-9) {
+    return {
+      vertical: true,
+      slope: null
+    };
+  }
+
+  return {
+    vertical: false,
+    slope: -1 / line.slope
+  };
+
+}
+
+function projectPointOntoConstrainedLine(cursorXY, throughXY, vertical, slope) {
+
+  if (vertical) {
+    return {
+      x: throughXY.x,
+      y: cursorXY.y
+    };
+  }
+
+  if (Math.abs(slope) < 1e-9) {
+    return {
+      x: cursorXY.x,
+      y: throughXY.y
+    };
+  }
+
+  const dx = cursorXY.x - throughXY.x;
+  const dy = cursorXY.y - throughXY.y;
+
+  const len2 = 1 + slope * slope;
+  const t = (dx + dy * slope) / len2;
+
+  return {
+    x: throughXY.x + t,
+    y: throughXY.y + t * slope
+  };
+
+}
+
+function solveLineLineIntersectionXY(lineA, lineB) {
+
+  if (lineA.vertical && lineB.vertical) {
+    return null;
+  }
+
+  if (lineA.vertical) {
+    const x = lineA.x;
+    const y = lineB.slope * x + lineB.intercept;
+    return { x, y };
+  }
+
+  if (lineB.vertical) {
+    const x = lineB.x;
+    const y = lineA.slope * x + lineA.intercept;
+    return { x, y };
+  }
+
+  if (Math.abs(lineA.slope - lineB.slope) < 1e-9) {
+    return null;
+  }
+
+  const x =
+    (lineB.intercept - lineA.intercept) /
+    (lineA.slope - lineB.slope);
+
+  const y = lineA.slope * x + lineA.intercept;
+
+  return { x, y };
+
+}
+
+function pointWithinSegmentBounds(point, a, b, tolerance = 0.6) {
+
+  const minX = Math.min(a.x, b.x) - tolerance;
+  const maxX = Math.max(a.x, b.x) + tolerance;
+  const minY = Math.min(a.y, b.y) - tolerance;
+  const maxY = Math.max(a.y, b.y) + tolerance;
+
+  return (
+    point.x >= minX && point.x <= maxX &&
+    point.y >= minY && point.y <= maxY
+  );
+
+}
+
+function solveLineCircleIntersectionXY(line, circle) {
+
+  const h = circle.center.x;
+  const k = circle.center.y;
+  const r = circle.radius;
+
+  if (line.vertical) {
+
+    const c = line.x;
+    const rhs = (r * r) - Math.pow(c - h, 2);
+
+    if (rhs < -1e-9) {
+      return { count: 0, points: [], discriminant: rhs };
+    }
+
+    if (Math.abs(rhs) < 1e-9) {
+      return {
+        count: 1,
+        points: [{ x: c, y: k }],
+        discriminant: 0
+      };
+    }
+
+    const sq = Math.sqrt(rhs);
+
+    return {
+      count: 2,
+      points: [
+        { x: c, y: k + sq },
+        { x: c, y: k - sq }
+      ],
+      discriminant: rhs
+    };
+
+  }
+
+  const m = line.slope;
+  const b = line.intercept;
+
+  const A = 1 + m * m;
+  const B = 2 * (m * (b - k) - h);
+  const C = (h * h) + Math.pow(b - k, 2) - (r * r);
+
+  const discriminant = (B * B) - (4 * A * C);
+
+  if (discriminant < -1e-9) {
+    return { count: 0, points: [], discriminant, A, B, C };
+  }
+
+  if (Math.abs(discriminant) < 1e-9) {
+    const x = -B / (2 * A);
+    const y = m * x + b;
+    return {
+      count: 1,
+      points: [{ x, y }],
+      discriminant: 0,
+      A, B, C
+    };
+  }
+
+  const sq = Math.sqrt(discriminant);
+  const x1 = (-B + sq) / (2 * A);
+  const x2 = (-B - sq) / (2 * A);
+
+  return {
+    count: 2,
+    points: [
+      { x: x1, y: m * x1 + b },
+      { x: x2, y: m * x2 + b }
+    ],
+    discriminant,
+    A, B, C
+  };
+
+}
+
+
+/* =========================================================
    31. DRAWING STATE
    ========================================================= */
 
@@ -4248,6 +4833,30 @@ function addDrawingPoint(
 map.on(
   "click",
   function(event) {
+
+    if (
+      circleDrawing.active
+    ) {
+
+      handleCircleDrawingClick(
+        event.latlng
+      );
+
+      return;
+
+    }
+
+    if (
+      corridorConstruction.active
+    ) {
+
+      handleCorridorConstructionClick(
+        event.latlng
+      );
+
+      return;
+
+    }
 
     if (
       !transportDrawing.active
@@ -5230,6 +5839,8 @@ function clearAllTransportRoutes() {
 
 function updateRouteList() {
 
+  populateMathDropdowns();
+
   const list =
     document.getElementById(
       "routeList"
@@ -5380,6 +5991,989 @@ function updateRouteList() {
 
     }
   );
+
+}
+
+
+/* =========================================================
+   45b. MATH MODE — TOGGLE
+   ========================================================= */
+
+function toggleMathMode() {
+
+  mathMode.active =
+    !mathMode.active;
+
+  const body =
+    document.getElementById(
+      "mathModeBody"
+    );
+
+  const button =
+    document.getElementById(
+      "mathModeToggleButton"
+    );
+
+  if (mathMode.active) {
+
+    body.style.display = "block";
+    button.textContent = "Disable Math Mode";
+    populateMathDropdowns();
+
+  }
+  else {
+
+    body.style.display = "none";
+    button.textContent = "Enable Math Mode";
+    cancelCircleDrawing();
+    cancelCorridorConstruction();
+
+  }
+
+}
+
+
+/* =========================================================
+   45c. MATH MODE — CIRCLE DRAWING TOOL
+   ========================================================= */
+
+function startCircleDrawing() {
+
+  cancelTransportDrawing();
+  cancelCorridorConstruction();
+
+  circleDrawing.active = true;
+  circleDrawing.centerLatLng = null;
+  circleDrawing.centerXY = null;
+
+  if (circleDrawing.previewCircle) {
+    map.removeLayer(circleDrawing.previewCircle);
+    circleDrawing.previewCircle = null;
+  }
+
+  if (circleDrawing.previewRadiusLine) {
+    map.removeLayer(circleDrawing.previewRadiusLine);
+    circleDrawing.previewRadiusLine = null;
+  }
+
+  map.getContainer().style.cursor = "crosshair";
+
+  document.getElementById("circleDrawStatus").textContent =
+    "Click the map to place the circle's center.";
+
+}
+
+function handleCircleDrawingClick(latlng) {
+
+  if (!circleDrawing.centerLatLng) {
+
+    circleDrawing.centerLatLng = latlng;
+    circleDrawing.centerXY = latLngToCoordinate(latlng);
+
+    document.getElementById("circleDrawStatus").textContent =
+      "Move the mouse to set the radius, then click to confirm.";
+
+    return;
+
+  }
+
+  const edgeXY = latLngToCoordinate(latlng);
+
+  const radiusUnits =
+    Math.hypot(
+      edgeXY.x - circleDrawing.centerXY.x,
+      edgeXY.y - circleDrawing.centerXY.y
+    );
+
+  if (radiusUnits < 0.5) {
+
+    document.getElementById("circleDrawStatus").textContent =
+      "⚠️ Radius too small — click further from the center.";
+
+    return;
+
+  }
+
+  const name =
+    `Hub Circle ${circleNumber++}`;
+
+  const circleLayer =
+    L.circle(
+      circleDrawing.centerLatLng,
+      {
+        radius: radiusUnits * METERS_PER_UNIT,
+        color: "#7c3aed",
+        weight: 2.5,
+        fillColor: "#7c3aed",
+        fillOpacity: .12,
+        interactive: true,
+        pane: "routePane"
+      }
+    ).addTo(map);
+
+  const centerMarker =
+    L.circleMarker(
+      circleDrawing.centerLatLng,
+      {
+        radius: 4,
+        color: "#7c3aed",
+        weight: 2,
+        fillColor: "white",
+        fillOpacity: 1,
+        interactive: false,
+        pane: "routePane"
+      }
+    ).addTo(map);
+
+  const circle = {
+    id: Date.now() + Math.random(),
+    name,
+    center: {
+      x: circleDrawing.centerXY.x,
+      y: circleDrawing.centerXY.y
+    },
+    centerLatLng: circleDrawing.centerLatLng,
+    radius: radiusUnits,
+    layer: L.layerGroup([circleLayer, centerMarker]).addTo(map)
+  };
+
+  circleLayer.on("click", function() {
+    document.getElementById("mathInspectCircle").value = circle.id;
+    inspectCircleMath();
+  });
+
+  mathCircles.push(circle);
+
+  cancelCircleDrawing();
+  updateCircleList();
+  populateMathDropdowns();
+
+  document.getElementById("circleDrawStatus").textContent =
+    `✅ ${name} created — radius ${formatNumber(radiusUnits)} units ` +
+    `(${formatNumber(radiusUnits * KM_PER_UNIT)} km).`;
+
+}
+
+function updateCircleDrawingPreview(latlng) {
+
+  if (!circleDrawing.centerLatLng) {
+    return;
+  }
+
+  const edgeXY = latLngToCoordinate(latlng);
+
+  const radiusUnits =
+    Math.hypot(
+      edgeXY.x - circleDrawing.centerXY.x,
+      edgeXY.y - circleDrawing.centerXY.y
+    );
+
+  if (circleDrawing.previewCircle) {
+    map.removeLayer(circleDrawing.previewCircle);
+  }
+
+  if (circleDrawing.previewRadiusLine) {
+    map.removeLayer(circleDrawing.previewRadiusLine);
+  }
+
+  circleDrawing.previewCircle =
+    L.circle(
+      circleDrawing.centerLatLng,
+      {
+        radius: radiusUnits * METERS_PER_UNIT,
+        color: "#7c3aed",
+        weight: 2,
+        dashArray: "6 5",
+        fillColor: "#7c3aed",
+        fillOpacity: .08,
+        interactive: false,
+        pane: "routePreviewPane"
+      }
+    ).addTo(map);
+
+  circleDrawing.previewRadiusLine =
+    L.polyline(
+      [circleDrawing.centerLatLng, latlng],
+      {
+        color: "#7c3aed",
+        weight: 1.5,
+        dashArray: "3 4",
+        interactive: false,
+        pane: "routePreviewPane"
+      }
+    ).addTo(map);
+
+  document.getElementById("circleDrawStatus").textContent =
+    `Radius: ${formatNumber(radiusUnits)} units ` +
+    `(${formatNumber(radiusUnits * KM_PER_UNIT)} km). Click to confirm.`;
+
+}
+
+function cancelCircleDrawing() {
+
+  circleDrawing.active = false;
+  circleDrawing.centerLatLng = null;
+  circleDrawing.centerXY = null;
+
+  if (circleDrawing.previewCircle) {
+    map.removeLayer(circleDrawing.previewCircle);
+    circleDrawing.previewCircle = null;
+  }
+
+  if (circleDrawing.previewRadiusLine) {
+    map.removeLayer(circleDrawing.previewRadiusLine);
+    circleDrawing.previewRadiusLine = null;
+  }
+
+  map.getContainer().style.cursor = "";
+
+  const status = document.getElementById("circleDrawStatus");
+  if (status) {
+    status.textContent =
+      "Click a center point, then click again to set the radius.";
+  }
+
+}
+
+function deleteMathCircle(id) {
+
+  const index =
+    mathCircles.findIndex(
+      circle => String(circle.id) === String(id)
+    );
+
+  if (index === -1) {
+    return;
+  }
+
+  const circle = mathCircles[index];
+
+  if (circle.layer) {
+    map.removeLayer(circle.layer);
+  }
+
+  mathCircles.splice(index, 1);
+
+  updateCircleList();
+  populateMathDropdowns();
+
+}
+
+function clearAllMathCircles() {
+
+  mathCircles.forEach(
+    circle => {
+      if (circle.layer) {
+        map.removeLayer(circle.layer);
+      }
+    }
+  );
+
+  mathCircles.length = 0;
+
+  updateCircleList();
+  populateMathDropdowns();
+
+}
+
+function updateCircleList() {
+
+  const list =
+    document.getElementById("circleList");
+
+  if (!list) {
+    return;
+  }
+
+  if (mathCircles.length === 0) {
+    list.innerHTML =
+      `<div style="font-size:10px;color:#9aa4ad;">No circles created yet.</div>`;
+    return;
+  }
+
+  list.innerHTML =
+    mathCircles.map(
+      circle => `
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          font-size:10px;
+          padding:4px 0;
+          border-bottom:1px solid #eef1f4;
+        ">
+          <span>${escapeHTML(circle.name)} · r=${formatNumber(circle.radius)}u</span>
+          <button
+            style="font-size:9px;padding:3px 6px;background:#b91c1c;"
+            onclick="deleteMathCircle('${circle.id}')"
+          >✕</button>
+        </div>
+      `
+    ).join("");
+
+}
+
+
+/* =========================================================
+   45d. MATH MODE — PARALLEL/PERPENDICULAR CONSTRUCTION
+   ========================================================= */
+
+function startCorridorConstruction(mode) {
+
+  const refId =
+    document.getElementById("corridorReferenceRoute").value;
+
+  const status =
+    document.getElementById("corridorStatus");
+
+  if (!refId) {
+    status.textContent =
+      "⚠️ Choose a reference route first.";
+    return;
+  }
+
+  const refRoute =
+    transportRoutes.find(
+      route => String(route.id) === String(refId)
+    );
+
+  if (!refRoute) {
+    status.textContent =
+      "⚠️ Reference route not found.";
+    return;
+  }
+
+  cancelTransportDrawing();
+  cancelCircleDrawing();
+
+  const corridor = routeCorridorLine(refRoute);
+  const refLine = corridor.line;
+
+  let vertical, slope;
+
+  if (mode === "perpendicular") {
+
+    const perp = perpendicularSlope(refLine);
+    vertical = perp.vertical;
+    slope = perp.slope;
+
+  }
+  else {
+
+    vertical = refLine.vertical;
+    slope = refLine.slope;
+
+  }
+
+  corridorConstruction.active = true;
+  corridorConstruction.mode = mode;
+  corridorConstruction.referenceRouteId = refId;
+  corridorConstruction.newMode =
+    document.getElementById("corridorNewMode").value || "ROAD";
+  corridorConstruction.vertical = vertical;
+  corridorConstruction.slope = slope;
+  corridorConstruction.throughXY = null;
+  corridorConstruction.throughLatLng = null;
+
+  map.getContainer().style.cursor = "crosshair";
+
+  status.textContent =
+    `Click a point on the map to build the ${mode} corridor through it.`;
+
+}
+
+function handleCorridorConstructionClick(latlng) {
+
+  const status =
+    document.getElementById("corridorStatus");
+
+  if (!corridorConstruction.throughLatLng) {
+
+    corridorConstruction.throughLatLng = latlng;
+    corridorConstruction.throughXY = latLngToCoordinate(latlng);
+
+    status.textContent =
+      "Move the mouse along the constrained line, then click to set the endpoint.";
+
+    return;
+
+  }
+
+  const endXY =
+    projectPointOntoConstrainedLine(
+      latLngToCoordinate(latlng),
+      corridorConstruction.throughXY,
+      corridorConstruction.vertical,
+      corridorConstruction.slope
+    );
+
+  const throughLatLng =
+    corridorConstruction.throughLatLng;
+
+  const endLatLng =
+    coordinateToLatLng(endXY.x, endXY.y);
+
+  const refRoute =
+    transportRoutes.find(
+      route => String(route.id) === String(corridorConstruction.referenceRouteId)
+    );
+
+  const type = corridorConstruction.newMode;
+
+  cancelCorridorConstruction();
+
+  /* Reuse the normal drawing pipeline to create a real route. */
+  transportDrawing.active = true;
+  transportDrawing.type = type;
+  transportDrawing.points = [
+    L.latLng(throughLatLng.lat, throughLatLng.lng),
+    L.latLng(endLatLng.lat, endLatLng.lng)
+  ];
+  transportDrawing.snappedPin = null;
+
+  const nameInput =
+    document.getElementById("routeNameInput");
+
+  if (nameInput && refRoute) {
+    nameInput.value =
+      `${corridorConstruction.mode === "parallel" ? "Parallel" : "Perpendicular"} to ${refRoute.name}`;
+  }
+
+  finishTransportDrawing();
+
+}
+
+function updateCorridorConstructionPreview(latlng) {
+
+  if (!corridorConstruction.throughLatLng) {
+    return;
+  }
+
+  const endXY =
+    projectPointOntoConstrainedLine(
+      latLngToCoordinate(latlng),
+      corridorConstruction.throughXY,
+      corridorConstruction.vertical,
+      corridorConstruction.slope
+    );
+
+  const endLatLng =
+    coordinateToLatLng(endXY.x, endXY.y);
+
+  if (corridorConstruction.previewLine) {
+    map.removeLayer(corridorConstruction.previewLine);
+  }
+
+  corridorConstruction.previewLine =
+    L.polyline(
+      [corridorConstruction.throughLatLng, endLatLng],
+      {
+        color: "#0f766e",
+        weight: 3,
+        dashArray: "10 7",
+        interactive: false,
+        pane: "routePreviewPane"
+      }
+    ).addTo(map);
+
+}
+
+function cancelCorridorConstruction() {
+
+  corridorConstruction.active = false;
+  corridorConstruction.mode = null;
+  corridorConstruction.referenceRouteId = null;
+  corridorConstruction.throughXY = null;
+  corridorConstruction.throughLatLng = null;
+  corridorConstruction.vertical = false;
+  corridorConstruction.slope = null;
+
+  if (corridorConstruction.previewLine) {
+    map.removeLayer(corridorConstruction.previewLine);
+    corridorConstruction.previewLine = null;
+  }
+
+  map.getContainer().style.cursor = "";
+
+  const status = document.getElementById("corridorStatus");
+  if (status) {
+    status.textContent =
+      "Choose a reference route, pick parallel or perpendicular, then click a point on the map to build through it.";
+  }
+
+}
+
+
+/* =========================================================
+   45e. MATH MODE — DROPDOWN POPULATION
+   ========================================================= */
+
+function populateMathDropdowns() {
+
+  const routeSelectIds = [
+    "mathInspectRoute",
+    "corridorReferenceRoute",
+    "intersectRouteA",
+    "intersectRouteB",
+    "intersectRouteC"
+  ];
+
+  routeSelectIds.forEach(
+    id => {
+
+      const select =
+        document.getElementById(id);
+
+      if (!select) return;
+
+      const previousValue = select.value;
+
+      select.innerHTML =
+        `<option value="">${select.dataset.placeholder || "Choose a route"}</option>` +
+        transportRoutes.map(
+          route =>
+            `<option value="${route.id}">${escapeHTML(route.name)}</option>`
+        ).join("");
+
+      if (
+        transportRoutes.some(
+          route => String(route.id) === String(previousValue)
+        )
+      ) {
+        select.value = previousValue;
+      }
+
+    }
+  );
+
+  const circleSelectIds = [
+    "mathInspectCircle",
+    "intersectCircleC"
+  ];
+
+  circleSelectIds.forEach(
+    id => {
+
+      const select =
+        document.getElementById(id);
+
+      if (!select) return;
+
+      const previousValue = select.value;
+
+      select.innerHTML =
+        `<option value="">${select.dataset.placeholder || "Choose a circle"}</option>` +
+        mathCircles.map(
+          circle =>
+            `<option value="${circle.id}">${escapeHTML(circle.name)}</option>`
+        ).join("");
+
+      if (
+        mathCircles.some(
+          circle => String(circle.id) === String(previousValue)
+        )
+      ) {
+        select.value = previousValue;
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   45f. MATH MODE — ROUTE / CIRCLE INSPECTOR
+   ========================================================= */
+
+function buildRouteMathHTML(route) {
+
+  const xyPoints = routeToXYPoints(route);
+
+  const segmentRows =
+    xyPoints.slice(0, -1).map(
+      (point, index) => {
+
+        const next = xyPoints[index + 1];
+        const line = computeLineFromXY(point, next);
+
+        return `
+          <div style="margin-bottom:5px;">
+            <strong>Segment ${index + 1}:</strong>
+            (${formatNumber(point.x)}, ${formatNumber(point.y)}) →
+            (${formatNumber(next.x)}, ${formatNumber(next.y)})<br>
+            Slope m = ${line.vertical ? "undefined (vertical)" : formatNumber(line.slope)}<br>
+            Equation: <code>${formatLineEquation(line)}</code>
+          </div>
+        `;
+
+      }
+    ).join("");
+
+  const corridor = routeCorridorLine(route);
+
+  return `
+    <div style="font-size:10px;line-height:1.5;">
+      <div style="
+        font-weight:bold;
+        margin-bottom:6px;
+        color:${route.color};
+      ">${escapeHTML(route.name)} (${transportTypes[route.type]?.name || route.type})</div>
+
+      <div style="
+        background:#f4f6f8;
+        border-radius:6px;
+        padding:6px 8px;
+        margin-bottom:8px;
+      ">
+        <strong>Overall corridor</strong>
+        (start → end, straight-line assumption):<br>
+        Slope m = ${corridor.line.vertical ? "undefined (vertical)" : formatNumber(corridor.line.slope)}<br>
+        Equation: <code>${formatLineEquation(corridor.line)}</code>
+      </div>
+
+      ${segmentRows}
+    </div>
+  `;
+
+}
+
+function buildCircleMathHTML(circle) {
+
+  const h = formatNumber(circle.center.x);
+  const k = formatNumber(circle.center.y);
+  const r = formatNumber(circle.radius);
+  const rSq = formatNumber(circle.radius * circle.radius);
+
+  return `
+    <div style="font-size:10px;line-height:1.6;">
+      <div style="font-weight:bold;color:#7c3aed;margin-bottom:6px;">
+        ${escapeHTML(circle.name)}
+      </div>
+      Center (h, k) = (${h}, ${k})<br>
+      Radius r = ${r} units (${formatNumber(circle.radius * KM_PER_UNIT)} km)<br>
+      Equation:
+      <code>(x − ${h})² + (y − ${k})² = ${rSq}</code>
+    </div>
+  `;
+
+}
+
+function inspectRouteMath() {
+
+  const id =
+    document.getElementById("mathInspectRoute").value;
+
+  const output =
+    document.getElementById("mathInspectorOutput");
+
+  if (!id) {
+    output.innerHTML = "";
+    return;
+  }
+
+  const route =
+    transportRoutes.find(
+      r => String(r.id) === String(id)
+    );
+
+  if (!route) {
+    output.innerHTML = "";
+    return;
+  }
+
+  output.innerHTML =
+    buildRouteMathHTML(route);
+
+}
+
+function inspectCircleMath() {
+
+  const id =
+    document.getElementById("mathInspectCircle").value;
+
+  const output =
+    document.getElementById("mathInspectorOutput");
+
+  if (!id) {
+    output.innerHTML = "";
+    return;
+  }
+
+  const circle =
+    mathCircles.find(
+      c => String(c.id) === String(id)
+    );
+
+  if (!circle) {
+    output.innerHTML = "";
+    return;
+  }
+
+  output.innerHTML =
+    buildCircleMathHTML(circle);
+
+}
+
+
+/* =========================================================
+   45g. MATH MODE — INTERSECTION MARKERS
+   ========================================================= */
+
+function clearMathMarkers() {
+
+  mathMarkers.forEach(
+    marker => map.removeLayer(marker)
+  );
+
+  mathMarkers.length = 0;
+
+}
+
+function addMathMarker(latlng, color, label) {
+
+  const marker =
+    L.circleMarker(
+      latlng,
+      {
+        radius: 7,
+        color,
+        weight: 3,
+        fillColor: "white",
+        fillOpacity: 1,
+        pane: "routePane"
+      }
+    ).bindTooltip(
+      label,
+      { permanent: false }
+    ).addTo(map);
+
+  mathMarkers.push(marker);
+
+  return marker;
+
+}
+
+
+/* =========================================================
+   45h. MATH MODE — LINE-LINE INTERSECTION (TRANSFER STATIONS)
+   ========================================================= */
+
+function findLineLineIntersectionUI() {
+
+  const idA = document.getElementById("intersectRouteA").value;
+  const idB = document.getElementById("intersectRouteB").value;
+
+  const result = document.getElementById("lineLineResult");
+
+  if (!idA || !idB) {
+    result.innerHTML =
+      `<div style="font-size:10px;color:#b91c1c;">Choose two routes.</div>`;
+    return;
+  }
+
+  if (idA === idB) {
+    result.innerHTML =
+      `<div style="font-size:10px;color:#b91c1c;">Choose two different routes.</div>`;
+    return;
+  }
+
+  const routeA = transportRoutes.find(r => String(r.id) === String(idA));
+  const routeB = transportRoutes.find(r => String(r.id) === String(idB));
+
+  if (!routeA || !routeB) {
+    result.innerHTML = "";
+    return;
+  }
+
+  clearMathMarkers();
+
+  const pointsA = routeToXYPoints(routeA);
+  const pointsB = routeToXYPoints(routeB);
+
+  let onSegmentMatch = null;
+  let anyMatch = null;
+
+  for (let i = 0; i < pointsA.length - 1; i++) {
+
+    const lineA = computeLineFromXY(pointsA[i], pointsA[i + 1]);
+
+    for (let j = 0; j < pointsB.length - 1; j++) {
+
+      const lineB = computeLineFromXY(pointsB[j], pointsB[j + 1]);
+
+      const intersection =
+        solveLineLineIntersectionXY(lineA, lineB);
+
+      if (!intersection) continue;
+
+      const candidate = {
+        lineA, lineB, intersection,
+        segA: [pointsA[i], pointsA[i + 1]],
+        segB: [pointsB[j], pointsB[j + 1]]
+      };
+
+      if (!anyMatch) anyMatch = candidate;
+
+      const withinA =
+        pointWithinSegmentBounds(intersection, pointsA[i], pointsA[i + 1]);
+      const withinB =
+        pointWithinSegmentBounds(intersection, pointsB[j], pointsB[j + 1]);
+
+      if (withinA && withinB && !onSegmentMatch) {
+        onSegmentMatch = candidate;
+      }
+
+    }
+
+  }
+
+  const chosen = onSegmentMatch || anyMatch;
+
+  if (!chosen) {
+
+    result.innerHTML = `
+      <div style="font-size:10px;line-height:1.5;">
+        These two routes run at the same slope (parallel), so the
+        system y = m₁x + b₁ and y = m₂x + b₂ has <strong>no unique solution</strong>
+        — they never cross.
+      </div>
+    `;
+
+    return;
+
+  }
+
+  const latlng =
+    coordinateToLatLng(chosen.intersection.x, chosen.intersection.y);
+
+  addMathMarker(
+    latlng,
+    onSegmentMatch ? "#16a34a" : "#f59e0b",
+    `Transfer point (${formatNumber(chosen.intersection.x)}, ${formatNumber(chosen.intersection.y)})`
+  );
+
+  map.panTo(latlng);
+
+  result.innerHTML = `
+    <div style="font-size:10px;line-height:1.6;">
+      <strong>${escapeHTML(routeA.name)}:</strong>
+      <code>${formatLineEquation(chosen.lineA)}</code><br>
+      <strong>${escapeHTML(routeB.name)}:</strong>
+      <code>${formatLineEquation(chosen.lineB)}</code><br><br>
+
+      Solving the system by substitution gives:<br>
+      <strong>Intersection point:</strong>
+      (${formatNumber(chosen.intersection.x)}, ${formatNumber(chosen.intersection.y)})<br><br>
+
+      ${
+        onSegmentMatch
+          ? `✅ This point lies on both drawn segments — a realistic <strong>transfer station</strong> location.`
+          : `⚠️ The lines cross at this point only if extended beyond the segments you actually drew — not a usable transfer point as currently drawn.`
+      }
+    </div>
+  `;
+
+}
+
+
+/* =========================================================
+   45i. MATH MODE — LINE-CIRCLE INTERSECTION (ROUTE ∩ HUB)
+   ========================================================= */
+
+function findLineCircleIntersectionUI() {
+
+  const routeId = document.getElementById("intersectRouteC").value;
+  const circleId = document.getElementById("intersectCircleC").value;
+
+  const result = document.getElementById("lineCircleResult");
+
+  if (!routeId || !circleId) {
+    result.innerHTML =
+      `<div style="font-size:10px;color:#b91c1c;">Choose a route and a circle.</div>`;
+    return;
+  }
+
+  const route = transportRoutes.find(r => String(r.id) === String(routeId));
+  const circle = mathCircles.find(c => String(c.id) === String(circleId));
+
+  if (!route || !circle) {
+    result.innerHTML = "";
+    return;
+  }
+
+  clearMathMarkers();
+
+  const points = routeToXYPoints(route);
+
+  let totalIntersections = 0;
+  let firstDetail = null;
+
+  const rows = [];
+
+  for (let i = 0; i < points.length - 1; i++) {
+
+    const line = computeLineFromXY(points[i], points[i + 1]);
+    const solved = solveLineCircleIntersectionXY(line, circle);
+
+    const onSegmentPoints =
+      solved.points.filter(
+        pt => pointWithinSegmentBounds(pt, points[i], points[i + 1], 0.15)
+      );
+
+    totalIntersections += onSegmentPoints.length;
+
+    if (onSegmentPoints.length && !firstDetail) {
+      firstDetail = { line, solved, segIndex: i };
+    }
+
+    rows.push(
+      `Segment ${i + 1}: discriminant = ${formatNumber(solved.discriminant)} → ` +
+      `${onSegmentPoints.length} intersection${onSegmentPoints.length === 1 ? "" : "s"} on this segment`
+    );
+
+    onSegmentPoints.forEach(
+      pt => {
+        const latlng = coordinateToLatLng(pt.x, pt.y);
+        addMathMarker(
+          latlng,
+          "#dc2626",
+          `Route enters hub coverage at (${formatNumber(pt.x)}, ${formatNumber(pt.y)})`
+        );
+      }
+    );
+
+  }
+
+  if (firstDetail) {
+    const firstLatLng =
+      coordinateToLatLng(
+        firstDetail.solved.points[0].x,
+        firstDetail.solved.points[0].y
+      );
+    map.panTo(firstLatLng);
+  }
+
+  const h = formatNumber(circle.center.x);
+  const k = formatNumber(circle.center.y);
+  const r = formatNumber(circle.radius);
+
+  result.innerHTML = `
+    <div style="font-size:10px;line-height:1.6;">
+      <strong>${escapeHTML(circle.name)}:</strong>
+      <code>(x − ${h})² + (y − ${k})² = ${formatNumber(circle.radius * circle.radius)}</code><br>
+      <strong>${escapeHTML(route.name)}</strong> checked segment by segment:<br>
+      ${rows.map(row => `• ${row}`).join("<br>")}<br><br>
+      <strong>Total intersections with the circle: ${totalIntersections}</strong><br>
+      ${
+        totalIntersections === 0
+          ? "This route never enters the hub's coverage circle."
+          : totalIntersections === 1
+            ? "The route is tangent to the coverage boundary — touching it at exactly one point (discriminant = 0)."
+            : "The route crosses into and out of the coverage circle."
+      }
+    </div>
+  `;
 
 }
 
@@ -7804,6 +9398,8 @@ document.addEventListener(
     ) {
 
       cancelTransportDrawing();
+      cancelCircleDrawing();
+      cancelCorridorConstruction();
 
     }
 
