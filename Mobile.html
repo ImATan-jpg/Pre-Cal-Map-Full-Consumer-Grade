@@ -1,0 +1,2597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Philippines Transportation Planning Map — Mobile</title>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7.2.0/turf.min.js"></script>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background:
+    linear-gradient(
+      135deg,
+      #dfe9f3,
+      #f7f9fb
+    );
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  color: #17212b;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 8px;
+
+  overflow: hidden;
+}
+
+button,
+select,
+input {
+  font-family: inherit;
+}
+
+button {
+  border: none;
+  border-radius: 7px;
+  padding: 9px 14px;
+  font-size: 12.5px;
+  cursor: pointer;
+
+  background: #17365d;
+  color: white;
+
+  transition:
+    background .15s ease,
+    transform .1s ease;
+}
+
+button:hover {
+  background: #24558e;
+}
+
+button:active {
+  transform: scale(.97);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   PROJECT
+   ========================================================= */
+
+.project {
+  width: min(99.5vw, 2200px);
+  height: calc(100vh - 16px);
+  max-height: calc(100vh - 16px);
+
+  background: white;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 12px 40px rgba(0,0,0,.18);
+
+  padding: 12px 22px 10px;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+h1 {
+  text-align: center;
+  margin: 0 0 2px;
+
+  color: #17365d;
+
+  font-size: 23px;
+
+  flex-shrink: 0;
+}
+
+.subtitle {
+  text-align: center;
+
+  color: #66727e;
+
+  font-size: 12.5px;
+
+  margin-bottom: 8px;
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   COMMON PANELS
+   ========================================================= */
+
+.panel {
+  border-radius: 9px;
+  padding: 11px;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 9px;
+}
+
+input,
+select {
+  border:
+    1px solid #9eacb9;
+
+  border-radius: 6px;
+
+  padding:
+    7px 9px;
+
+  background: white;
+
+  color: #17212b;
+
+  font-size: 12px;
+}
+
+input {
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: #24558e;
+
+  box-shadow:
+    0 0 0 2px rgba(36,85,142,.12);
+}
+
+
+/* =========================================================
+   CALIBRATION
+   ========================================================= */
+
+.calibration-panel {
+  background:
+    linear-gradient(
+      135deg,
+      #eef5fb,
+      #f8fbfd
+    );
+
+  border:
+    1px solid #cbd8e5;
+
+  border-radius: 9px;
+
+  padding: 7px 11px;
+
+  margin-bottom: 7px;
+
+  flex-shrink: 0;
+}
+
+.calibration-title {
+  font-size: 12px;
+  font-weight: bold;
+
+  color: #17365d;
+
+  margin-bottom: 5px;
+}
+
+.calibration-row {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  flex-wrap: wrap;
+}
+
+.calibration-row label {
+  font-size: 10.5px;
+  font-weight: bold;
+}
+
+.calibration-info {
+  margin-top: 4px;
+
+  font-size: 10px;
+
+  line-height: 1.4;
+
+  color: #59636d;
+}
+
+.calibration-details {
+  margin-top: 4px;
+}
+
+.calibration-details summary {
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: bold;
+  color: #17365d;
+}
+
+#calibrationName,
+#scaleDisplay {
+  font-weight: bold;
+  color: #17365d;
+}
+
+#originDisplay {
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  color: #c1121f;
+}
+
+
+/* =========================================================
+   WORKSPACE
+   ========================================================= */
+
+.workspace {
+  display: grid;
+
+  grid-template-columns:
+    285px
+    minmax(0, 1fr)
+    300px;
+
+  grid-template-rows: 1fr;
+
+  gap: 12px;
+
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  overflow-y: auto;
+  min-height: 0;
+
+  padding-right: 4px;
+}
+
+
+/* =========================================================
+   PIN PANEL
+   ========================================================= */
+
+.pin-panel {
+  background:
+    linear-gradient(
+      135deg,
+      #fff7e8,
+      #fffdf7
+    );
+
+  border:
+    1px solid #e3cf9f;
+}
+
+.pin-panel-title {
+  color: #7a4b00;
+}
+
+.pin-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pin-row label {
+  font-size: 10px;
+  font-weight: bold;
+  color: #59451f;
+}
+
+.pin-name,
+.pin-type {
+  width: 100%;
+}
+
+.color-options {
+  display: grid;
+  grid-template-columns:
+    repeat(5, 1fr);
+
+  gap: 7px;
+
+  margin-top: 4px;
+}
+
+.color-button {
+  width: 27px;
+  height: 27px;
+
+  padding: 0;
+
+  border-radius: 50%;
+
+  border:
+    3px solid white;
+
+  box-shadow:
+    0 0 0 1px #8995a1;
+}
+
+.color-button.selected {
+  box-shadow:
+    0 0 0 2px #17212b,
+    0 0 0 4px white;
+
+  transform: scale(1.08);
+}
+
+.pin-instructions {
+  margin-top: 9px;
+
+  font-size: 10px;
+
+  color: #6b6255;
+
+  line-height: 1.5;
+}
+
+.pin-count {
+  margin-top: 8px;
+
+  font-size: 11px;
+
+  color: #6b6255;
+
+  font-weight: bold;
+}
+
+
+/* =========================================================
+   TRANSPORT PANEL
+   ========================================================= */
+
+.transport-panel {
+  background:
+    linear-gradient(
+      135deg,
+      #eef8ff,
+      #fbfdff
+    );
+
+  border:
+    1px solid #9fc5df;
+}
+
+.transport-title {
+  color: #155b83;
+}
+
+.transport-grid {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 5px;
+}
+
+.transport-button {
+  font-size: 10px;
+  padding: 7px 4px;
+}
+
+.transport-button.active {
+  background: #0b7fab;
+
+  box-shadow:
+    0 0 0 2px #d5f2ff;
+}
+
+.transport-controls {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 5px;
+
+  margin-top: 8px;
+}
+
+.snap-toggle {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-top: 8px;
+
+  padding: 7px;
+
+  background: #f7fbfe;
+
+  border:
+    1px solid #c8dce8;
+
+  border-radius: 6px;
+
+  font-size: 10px;
+
+  font-weight: bold;
+}
+
+.toggle {
+  position: relative;
+
+  width: 38px;
+  height: 20px;
+
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+
+  inset: 0;
+
+  cursor: pointer;
+
+  background: #aeb9c2;
+
+  border-radius: 20px;
+
+  transition: .2s;
+}
+
+.slider:before {
+  content: "";
+
+  position: absolute;
+
+  height: 14px;
+  width: 14px;
+
+  left: 3px;
+  top: 3px;
+
+  background: white;
+
+  border-radius: 50%;
+
+  transition: .2s;
+}
+
+.toggle input:checked + .slider {
+  background: #159447;
+}
+
+.toggle input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+.draw-status {
+  margin-top: 8px;
+
+  padding: 8px;
+
+  border-radius: 6px;
+
+  background: #f5fbff;
+
+  border:
+    1px solid #c8dce8;
+
+  color: #456273;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.snap-indicator {
+  display: none;
+
+  margin-top: 6px;
+
+  padding: 6px;
+
+  background: #dcfce7;
+
+  border:
+    1px solid #86efac;
+
+  color: #166534;
+
+  border-radius: 6px;
+
+  font-size: 10px;
+
+  font-weight: bold;
+}
+
+.transport-note {
+  margin-top: 8px;
+
+  font-size: 9px;
+
+  color: #63727d;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   ROUTE MANAGER
+   ========================================================= */
+
+.route-manager {
+  background:
+    linear-gradient(
+      135deg,
+      #f3f0ff,
+      #fcfbff
+    );
+
+  border:
+    1px solid #c9bde8;
+}
+
+.route-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.route-item {
+  padding: 8px;
+
+  margin-bottom: 6px;
+
+  background: white;
+
+  border:
+    1px solid #d8d2e8;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+}
+
+.route-item:hover {
+  background: #f5f1ff;
+}
+
+.route-item-header {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.route-color {
+  width: 13px;
+  height: 13px;
+
+  border-radius: 50%;
+
+  flex-shrink: 0;
+}
+
+.route-item-name {
+  font-size: 11px;
+  font-weight: bold;
+  color: #35245d;
+}
+
+.route-item-meta {
+  margin-top: 4px;
+
+  font-size: 9px;
+
+  color: #68727b;
+
+  line-height: 1.5;
+}
+
+.route-empty {
+  font-size: 10px;
+
+  color: #737984;
+
+  padding: 8px 2px;
+}
+
+
+/* =========================================================
+   ANALYSIS PANEL
+   ========================================================= */
+
+.analysis-panel {
+  background:
+    linear-gradient(
+      135deg,
+      #fff8ed,
+      #fffdf9
+    );
+
+  border:
+    1px solid #e5c58e;
+}
+
+.analysis-summary {
+  font-size: 10px;
+
+  line-height: 1.55;
+
+  color: #5d5346;
+}
+
+.analysis-box {
+  margin-top: 7px;
+
+  padding: 7px;
+
+  border-radius: 6px;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.analysis-ok {
+  background: #ecfdf5;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+.analysis-warning {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  color: #9a3412;
+}
+
+.analysis-danger {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.analysis-neutral {
+  background: #f4f7fa;
+  border: 1px solid #d4dde5;
+  color: #52616d;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.search-panel {
+  background:
+    linear-gradient(
+      135deg,
+      #eef4ff,
+      #fafcff
+    );
+
+  border:
+    1px solid #b8c9e4;
+}
+
+.search-title {
+  color: #244f86;
+}
+
+.search-label {
+  display: block;
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  margin:
+    7px 0 4px;
+
+  color: #3c5066;
+}
+
+.search-input {
+  width: 100%;
+}
+
+.search-button {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.search-results {
+  margin-top: 8px;
+
+  max-height: 220px;
+
+  overflow-y: auto;
+
+  font-size: 10px;
+}
+
+.search-result-item {
+  padding: 7px;
+
+  margin-bottom: 5px;
+
+  border:
+    1px solid #d4deea;
+
+  border-radius: 6px;
+
+  background: white;
+
+  cursor: pointer;
+}
+
+.search-result-item:hover {
+  background: #eef5ff;
+}
+
+.search-result-name {
+  font-weight: bold;
+  color: #17365d;
+}
+
+.search-result-type {
+  color: #66727e;
+  margin-top: 2px;
+}
+
+.search-result-pin {
+  margin-top: 5px;
+  color: #246b39;
+  font-weight: bold;
+}
+
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+.map-column {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#map {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+
+  border:
+    2px solid #263746;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  position: relative;
+
+  background: #dfe7ed;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+
+/* =========================================================
+   CARTESIAN OVERLAY
+   ========================================================= */
+
+.cartesian-overlay {
+  pointer-events: none;
+  overflow: visible;
+}
+
+.cartesian-overlay line {
+  vector-effect:
+    non-scaling-stroke;
+}
+
+.cartesian-grid {
+  stroke: #34495e;
+  stroke-width: .65;
+  opacity: .18;
+}
+
+.cartesian-grid-major {
+  stroke: #34495e;
+  stroke-width: 1.15;
+  opacity: .34;
+}
+
+.cartesian-grid-10 {
+  stroke: #34495e;
+  stroke-width: 1.5;
+  opacity: .43;
+}
+
+.cartesian-axis {
+  stroke: #111827;
+  stroke-width: 2.5;
+  opacity: .88;
+}
+
+.coordinate-number {
+  font-size: 10px;
+  font-weight: bold;
+  fill: #263746;
+
+  paint-order: stroke;
+  stroke: white;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.axis-label {
+  font-size: 11px;
+  font-weight: bold;
+  fill: #111827;
+
+  paint-order: stroke;
+  stroke: white;
+  stroke-width: 3px;
+}
+
+
+/* =========================================================
+   PINS
+   ========================================================= */
+
+.custom-pin {
+  position: relative;
+
+  width: 34px;
+  height: 44px;
+
+  cursor: pointer;
+}
+
+.pin-shape {
+  position: absolute;
+
+  left: 4px;
+  top: 2px;
+
+  width: 26px;
+  height: 26px;
+
+  border-radius:
+    50% 50% 50% 0;
+
+  transform:
+    rotate(-45deg);
+
+  border:
+    3px solid white;
+
+  box-shadow:
+    0 2px 5px rgba(0,0,0,.45);
+}
+
+.pin-dot {
+  position: absolute;
+
+  left: 12px;
+  top: 10px;
+
+  width: 10px;
+  height: 10px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  border:
+    2px solid rgba(0,0,0,.25);
+}
+
+.station-ring {
+  position: absolute;
+
+  left: 5px;
+  top: 4px;
+
+  width: 24px;
+  height: 24px;
+
+  border-radius: 50%;
+
+  border:
+    3px solid white;
+
+  box-shadow:
+    0 0 0 2px #111827,
+    0 2px 5px rgba(0,0,0,.4);
+}
+
+
+/* =========================================================
+   PIN POPUP
+   ========================================================= */
+
+.pin-popup {
+  background:
+    rgba(20,28,36,.96);
+
+  color: white;
+
+  padding: 9px 11px;
+
+  border-radius: 7px;
+
+  min-width: 210px;
+
+  box-shadow:
+    0 4px 15px rgba(0,0,0,.35);
+
+  font-size: 11px;
+
+  line-height: 1.55;
+}
+
+.pin-popup-title {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.pin-popup-type {
+  color: #b9d8ff;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.pin-popup-coordinates {
+  font-family:
+    "Courier New",
+    monospace;
+
+  color: #ffd166;
+}
+
+.pin-popup-elevation {
+  color: #9ef01a;
+}
+
+
+/* =========================================================
+   TRANSPORT DRAWING
+   ========================================================= */
+
+.transport-preview {
+  pointer-events: none;
+}
+
+.route-drawing-point {
+  pointer-events: none;
+}
+
+.route-vertex {
+  background: white;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 0 3px #17365d,
+    0 2px 5px rgba(0,0,0,.35);
+}
+
+.snap-marker {
+  background: #16a34a;
+
+  border:
+    3px solid white;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 0 3px #16a34a,
+    0 2px 7px rgba(0,0,0,.4);
+}
+
+.route-label-marker {
+  background:
+    rgba(20,28,36,.9);
+
+  color: white;
+
+  border-radius: 5px;
+
+  padding: 4px 7px;
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0 2px 5px rgba(0,0,0,.3);
+}
+
+
+/* =========================================================
+   TERRAIN NOTE
+   ========================================================= */
+
+.terrain-note {
+  position: absolute;
+
+  bottom: 10px;
+  right: 10px;
+
+  z-index: 1000;
+
+  background:
+    rgba(255,255,255,.92);
+
+  border:
+    1px solid #999;
+
+  border-radius: 5px;
+
+  padding:
+    5px 7px;
+
+  font-size: 10px;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   WARNINGS ON MAP
+   ========================================================= */
+
+.warning-marker {
+  width: 22px;
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: #dc2626;
+
+  border:
+    3px solid white;
+
+  box-shadow:
+    0 2px 7px rgba(0,0,0,.45);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+
+  font-size: 12px;
+
+  font-weight: bold;
+}
+
+.warning-marker.yellow {
+  background: #f59e0b;
+}
+
+
+/* =========================================================
+   CONTROLS
+   ========================================================= */
+
+.controls {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin-top: 10px;
+}
+
+.map-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+
+  flex-shrink: 0;
+
+  margin-bottom: 8px;
+}
+
+.toolbar-cursor {
+  font-size: 12px;
+  color: #34495e;
+  white-space: nowrap;
+}
+
+.map-help-details {
+  position: relative;
+}
+
+.map-help-details summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  color: #17365d;
+
+  list-style: none;
+
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+
+  background: #dfe9f3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-help-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.map-help-details[open] summary {
+  background: #17365d;
+  color: white;
+}
+
+.map-help-popover {
+  position: absolute;
+  top: 28px;
+  right: 0;
+  width: 250px;
+  z-index: 500;
+
+  background: white;
+
+  border: 1px solid #cbd8e5;
+  border-radius: 8px;
+
+  padding: 9px 11px;
+
+  font-size: 11px;
+  line-height: 1.5;
+
+  box-shadow:
+    0 6px 20px rgba(0,0,0,.15);
+}
+
+
+/* =========================================================
+   INFO
+   ========================================================= */
+
+.info {
+  margin-top: 10px;
+
+  padding: 10px;
+
+  background: #edf5fb;
+
+  border-left:
+    5px solid #17365d;
+
+  border-radius: 5px;
+
+  font-size: 12px;
+
+  line-height: 1.55;
+}
+
+#mouseCoordinate {
+  font-weight: bold;
+
+  color: #c1121f;
+
+  font-family:
+    "Courier New",
+    monospace;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+  margin-top: 6px;
+  flex-shrink: 0;
+
+  text-align: center;
+
+  font-size: 10px;
+
+  font-weight: bold;
+
+  color: #34495e;
+
+  line-height: 1.4;
+}
+
+#map.right-dragging {
+  cursor: grabbing !important;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.loading {
+  opacity: .65;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .workspace {
+    grid-template-columns:
+      220px
+      minmax(0, 1fr)
+      220px;
+  }
+
+}
+
+@media (max-width: 850px) {
+
+  body {
+    height: auto;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding: 8px;
+    overflow: auto;
+  }
+
+  .project {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    padding: 10px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    height: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-height: 340px;
+  }
+
+  .map-column {
+    height: auto;
+  }
+
+  #map {
+    flex: none;
+    height: 500px;
+  }
+
+}
+
+
+/* =========================================================
+   SEARCH MARKER
+   ========================================================= */
+
+.search-location-marker {
+  width: 22px;
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: #2563eb;
+
+  border:
+    4px solid white;
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.45);
+}
+
+
+
+/* =========================================================
+   UPGRADE SUPPORT — SAME ORIGINAL VISUAL SYSTEM
+   ========================================================= */
+.route-status-chip { display:inline-block; padding:2px 6px; border-radius:10px; font-size:8px; font-weight:bold; margin-left:4px; }
+.route-status-ok { background:#dcfce7; color:#166534; }
+.route-status-warning { background:#ffedd5; color:#9a3412; }
+.route-status-danger { background:#fee2e2; color:#991b1b; }
+.route-status-unavailable { background:#eef2f7; color:#52616d; }
+.live-analysis { margin-top:7px; padding:7px; border-radius:6px; background:#f8fafc; border:1px solid #d8e0e7; font-size:9px; line-height:1.5; }
+.gps-route-line { pointer-events:none; }
+</style>
+</head>
+
+
+<body>
+
+<div class="project">
+
+<!-- =======================================================
+     CALIBRATION
+     ======================================================= -->
+
+<div class="calibration-panel">
+
+  <div class="calibration-title">
+    Coordinate Calibration
+  </div>
+
+  <div class="calibration-row">
+
+    <label for="calibrationSelect">
+      Coordinate Reference:
+    </label>
+
+    <select
+      id="calibrationSelect"
+      onchange="changeCalibration(this.value)"
+    >
+
+      <option value="philippines">
+        🇵🇭 Philippines — Whole Country
+      </option>
+
+      <option value="region1" selected>
+        Region I — Ilocos Region
+      </option>
+
+      <option value="region2">
+        Region II — Cagayan Valley
+      </option>
+
+      <option value="region3">
+        Region III — Central Luzon
+      </option>
+
+      <option value="region4a">
+        Region IV-A — CALABARZON
+      </option>
+
+      <option value="region4b">
+        Region IV-B — MIMAROPA
+      </option>
+
+      <option value="region5">
+        Region V — Bicol Region
+      </option>
+
+      <option value="region6">
+        Region VI — Western Visayas
+      </option>
+
+      <option value="region7">
+        Region VII — Central Visayas
+      </option>
+
+      <option value="region8">
+        Region VIII — Eastern Visayas
+      </option>
+
+      <option value="region9">
+        Region IX — Zamboanga Peninsula
+      </option>
+
+      <option value="region10">
+        Region X — Northern Mindanao
+      </option>
+
+      <option value="region11">
+        Region XI — Davao Region
+      </option>
+
+      <option value="region12">
+        Region XII — SOCCSKSARGEN
+      </option>
+
+      <option value="region13">
+        Region XIII — Caraga
+      </option>
+
+      <option value="nir">
+        Negros Island Region — NIR
+      </option>
+
+      <option value="car">
+        Cordillera Administrative Region — CAR
+      </option>
+
+      <option value="ncr">
+        National Capital Region — NCR
+      </option>
+
+      <option value="barmm">
+        BARMM
+      </option>
+
+    </select>
+
+
+    <label for="unitScaleSelect">
+      Unit Scale:
+    </label>
+
+    <select
+      id="unitScaleSelect"
+      onchange="changeUnitScale(this.value)"
+    >
+
+      <option value="0.05">
+        1 unit = 50 m
+      </option>
+
+      <option value="0.1">
+        1 unit = 100 m
+      </option>
+
+      <option value="0.5">
+        1 unit = 500 m
+      </option>
+
+      <option value="1">
+        1 unit = 1 km
+      </option>
+
+      <option value="2">
+        1 unit = 2 km
+      </option>
+
+      <option value="5">
+        1 unit = 5 km
+      </option>
+
+      <option value="10" selected>
+        1 unit = 10 km
+      </option>
+
+      <option value="20">
+        1 unit = 20 km
+      </option>
+
+      <option value="25">
+        1 unit = 25 km
+      </option>
+
+      <option value="50">
+        1 unit = 50 km
+      </option>
+
+      <option value="100">
+        1 unit = 100 km
+      </option>
+
+    </select>
+
+    <button
+      id="setOriginButton"
+      onclick="startSetCustomOrigin()"
+      style="font-size:11px;padding:6px 10px;"
+    >
+      🎯 Set Custom Origin
+    </button>
+
+  </div>
+
+  <div class="calibration-info">
+
+    <strong id="calibrationName">
+      Region I — Ilocos Region
+    </strong>
+
+    ·
+    Origin:
+    <span id="originDisplay">
+      (0,0)
+    </span>
+
+    ·
+    Scale:
+    <span id="scaleDisplay">
+      1 coordinate unit = 10 km
+    </span>
+
+    <details class="calibration-details">
+
+      <summary>Grid & geographic extent</summary>
+
+      Grid:
+      <strong>400 × 400 units</strong>
+
+      ·
+
+      Range:
+      <strong>−200 to +200</strong>
+
+      <br>
+
+      Total geographic width:
+      <strong id="geographicWidth">
+        4,000 km
+      </strong>
+
+      ×
+
+      <strong id="geographicHeight">
+        4,000 km
+      </strong>
+
+    </details>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     WORKSPACE
+     ======================================================= -->
+
+<div class="workspace">
+
+
+<!-- =======================================================
+     LEFT SIDEBAR
+     ======================================================= -->
+
+<div class="sidebar">
+
+
+<!-- PIN PANEL -->
+
+<div class="panel pin-panel">
+
+  <div class="panel-title pin-panel-title">
+    📍 Pin / Station Placement
+  </div>
+
+  <div class="pin-row">
+
+    <label>
+      Pin Type
+    </label>
+
+    <input
+      id="pinType"
+      class="pin-type"
+      type="text"
+      value="Major Area"
+      placeholder="e.g. MRT Station"
+    >
+
+    <label>
+      Pin Name
+    </label>
+
+    <input
+      id="pinName"
+      class="pin-name"
+      type="text"
+      value="Unnamed Location"
+      placeholder="e.g. Quezon City"
+    >
+
+  </div>
+
+
+  <div class="pin-row" style="margin-top:9px;">
+
+    <label>
+      Pin Color
+    </label>
+
+    <div class="color-options">
+
+      <button
+        type="button"
+        class="color-button selected"
+        data-color="#e63946"
+        style="background:#e63946"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#2563eb"
+        style="background:#2563eb"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#16a34a"
+        style="background:#16a34a"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#facc15"
+        style="background:#facc15"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#9333ea"
+        style="background:#9333ea"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#f97316"
+        style="background:#f97316"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#0891b2"
+        style="background:#0891b2"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#ec4899"
+        style="background:#ec4899"
+        onclick="selectPinColor(this)"
+      ></button>
+
+      <button
+        type="button"
+        class="color-button"
+        data-color="#374151"
+        style="background:#374151"
+        onclick="selectPinColor(this)"
+      ></button>
+
+    </div>
+
+  </div>
+
+
+  <div class="pin-instructions">
+
+    <strong>Double-click</strong>
+    anywhere on the map to place a pin.
+
+    <br>
+
+    <strong>Hover</strong>
+    over a pin to inspect it.
+
+    <br>
+
+    <strong>Hold for 2 seconds</strong>
+    to remove a pin.
+
+  </div>
+
+  <div class="pin-count">
+
+    Pins currently placed:
+    <span id="pinCount">0</span>
+
+  </div>
+
+</div>
+
+
+<!-- TRANSPORT DRAWING -->
+
+<div class="panel transport-panel">
+
+  <div class="panel-title transport-title">
+    🚇 Transportation Planner
+  </div>
+
+
+  <div class="transport-grid">
+
+    <button class="transport-button" data-mode="BUS" onclick="startTransportDrawing('BUS')">🚌 Bus</button>
+    <button class="transport-button" data-mode="MRT" onclick="startTransportDrawing('MRT')">🚇 MRT</button>
+    <button class="transport-button" data-mode="LRT" onclick="startTransportDrawing('LRT')">🚈 LRT</button>
+    <button class="transport-button" data-mode="SUBWAY" onclick="startTransportDrawing('SUBWAY')">🚇 Subway</button>
+    <button class="transport-button" data-mode="ELEVATED" onclick="startTransportDrawing('ELEVATED')">🚆 Elevated</button>
+    <button class="transport-button" data-mode="MONORAIL" onclick="startTransportDrawing('MONORAIL')">🚝 Monorail</button>
+    <button class="transport-button" data-mode="FERRY" onclick="startTransportDrawing('FERRY')">⛴ Ferry</button>
+    <button class="transport-button" data-mode="BIKE" onclick="startTransportDrawing('BIKE')">🚲 Bike Lane</button>
+    <button class="transport-button" data-mode="ROAD" onclick="startTransportDrawing('ROAD')">🛣 Road</button>
+    <button class="transport-button" data-mode="TERMINAL" onclick="startTransportDrawing('TERMINAL')">🚉 Terminal</button>
+    <button class="transport-button" data-mode="HUB" onclick="startTransportDrawing('HUB')">🔄 Hub</button>
+    <button class="transport-button" data-mode="CABLE" onclick="startTransportDrawing('CABLE')">🚡 Cable Car</button>
+
+  </div>
+
+
+  <div class="snap-toggle">
+
+    <span>
+      🧲 Snap to Grid
+    </span>
+
+    <label class="toggle">
+
+      <input
+        id="snapToggle"
+        type="checkbox"
+        checked
+      >
+
+      <span class="slider"></span>
+
+    </label>
+
+  </div>
+
+
+  <div
+    id="drawStatus"
+    class="draw-status"
+  >
+    Choose a transportation type to begin drawing.
+  </div>
+
+
+  <div
+    id="snapIndicator"
+    class="snap-indicator"
+  >
+    🧲 Snapped to point
+  </div>
+
+  <div style="margin-top:8px;">
+    <label for="routeNameInput" style="display:block;font-size:10px;font-weight:bold;margin-bottom:4px;">Route Name</label>
+    <input
+      id="routeNameInput"
+      type="text"
+      class="search-input"
+      value=""
+      maxlength="80"
+      placeholder="Optional route name"
+      style="width:100%;"
+    >
+  </div>
+
+  <div style="margin-top:8px;">
+    <label for="routeLineWidth" style="display:block;font-size:10px;font-weight:bold;margin-bottom:4px;">Route Line Width</label>
+    <select id="routeLineWidth" style="width:100%;" onchange="updateDrawingLineWidth()">
+      <option value="2">2 px</option>
+      <option value="3">3 px</option>
+      <option value="4">4 px</option>
+      <option value="5" selected>5 px</option>
+      <option value="6">6 px</option>
+      <option value="8">8 px</option>
+      <option value="10">10 px</option>
+      <option value="12">12 px</option>
+      <option value="14">14 px</option>
+    </select>
+  </div>
+
+
+  <div class="transport-controls">
+
+    <button
+      onclick="undoDrawingPoint()"
+      id="undoPointButton"
+      disabled
+    >
+      ↩ Undo
+    </button>
+
+    <button
+      onclick="finishTransportDrawing()"
+      id="finishRouteButton"
+      disabled
+    >
+      ✅ Finish
+    </button>
+
+    <button
+      onclick="cancelTransportDrawing()"
+      id="cancelRouteButton"
+      disabled
+    >
+      ❌ Cancel
+    </button>
+
+    <button
+      onclick="clearAllTransportRoutes()"
+    >
+      🗑️ Clear Routes
+    </button>
+
+  </div>
+
+
+  <div class="transport-note">
+
+    Click the map to add alignment points.
+    Double-clicking while drawing finishes the route.
+
+    <br><br>
+
+    When Snap is enabled, alignment points snap to the
+    mathematical Cartesian grid using the current unit scale.
+
+  </div>
+
+</div>
+
+
+<!-- ROUTE MANAGER -->
+
+<div class="panel route-manager">
+
+  <div class="panel-title" style="color:#35245d;">
+    🛤️ Transport Network
+  </div>
+
+  <div
+    id="routeList"
+    class="route-list"
+  >
+    <div class="route-empty">
+      No transportation routes created yet.
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ANALYSIS -->
+
+<div class="panel analysis-panel">
+
+  <div class="panel-title" style="color:#875300;">
+    🔍 Route Analysis
+  </div>
+
+  <div
+    id="analysisContent"
+    class="analysis-summary"
+  >
+    Finish a transportation route to analyze
+    distance, elevation, gradient and terrain.
+  </div>
+
+  <div id="dataSourceStatus" class="live-analysis">
+    🟡 Live terrain, water and DENR-BMB checks are idle.
+  </div>
+
+</div>
+
+</div>
+
+
+<!-- =======================================================
+     MAP
+     ======================================================= -->
+
+<div class="map-column">
+
+  <div class="map-toolbar">
+
+    <button onclick="resetView()">Reset View</button>
+    <button onclick="fitSelectedRegion()">Fit Region</button>
+    <button onclick="toggleGrid()">Grid</button>
+    <button onclick="toggleLabels()">Coordinates</button>
+    <button onclick="toggleTerrain()">Terrain</button>
+    <button onclick="locatePhilippines()">Philippines</button>
+
+    <span class="toolbar-cursor">
+      <strong>Cursor:</strong>
+      <span id="mouseCoordinate">(—, —)</span>
+    </span>
+
+    <details class="map-help-details">
+
+      <summary>?</summary>
+
+      <div class="map-help-popover">
+
+        Mouse wheel = zoom ·
+        Right-click + drag = pan ·
+        Double-click = place pin
+        <br>
+        Select a transport mode → click alignment points →
+        Finish or double-click. Live planning checks run while drawing.
+        <br>
+        +X = East ·
+        −X = West ·
+        +Y = North ·
+        −Y = South
+
+      </div>
+
+    </details>
+
+    <button
+      onclick="clearAllPins()"
+      style="background:#b91c1c;margin-left:auto;"
+    >
+      Clear Pins
+    </button>
+
+  </div>
+
+  <div id="map">
+
+    <div
+      class="terrain-note"
+      id="terrainNote"
+    >
+      Terrain layer hidden
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     RIGHT SIDEBAR
+     ======================================================= -->
+
+<div class="sidebar">
+
+
+<!-- LOCATION SEARCH -->
+
+<div class="panel search-panel">
+
+  <div class="panel-title search-title">
+    🔎 Location Search
+  </div>
+
+  <label class="search-label">
+    Search location
+  </label>
+
+  <input
+    id="locationSearch"
+    class="search-input"
+    type="text"
+    placeholder="e.g. SM Fairview, Vigan..."
+    onkeydown="handleSearchKey(event)"
+  >
+
+  <button
+    class="search-button"
+    onclick="searchLocation()"
+  >
+    Search Location
+  </button>
+
+  <div
+    id="searchStatus"
+    style="
+      margin-top:7px;
+      font-size:10px;
+      color:#66727e;
+      line-height:1.4;
+    "
+  >
+    Search for a place and the map will zoom to it.
+  </div>
+
+  <div
+    id="searchResults"
+    class="search-results"
+  ></div>
+
+</div>
+
+
+<!-- PIN-TO-PIN ROUTING -->
+
+<div class="panel search-panel">
+
+  <div class="panel-title search-title">
+    🧭 Route Between Transportation Pins
+  </div>
+
+  <label class="search-label">
+    Start Pin
+  </label>
+
+  <select
+    id="gpsStartPin"
+    class="search-input"
+  >
+    <option value="">Choose a transportation pin</option>
+  </select>
+
+  <label class="search-label" style="margin-top:7px;">
+    Destination Pin
+  </label>
+
+  <select
+    id="gpsEndPin"
+    class="search-input"
+  >
+    <option value="">Choose a transportation pin</option>
+  </select>
+
+  <button
+    class="search-button"
+    style="margin-top:7px;"
+    onclick="createPinToPinRoute()"
+  >
+    🧭 Create Land Route
+  </button>
+
+  <button
+    class="search-button"
+    style="margin-top:5px;background:#66727e;"
+    onclick="clearPinToPinRoute()"
+  >
+    Clear GPS Route
+  </button>
+
+  <div
+    id="gpsRouteStatus"
+    style="
+      margin-top:7px;
+      font-size:10px;
+      color:#66727e;
+      line-height:1.4;
+    "
+  >
+    Choose two transportation pins to calculate a mostly land-based route.
+  </div>
+
+</div>
+
+
+<!-- LANDMARK SEARCH -->
+
+<div class="panel search-panel">
+
+  <div class="panel-title search-title">
+    🗺️ Places & Landmarks
+  </div>
+
+  <label class="search-label">
+    Region
+  </label>
+
+  <select
+    id="landmarkRegion"
+    class="search-input"
+  >
+
+    <option value="all">
+      All Philippines
+    </option>
+
+    <option value="region1">
+      Region I — Ilocos Region
+    </option>
+
+    <option value="region2">
+      Region II — Cagayan Valley
+    </option>
+
+    <option value="region3">
+      Region III — Central Luzon
+    </option>
+
+    <option value="region4a">
+      Region IV-A — CALABARZON
+    </option>
+
+    <option value="region4b">
+      Region IV-B — MIMAROPA
+    </option>
+
+    <option value="region5">
+      Region V — Bicol Region
+    </option>
+
+    <option value="region6">
+      Region VI — Western Visayas
+    </option>
+
+    <option value="region7">
+      Region VII — Central Visayas
+    </option>
+
+    <option value="region8">
+      Region VIII — Eastern Visayas
+    </option>
+
+    <option value="region9">
+      Region IX — Zamboanga Peninsula
+    </option>
+
+    <option value="region10">
+      Region X — Northern Mindanao
+    </option>
+
+    <option value="region11">
+      Region XI — Davao Region
+    </option>
+
+    <option value="region12">
+      Region XII — SOCCSKSARGEN
+    </option>
+
+    <option value="region13">
+      Region XIII — Caraga
+    </option>
+
+    <option value="nir">
+      Negros Island Region
+    </option>
+
+    <option value="car">
+      Cordillera Administrative Region
+    </option>
+
+    <option value="ncr">
+      National Capital Region
+    </option>
+
+    <option value="barmm">
+      BARMM
+    </option>
+
+  </select>
+
+
+  <label class="search-label">
+    Place Type
+  </label>
+
+  <select
+    id="landmarkType"
+    class="search-input"
+  >
+
+    <option value="tourism">
+      All Landmarks & Tourist Spots
+    </option>
+
+    <option value="attraction">
+      Tourist Attractions
+    </option>
+
+    <option value="museum">
+      Museums
+    </option>
+
+    <option value="monument">
+      Monuments
+    </option>
+
+    <option value="viewpoint">
+      Viewpoints
+    </option>
+
+    <option value="park">
+      Parks
+    </option>
+
+    <option value="beach">
+      Beaches
+    </option>
+
+    <option value="waterfall">
+      Waterfalls
+    </option>
+
+    <option value="church">
+      Churches
+    </option>
+
+    <option value="historic">
+      Historic Places
+    </option>
+
+  </select>
+
+
+  <button
+    class="search-button"
+    onclick="findLandmarks()"
+  >
+    Find Matching Places
+  </button>
+
+
+  <div
+    id="landmarkStatus"
+    style="
+      margin-top:7px;
+      font-size:10px;
+      color:#66727e;
+      line-height:1.4;
+    "
+  >
+    Choose a region and place type.
+  </div>
+
+
+  <div
+    id="landmarkResults"
+    class="search-results"
+  ></div>
+
+</div>
+
+
+<!-- MATH MODE -->
+
+<div class="panel search-panel" id="mathModePanel">
+
+  <div class="panel-title search-title">
+    📐 Math Mode
+  </div>
+
+  <div style="font-size:10px;color:#66727e;line-height:1.4;margin-bottom:7px;">
+    Explore the linear equations, circles and systems of equations
+    behind your transportation network.
+  </div>
+
+  <button
+    class="search-button"
+    id="mathModeToggleButton"
+    onclick="toggleMathMode()"
+  >
+    Enable Math Mode
+  </button>
+
+  <div id="mathModeBody" style="display:none;margin-top:9px;">
+
+    <!-- INSPECTOR -->
+
+    <label class="search-label">
+      Inspect a Route
+    </label>
+
+    <select
+      id="mathInspectRoute"
+      class="search-input"
+      data-placeholder="Choose a route"
+      onchange="inspectRouteMath()"
+    >
+      <option value="">Choose a route</option>
+    </select>
+
+    <label class="search-label" style="margin-top:7px;">
+      Inspect a Hub / Circle
+    </label>
+
+    <select
+      id="mathInspectCircle"
+      class="search-input"
+      data-placeholder="Choose a circle"
+      onchange="inspectCircleMath()"
+    >
+      <option value="">Choose a circle</option>
+    </select>
+
+    <div
+      id="mathInspectorOutput"
+      class="search-results"
+      style="margin-top:7px;"
+    ></div>
+
+
+    <!-- CIRCLE TOOL -->
+
+    <div style="margin-top:12px;border-top:1px solid #e3e8ee;padding-top:9px;">
+
+      <label class="search-label">
+        Hubs, Roundabouts & Coverage Circles
+      </label>
+
+      <button
+        class="search-button"
+        id="circleDrawButton"
+        onclick="startCircleDrawing()"
+      >
+        ⭕ Draw Circle
+      </button>
+
+      <button
+        class="search-button"
+        style="margin-top:5px;background:#66727e;"
+        onclick="clearAllMathCircles()"
+      >
+        Clear All Circles
+      </button>
+
+      <div
+        id="circleDrawStatus"
+        style="margin-top:6px;font-size:10px;color:#66727e;line-height:1.4;"
+      >
+        Click a center point, then click again to set the radius.
+      </div>
+
+      <div id="circleList" style="margin-top:6px;"></div>
+
+    </div>
+
+
+    <!-- PARALLEL / PERPENDICULAR CONSTRUCTION -->
+
+    <div style="margin-top:12px;border-top:1px solid #e3e8ee;padding-top:9px;">
+
+      <label class="search-label">
+        Construct a Parallel/Perpendicular Corridor
+      </label>
+
+      <select
+        id="corridorReferenceRoute"
+        class="search-input"
+        data-placeholder="Choose a reference route"
+      >
+        <option value="">Choose a reference route</option>
+      </select>
+
+      <select
+        id="corridorNewMode"
+        class="search-input"
+        style="margin-top:5px;"
+      >
+        <option value="ROAD">🛣 Road</option>
+        <option value="BUS">🚌 Bus</option>
+        <option value="MRT">🚇 MRT</option>
+        <option value="LRT">🚈 LRT</option>
+        <option value="BIKE">🚲 Bike Lane</option>
+      </select>
+
+      <div style="display:flex;gap:5px;margin-top:5px;">
+
+        <button
+          class="search-button"
+          style="flex:1;"
+          onclick="startCorridorConstruction('parallel')"
+        >
+          ∥ Parallel
+        </button>
+
+        <button
+          class="search-button"
+          style="flex:1;"
+          onclick="startCorridorConstruction('perpendicular')"
+        >
+          ⟂ Perpendicular
+        </button>
+
+      </div>
+
+      <div
+        id="corridorStatus"
+        style="margin-top:6px;font-size:10px;color:#66727e;line-height:1.4;"
+      >
+        Choose a reference route, pick parallel or perpendicular, then click a point on the map to build through it.
+      </div>
+
+    </div>
+
+
+    <!-- LINE-LINE INTERSECTION -->
+
+    <div style="margin-top:12px;border-top:1px solid #e3e8ee;padding-top:9px;">
+
+      <label class="search-label">
+        Transfer Stations (Line ∩ Line)
+      </label>
+
+      <select
+        id="intersectRouteA"
+        class="search-input"
+        data-placeholder="Route A"
+      >
+        <option value="">Route A</option>
+      </select>
+
+      <select
+        id="intersectRouteB"
+        class="search-input"
+        style="margin-top:5px;"
+        data-placeholder="Route B"
+      >
+        <option value="">Route B</option>
+      </select>
+
+      <button
+        class="search-button"
+        style="margin-top:5px;"
+        onclick="findLineLineIntersectionUI()"
+      >
+        Solve System
+      </button>
+
+      <div
+        id="lineLineResult"
+        class="search-results"
+        style="margin-top:6px;"
+      ></div>
+
+    </div>
+
+
+    <!-- LINE-CIRCLE INTERSECTION -->
+
+    <div style="margin-top:12px;border-top:1px solid #e3e8ee;padding-top:9px;">
+
+      <label class="search-label">
+        Route ∩ Hub Coverage (Line ∩ Circle)
+      </label>
+
+      <select
+        id="intersectRouteC"
+        class="search-input"
+        data-placeholder="Choose a route"
+      >
+        <option value="">Choose a route</option>
+      </select>
+
+      <select
+        id="intersectCircleC"
+        class="search-input"
+        style="margin-top:5px;"
+        data-placeholder="Choose a circle"
+      >
+        <option value="">Choose a circle</option>
+      </select>
+
+      <button
+        class="search-button"
+        style="margin-top:5px;"
+        onclick="findLineCircleIntersectionUI()"
+      >
+        Solve System
+      </button>
+
+      <div
+        id="lineCircleResult"
+        class="search-results"
+        style="margin-top:6px;"
+      ></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+
+<div class="footer">
+
+  Coordinate scale:
+  <span id="footerScale">
+    1 unit = 10 km
+  </span>
+
+  <br>
+
+  Cartesian plane:
+  400 × 400 units
+
+  <br>
+
+  Coordinate range:
+  −200 ≤ X ≤ +200 ·
+  −200 ≤ Y ≤ +200
+
+  <br>
+
+  <a href="index.html" style="color:#17365d;">
+    ⤺ Switch version (PC / Mobile)
+  </a>
+
+</div>
+
+</div>
+
+
+<script src="planner-core.js"></script>
+
+</div>
+
+</body>
+</html>
